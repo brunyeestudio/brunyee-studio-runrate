@@ -49,6 +49,10 @@ export function getMonthContext(now: Date = new Date()): MonthContext {
   const monthStart = toIsoDate(year, month, 1);
   const monthEnd = toIsoDate(year, month, daysInMonth(year, month));
 
+  const previousMonthIndex = month === 0 ? 11 : month - 1;
+  const previousYear = month === 0 ? year - 1 : year;
+  const previousMonthStart = toIsoDate(previousYear, previousMonthIndex, 1);
+
   const nextMonthIndex = month === 11 ? 0 : month + 1;
   const nextYear = month === 11 ? year + 1 : year;
   const nextMonthStart = toIsoDate(nextYear, nextMonthIndex, 1);
@@ -65,6 +69,7 @@ export function getMonthContext(now: Date = new Date()): MonthContext {
     month,
     monthStart,
     monthEnd,
+    previousMonthStart,
     nextMonthStart,
     nextMonthEnd,
     firstOfNextMonth,
@@ -98,4 +103,38 @@ export function scheduleDate(
   const parsed = parseIsoDate(scheduleTime);
   if (!parsed) return null;
   return toIsoDate(parsed.year, parsed.month - 1, parsed.day);
+}
+
+/** Days elapsed / remaining for an as-of date within its calendar month. */
+export function monthDayProgress(asOfIso: string): {
+  daysElapsed: number;
+  daysRemaining: number;
+  daysInMonth: number;
+} | null {
+  const parsed = parseIsoDate(asOfIso);
+  if (!parsed) return null;
+  const daysInMonthTotal = daysInMonth(parsed.year, parsed.month - 1);
+  const daysElapsed = Math.min(Math.max(parsed.day, 0), daysInMonthTotal);
+  return {
+    daysElapsed,
+    daysRemaining: Math.max(daysInMonthTotal - daysElapsed, 0),
+    daysInMonth: daysInMonthTotal,
+  };
+}
+
+/**
+ * Project earned-to-date to month end using the run rate so far.
+ * `earnedToDate / daysElapsed * daysInMonth` — equivalent to adding the
+ * same daily rate across the remaining days.
+ */
+export function forecastEndOfMonth(
+  earnedToDate: number,
+  daysElapsed: number,
+  daysInMonthTotal: number,
+): number {
+  if (!Number.isFinite(earnedToDate) || earnedToDate <= 0) return 0;
+  if (!Number.isFinite(daysElapsed) || daysElapsed <= 0) return 0;
+  if (!Number.isFinite(daysInMonthTotal) || daysInMonthTotal <= 0) return 0;
+  if (daysElapsed >= daysInMonthTotal) return earnedToDate;
+  return (earnedToDate / daysElapsed) * daysInMonthTotal;
 }

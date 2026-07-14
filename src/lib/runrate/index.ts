@@ -6,6 +6,7 @@ export {
   classifyDueNextMonth,
   classifyDueThisMonth,
   classifyIssuedOnMonthStart,
+  classifyIssuedOnPreviousMonthStart,
   classifyIssuedThisMonth,
   classifyOutstanding,
   classifyScheduledNextMonth,
@@ -15,9 +16,11 @@ export {
 } from './classify-invoices';
 export { classifyHourlyWip, isHourlyBillingType } from './classify-projects';
 export {
+  forecastEndOfMonth,
   getMonthContext,
   isDateInRange,
   isSameDay,
+  monthDayProgress,
   parseIsoDate,
   scheduleDate,
   toIsoDate,

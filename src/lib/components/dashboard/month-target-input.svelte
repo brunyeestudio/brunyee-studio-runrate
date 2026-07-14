@@ -4,25 +4,41 @@
   import * as Field from '$lib/components/ui/field/index.js';
   import { Input } from '$lib/components/ui/input/index.js';
   import { Progress } from '$lib/components/ui/progress/index.js';
+  import { forecastEndOfMonth, monthDayProgress } from '$lib/runrate/dates';
   import { clampProgress, formatCurrency } from '$lib/runrate/format';
   import InfoHint from './info-hint.svelte';
   import { kpiInfo } from './kpi-info';
 
   let {
     monthTarget = $bindable<number | undefined>(undefined),
-    earnedPipeline = 0,
-    cashCollected = 0,
+    earnedThisMonth = 0,
+    paidThisMonth = 0,
+    asOf = '',
     currencyCode = 'GBP',
     monthLabel = '',
   }: {
     monthTarget?: number | undefined;
-    earnedPipeline?: number;
-    cashCollected?: number;
+    earnedThisMonth?: number;
+    paidThisMonth?: number;
+    asOf?: string;
     currencyCode?: string;
     monthLabel?: string;
   } = $props();
 
-  const progress = $derived(clampProgress(earnedPipeline, monthTarget ?? 0));
+  const dayProgress = $derived(monthDayProgress(asOf));
+  const endOfMonthForecast = $derived(
+    dayProgress
+      ? forecastEndOfMonth(
+          earnedThisMonth,
+          dayProgress.daysElapsed,
+          dayProgress.daysInMonth,
+        )
+      : 0,
+  );
+  const progress = $derived(clampProgress(earnedThisMonth, monthTarget ?? 0));
+  const forecastProgress = $derived(
+    clampProgress(endOfMonthForecast, monthTarget ?? 0),
+  );
   const displayTarget = $derived(
     monthTarget === undefined || Number.isNaN(monthTarget)
       ? ''
@@ -52,7 +68,7 @@
           />
         </div>
         <Card.Description>
-          Compare target to earned pipeline for {monthLabel || 'this month'}.
+          Compare target to earned this month for {monthLabel || 'this month'}.
         </Card.Description>
       </div>
       <Badge variant="secondary" data-testid="temporary-label">
@@ -78,14 +94,30 @@
     <div class="space-y-2">
       <div class="text-muted-foreground flex justify-between text-xs">
         <span
-          >Earned pipeline {formatCurrency(earnedPipeline, currencyCode)}</span
+          >Earned this month {formatCurrency(
+            earnedThisMonth,
+            currencyCode,
+          )}</span
         >
         <span class="tabular-nums">{progress}%</span>
       </div>
       <Progress value={progress} max={100} />
-      <p class="text-muted-foreground text-xs">
-        Cash collected this month: {formatCurrency(cashCollected, currencyCode)}
-      </p>
+      <div
+        class="text-muted-foreground flex flex-wrap justify-between gap-x-4 gap-y-1 text-xs"
+      >
+        <span data-testid="month-forecast">
+          Est. end of month {formatCurrency(endOfMonthForecast, currencyCode)}
+          {#if dayProgress}
+            <span class="text-muted-foreground/80">
+              ({dayProgress.daysElapsed} of {dayProgress.daysInMonth} days · {forecastProgress}%
+              of target)
+            </span>
+          {/if}
+        </span>
+        <span>
+          Paid this month: {formatCurrency(paidThisMonth, currencyCode)}
+        </span>
+      </div>
     </div>
   </Card.Content>
 </Card.Root>

@@ -59,6 +59,7 @@ Pure TypeScript, no Svelte — unit-tested with Vitest:
 | Cash collected              | Payments with `last_payment_date` in current month                                                     |
 | Issued this month           | Non-draft invoices with `date` in current month                                                        |
 | Issued on 1st of this month | Non-draft invoices with `date ===` first day of current month → NET 30 cash forecast, source `Issued`  |
+| Issued on 1st last month    | Non-draft invoices with `date ===` first day of previous month → **earned last month**, source `Issued` |
 | Hourly project WIP          | Active projects with hourly `billing_type`; use detail `un_billed_amount` → source `Projects (hourly)` |
 
 **Brunyee billing pattern:** invoices may be created any day, often sent/scheduled on the 1st of the month, due ~30 days later. Payment timing follows `due_date`, not create date.

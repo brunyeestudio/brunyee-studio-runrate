@@ -11,7 +11,6 @@
   import KpiCard from './kpi-card.svelte';
   import { kpiInfo } from './kpi-info';
   import MonthTargetInput from './month-target-input.svelte';
-  import PaymentTiming from './payment-timing.svelte';
   import ProjectWipTable from './project-wip-table.svelte';
 
   let {
@@ -82,15 +81,16 @@
   {:else if snapshot}
     <MonthTargetInput
       bind:monthTarget
-      earnedPipeline={snapshot.kpis.earnedPipeline.amount}
-      cashCollected={snapshot.kpis.cashCollected.amount}
+      earnedThisMonth={snapshot.kpis.earnedPipeline.amount}
+      paidThisMonth={snapshot.kpis.cashCollected.amount}
+      asOf={snapshot.asOf}
       currencyCode={snapshot.currencyCode}
       monthLabel={snapshot.monthLabel}
     />
 
     <section class="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
       <KpiCard
-        title="Cash collected"
+        title="Paid this month"
         amount={snapshot.kpis.cashCollected.amount}
         source={snapshot.kpis.cashCollected.source}
         count={snapshot.kpis.cashCollected.count}
@@ -98,10 +98,27 @@
         currencyCode={snapshot.currencyCode}
         invoices={snapshot.buckets.cashCollected.invoices}
         amountField="total"
-        info={kpiInfo.cashCollected}
+        info={kpiInfo.paidThisMonth}
       />
       <KpiCard
-        title="Earned pipeline"
+        title="Earned last month"
+        amount={snapshot.kpis.earnedLastMonth.amount}
+        source={snapshot.kpis.earnedLastMonth.source}
+        count={snapshot.kpis.earnedLastMonth.count}
+        byCurrency={snapshot.kpis.earnedLastMonth.byCurrency}
+        currencyCode={snapshot.currencyCode}
+        invoices={snapshot.buckets.issuedOnPreviousMonthStart.invoices}
+        amountField="total"
+        paymentSplit={{
+          paid:
+            snapshot.buckets.issuedOnPreviousMonthStart.total -
+            snapshot.buckets.issuedOnPreviousMonthStart.balance,
+          outstanding: snapshot.buckets.issuedOnPreviousMonthStart.balance,
+        }}
+        info={kpiInfo.earnedLastMonth}
+      />
+      <KpiCard
+        title="Earned this month"
         amount={snapshot.kpis.earnedPipeline.amount}
         source={snapshot.kpis.earnedPipeline.source}
         count={snapshot.kpis.earnedPipeline.count}
@@ -110,7 +127,7 @@
         breakdown={snapshot.kpis.earnedPipelineBreakdown}
         invoices={snapshot.buckets.draftDatedNextFirst.invoices}
         projects={snapshot.buckets.hourlyWip.projects}
-        info={kpiInfo.earnedPipeline}
+        info={kpiInfo.earnedThisMonth}
       />
       <KpiCard
         title="Outstanding"
@@ -122,28 +139,6 @@
         invoices={snapshot.buckets.outstanding.invoices}
         amountField="balance"
         info={kpiInfo.outstanding}
-      />
-      <KpiCard
-        title="Sent on the 1st"
-        amount={snapshot.kpis.issuedOnMonthStart.amount}
-        source={snapshot.kpis.issuedOnMonthStart.source}
-        count={snapshot.kpis.issuedOnMonthStart.count}
-        byCurrency={snapshot.kpis.issuedOnMonthStart.byCurrency}
-        currencyCode={snapshot.currencyCode}
-        invoices={snapshot.buckets.issuedOnMonthStart.invoices}
-        amountField="balance"
-        info={kpiInfo.issuedOnMonthStart}
-      />
-    </section>
-
-    <section class="space-y-3">
-      <h2 class="text-sm font-medium tracking-wide">Payment timing</h2>
-      <PaymentTiming
-        dueThisMonth={snapshot.paymentTiming.dueThisMonth}
-        dueNextMonth={snapshot.paymentTiming.dueNextMonth}
-        dueThisMonthInvoices={snapshot.buckets.dueThisMonth.invoices}
-        dueNextMonthInvoices={snapshot.buckets.dueNextMonth.invoices}
-        currencyCode={snapshot.currencyCode}
       />
     </section>
 

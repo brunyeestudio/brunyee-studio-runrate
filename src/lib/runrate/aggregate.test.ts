@@ -104,6 +104,12 @@ describe('aggregate', () => {
     ]);
     expect(snapshot.kpis.cashCollected.amount).toBe(750);
     expect(snapshot.kpis.outstandingBalance.amount).toBe(500);
+    expect(snapshot.kpis.earnedLastMonth.amount).toBe(1250);
+    expect(
+      snapshot.buckets.issuedOnPreviousMonthStart.invoices.map(
+        (i) => i.invoiceId,
+      ),
+    ).toEqual(['o1', 'p1']);
     expect(snapshot.kpis.issuedOnMonthStart.amount).toBe(1800);
     expect(
       snapshot.buckets.issuedOnMonthStart.invoices.map((i) => i.invoiceId),

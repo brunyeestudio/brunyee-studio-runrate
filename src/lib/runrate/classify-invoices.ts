@@ -150,19 +150,37 @@ export function classifyIssuedThisMonth(
   return bucket(matched, 'Issued', fx);
 }
 
+function classifyIssuedOnDay(
+  invoices: Invoice[],
+  day: string,
+  fx: FxContext,
+  useBalance = false,
+): InvoiceBucket {
+  const matched = invoices.filter(
+    (invoice) =>
+      !isDraftInvoice(invoice) &&
+      invoice.status.toLowerCase() !== 'void' &&
+      isSameDay(invoice.date, day),
+  );
+  return bucket(matched, 'Issued', fx, useBalance);
+}
+
 /** Non-draft invoices dated the 1st of this month — NET 30 cash forecast. */
 export function classifyIssuedOnMonthStart(
   invoices: Invoice[],
   ctx: MonthContext,
   fx: FxContext,
 ): InvoiceBucket {
-  const matched = invoices.filter(
-    (invoice) =>
-      !isDraftInvoice(invoice) &&
-      invoice.status.toLowerCase() !== 'void' &&
-      isSameDay(invoice.date, ctx.monthStart),
-  );
-  return bucket(matched, 'Issued', fx, true);
+  return classifyIssuedOnDay(invoices, ctx.monthStart, fx, true);
+}
+
+/** Non-draft invoices dated the 1st of last month — earned last month. */
+export function classifyIssuedOnPreviousMonthStart(
+  invoices: Invoice[],
+  ctx: MonthContext,
+  fx: FxContext,
+): InvoiceBucket {
+  return classifyIssuedOnDay(invoices, ctx.previousMonthStart, fx);
 }
 
 export function classifyCashCollected(

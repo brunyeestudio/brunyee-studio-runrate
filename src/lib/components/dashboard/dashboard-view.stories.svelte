@@ -26,8 +26,15 @@
     await expect(canvas.getByTestId('dashboard')).toBeInTheDocument();
     await expect(canvas.getByText('Runrate')).toBeInTheDocument();
     await expect(canvas.getByTestId('temporary-label')).toBeInTheDocument();
-    await expect(canvas.getByText('Earned pipeline')).toBeInTheDocument();
-    await expect(canvas.getByText('Payment timing')).toBeInTheDocument();
+    await expect(canvas.getByText('Paid this month')).toBeInTheDocument();
+    await expect(canvas.getByText('Earned last month')).toBeInTheDocument();
+    await expect(canvas.getByTestId('kpi-payment-split')).toHaveTextContent(
+      /£0\.00 paid.*£850\.00 outstanding/,
+    );
+    await expect(canvas.getByText('Earned this month')).toBeInTheDocument();
+    await expect(canvas.getByText('Outstanding')).toBeInTheDocument();
+    await expect(canvas.getByTestId('month-forecast')).toBeInTheDocument();
+    await expect(canvas.queryByText('Payment timing')).not.toBeInTheDocument();
     await expect(canvas.getByTestId('disconnect-zoho')).toBeInTheDocument();
 
     const kpiTriggers = canvas.getAllByTestId('kpi-details-trigger');

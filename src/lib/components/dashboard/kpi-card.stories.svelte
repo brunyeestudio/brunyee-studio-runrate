@@ -13,15 +13,15 @@
 </script>
 
 <Story
-  name="CashCollected"
+  name="PaidThisMonth"
   args={{
-    title: 'Cash collected',
+    title: 'Paid this month',
     amount: 3100,
     source: 'Cash collected',
     count: 1,
     currencyCode: 'GBP',
     byCurrency: sampleSnapshot.kpis.cashCollected.byCurrency,
-    info: kpiInfo.cashCollected,
+    info: kpiInfo.paidThisMonth,
     invoices: [sampleInvoices[2]],
     amountField: 'total',
   }}
@@ -33,7 +33,7 @@
     );
     await expect(canvas.getByTestId('kpi-card')).toHaveTextContent(/£3,100/);
     await expect(
-      canvas.getByRole('button', { name: 'How Cash collected is calculated' }),
+      canvas.getByRole('button', { name: 'How Paid this month is calculated' }),
     ).toBeInTheDocument();
 
     const trigger = canvas.getByTestId('kpi-details-trigger');
@@ -48,15 +48,40 @@
 />
 
 <Story
-  name="EarnedPipelineBreakdown"
+  name="EarnedLastMonthPaymentSplit"
   args={{
-    title: 'Earned pipeline',
+    title: 'Earned last month',
+    amount: 2500,
+    source: 'Issued',
+    count: 2,
+    currencyCode: 'GBP',
+    byCurrency: [
+      { currencyCode: 'GBP', amount: 2500, convertedAmount: 2500, count: 2 },
+    ],
+    info: kpiInfo.earnedLastMonth,
+    invoices: sampleSnapshot.buckets.issuedOnPreviousMonthStart.invoices,
+    amountField: 'total',
+    paymentSplit: { paid: 1500, outstanding: 1000 },
+  }}
+  play={async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await expect(canvas.getByTestId('kpi-card')).toHaveTextContent(/£2,500/);
+    const split = canvas.getByTestId('kpi-payment-split');
+    await expect(split).toHaveTextContent(/£1,500 paid/);
+    await expect(split).toHaveTextContent(/£1,000 outstanding/);
+  }}
+/>
+
+<Story
+  name="EarnedThisMonthBreakdown"
+  args={{
+    title: 'Earned this month',
     amount: 6787.5,
     source: 'Draft invoices',
     count: 2,
     currencyCode: 'GBP',
     byCurrency: sampleSnapshot.kpis.earnedPipeline.byCurrency,
-    info: kpiInfo.earnedPipeline,
+    info: kpiInfo.earnedThisMonth,
     breakdown: sampleSnapshot.kpis.earnedPipelineBreakdown,
     invoices: [sampleInvoices[1]],
     projects: sampleProjects,
@@ -96,14 +121,13 @@
   }}
   play={async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-    await expect(canvas.getByTestId('kpi-card')).toHaveTextContent(/£5,050/);
+    await expect(canvas.getByTestId('kpi-card')).toHaveTextContent(/£850/);
 
     const amountTrigger = canvas.getByTestId('currency-amount-trigger');
     await userEvent.hover(amountTrigger);
     const tooltip = await within(document.body).findByTestId(
       'currency-amount-tooltip',
     );
-    await expect(tooltip).toHaveTextContent(/£4,200/);
     await expect(tooltip).toHaveTextContent(/€1,000/);
 
     await userEvent.click(canvas.getByTestId('kpi-details-trigger'));

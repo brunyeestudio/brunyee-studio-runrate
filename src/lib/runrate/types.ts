@@ -108,6 +108,7 @@ export interface DashboardSnapshot {
   exchangeRates: Record<string, number>;
   kpis: {
     cashCollected: LabeledAmount;
+    earnedLastMonth: LabeledAmount;
     earnedPipeline: LabeledAmount;
     earnedPipelineBreakdown: LabeledAmount[];
     outstandingBalance: LabeledAmount;
@@ -123,6 +124,7 @@ export interface DashboardSnapshot {
     drafts: InvoiceBucket;
     scheduledNextMonth: InvoiceBucket;
     draftDatedNextFirst: InvoiceBucket;
+    issuedOnPreviousMonthStart: InvoiceBucket;
     issuedOnMonthStart: InvoiceBucket;
     issuedThisMonth: InvoiceBucket;
     cashCollected: InvoiceBucket;
@@ -138,6 +140,7 @@ export interface MonthContext {
   month: number;
   monthStart: string;
   monthEnd: string;
+  previousMonthStart: string;
   nextMonthStart: string;
   nextMonthEnd: string;
   firstOfNextMonth: string;

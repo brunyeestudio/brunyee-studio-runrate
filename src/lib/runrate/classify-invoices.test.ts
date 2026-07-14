@@ -6,6 +6,7 @@ import {
   classifyDueNextMonth,
   classifyDueThisMonth,
   classifyIssuedOnMonthStart,
+  classifyIssuedOnPreviousMonthStart,
   classifyIssuedThisMonth,
   classifyOutstanding,
   classifyScheduledNextMonth,
@@ -168,6 +169,52 @@ describe('classify-invoices', () => {
     expect(result.invoices.map((i) => i.invoiceId)).toEqual(['1']);
     expect(result.balance).toBe(2000);
     expect(result.total).toBe(2000);
+    expect(result.source).toBe('Issued');
+  });
+
+  it('classifies issued on the 1st of previous month by total (earned last month)', () => {
+    const invoices = [
+      invoice({
+        invoiceId: '1',
+        status: 'sent',
+        date: '2026-06-01',
+        dueDate: '2026-07-01',
+        total: 1500,
+        balance: 1500,
+      }),
+      invoice({
+        invoiceId: '2',
+        status: 'paid',
+        date: '2026-06-01',
+        dueDate: '2026-07-01',
+        total: 800,
+        balance: 0,
+        lastPaymentDate: '2026-07-05',
+      }),
+      invoice({
+        invoiceId: '3',
+        status: 'sent',
+        date: '2026-06-15',
+        total: 400,
+        balance: 400,
+      }),
+      invoice({
+        invoiceId: '4',
+        status: 'draft',
+        date: '2026-06-01',
+        total: 100,
+      }),
+      invoice({
+        invoiceId: '5',
+        status: 'sent',
+        date: '2026-07-01',
+        total: 2000,
+        balance: 2000,
+      }),
+    ];
+    const result = classifyIssuedOnPreviousMonthStart(invoices, ctx, fx);
+    expect(result.invoices.map((i) => i.invoiceId)).toEqual(['1', '2']);
+    expect(result.total).toBe(2300);
     expect(result.source).toBe('Issued');
   });
 

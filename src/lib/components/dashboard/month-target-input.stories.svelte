@@ -14,8 +14,9 @@
   name="TemporaryLabel"
   args={{
     monthTarget: 12000,
-    earnedPipeline: 6787.5,
-    cashCollected: 3100,
+    earnedThisMonth: 6787.5,
+    paidThisMonth: 3100,
+    asOf: '2026-07-14T10:00:00.000Z',
     currencyCode: 'GBP',
     monthLabel: 'July 2026',
   }}
@@ -25,6 +26,9 @@
       /Temporary/,
     );
     await expect(canvas.getByTestId('month-target-input')).toBeInTheDocument();
+    await expect(canvas.getByTestId('month-forecast')).toHaveTextContent(
+      /Est\. end of month/,
+    );
     const input = canvas.getByTestId('month-target-input');
     await userEvent.clear(input);
     await userEvent.type(input, '15000');

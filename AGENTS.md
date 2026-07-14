@@ -49,17 +49,17 @@ There is **no app-user authentication**, **no database**, and **no durable app s
 
 Pure TypeScript, no Svelte — unit-tested with Vitest:
 
-| Concern | Notes |
-|---------|--------|
-| Outstanding invoices | Unpaid-like status with `balance > 0` and `due_date` today or earlier (excludes not-yet-due) |
-| Drafts | `Status.Draft` |
-| Scheduled next month | Non-empty `schedule_time` in next calendar month |
-| Draft dated 1st next month | Draft with `date ===` first day of next month → **earned pipeline**, source `Draft invoices` |
-| Due this / next month | Receivable invoices (`balance > 0`, unpaid-like) bucketed by `due_date` month — includes not-yet-due |
-| Cash collected | Payments with `last_payment_date` in current month |
-| Issued this month | Non-draft invoices with `date` in current month |
-| Issued on 1st of this month | Non-draft invoices with `date ===` first day of current month → NET 30 cash forecast, source `Issued` |
-| Hourly project WIP | Active projects with hourly `billing_type`; use detail `un_billed_amount` → source `Projects (hourly)` |
+| Concern                     | Notes                                                                                                  |
+| --------------------------- | ------------------------------------------------------------------------------------------------------ |
+| Outstanding invoices        | Unpaid-like status with `balance > 0` and `due_date` today or earlier (excludes not-yet-due)           |
+| Drafts                      | `Status.Draft`                                                                                         |
+| Scheduled next month        | Non-empty `schedule_time` in next calendar month                                                       |
+| Draft dated 1st next month  | Draft with `date ===` first day of next month → **earned pipeline**, source `Draft invoices`           |
+| Due this / next month       | Receivable invoices (`balance > 0`, unpaid-like) bucketed by `due_date` month — includes not-yet-due   |
+| Cash collected              | Payments with `last_payment_date` in current month                                                     |
+| Issued this month           | Non-draft invoices with `date` in current month                                                        |
+| Issued on 1st of this month | Non-draft invoices with `date ===` first day of current month → NET 30 cash forecast, source `Issued`  |
+| Hourly project WIP          | Active projects with hourly `billing_type`; use detail `un_billed_amount` → source `Projects (hourly)` |
 
 **Brunyee billing pattern:** invoices may be created any day, often sent/scheduled on the 1st of the month, due ~30 days later. Payment timing follows `due_date`, not create date.
 
@@ -71,11 +71,11 @@ Hourly billing types: `based_on_project_hours`, `based_on_staff_hours`, `based_o
 
 ## Testing rules
 
-| What | How |
-|------|-----|
-| Domain logic, formatters, session-config, Zoho client helpers | **Vitest** `*.test.ts` (server/node project) |
-| UI components | **Storybook** `*.stories.svelte` with `play` interaction tests |
-| Do **not** use Vitest browser/component tests for UI coverage | Prefer Storybook + `@storybook/addon-vitest` |
+| What                                                          | How                                                            |
+| ------------------------------------------------------------- | -------------------------------------------------------------- |
+| Domain logic, formatters, session-config, Zoho client helpers | **Vitest** `*.test.ts` (server/node project)                   |
+| UI components                                                 | **Storybook** `*.stories.svelte` with `play` interaction tests |
+| Do **not** use Vitest browser/component tests for UI coverage | Prefer Storybook + `@storybook/addon-vitest`                   |
 
 Co-locate tests with features:
 

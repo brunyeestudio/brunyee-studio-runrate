@@ -1,3 +1,6 @@
 allowBuilds:
   '@tailwindcss/oxide': true
+  appium: true
+  edgedriver: false
   esbuild: true
+  geckodriver: false

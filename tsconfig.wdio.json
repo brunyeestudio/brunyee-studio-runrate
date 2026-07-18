@@ -1,0 +1,4 @@
+{
+	"extends": "./tests/appium/tsconfig.json",
+	"include": ["wdio.conf.ts", "tests/appium/**/*.ts"]
+}

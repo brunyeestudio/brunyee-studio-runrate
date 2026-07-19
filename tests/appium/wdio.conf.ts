@@ -8,14 +8,26 @@
  * - iOS: Xcode Simulator booted, XCUITest driver (`npx appium driver install xcuitest`)
  * - App already serving on port 4173 (e.g. `pnpm build && pnpm preview` in another terminal)
  *
+ * Screen recordings are written to ./test-results/appium-recordings/ (gitignored).
+ *
  * Env overrides: ANDROID_HOME, ANDROID_DEVICE_NAME, IOS_DEVICE_NAME, IOS_PLATFORM_VERSION,
  * APPIUM_BASE_URL, APPIUM_APP_PORT
  */
-import { existsSync } from 'node:fs';
+import { browser } from '@wdio/globals';
+import { existsSync, mkdirSync } from 'node:fs';
 import { createConnection } from 'node:net';
 import path from 'node:path';
 
 const PREVIEW_PORT = Number(process.env.APPIUM_APP_PORT ?? 4173);
+const RECORDINGS_DIR = path.join(
+  path.dirname(new URL(import.meta.url).pathname),
+  'test-results',
+  'appium-recordings',
+);
+
+function sanitizeFileName(value: string): string {
+  return value.replace(/[^a-zA-Z0-9._-]+/g, '_').replace(/^_+|_+$/g, '');
+}
 
 function getRequestedSuite(): 'android' | 'ios' | null {
   const suiteFlagIndex = process.argv.indexOf('--suite');
@@ -94,10 +106,10 @@ export const config: WebdriverIO.Config = {
   runner: 'local',
   tsConfigPath: './tsconfig.wdio.json',
 
-  specs: ['./tests/appium/**/*.e2e.ts'],
+  specs: ['./**/*.e2e.ts'],
   suites: {
-    android: ['./tests/appium/**/*.e2e.ts'],
-    ios: ['./tests/appium/**/*.e2e.ts'],
+    android: ['./**/*.e2e.ts'],
+    ios: ['./**/*.e2e.ts'],
   },
 
   maxInstances: 1,
@@ -132,10 +144,48 @@ export const config: WebdriverIO.Config = {
   },
 
   async onPrepare() {
+    mkdirSync(RECORDINGS_DIR, { recursive: true });
+
     if (await isPortOpen(PREVIEW_PORT)) return;
 
     throw new Error(
       `Nothing is listening on port ${PREVIEW_PORT}. Start the app first, e.g. \`pnpm build && pnpm preview\` (or \`pnpm dev\` on 5173 with APPIUM_APP_PORT=5173).`,
     );
+  },
+
+  async beforeTest() {
+    await browser.startRecordingScreen({
+      forceRestart: true,
+      // Default Appium limit is 180s; keep headroom for the mocha timeout.
+      timeLimit: '180',
+    });
+  },
+
+  async afterTest(test) {
+    const platform = sanitizeFileName(
+      String(
+        (browser.capabilities as WebdriverIO.Capabilities).platformName ??
+          'unknown',
+      ).toLowerCase(),
+    );
+    const suiteName = sanitizeFileName(test.parent ?? 'suite');
+    const testName = sanitizeFileName(test.title);
+    const stamp = new Date().toISOString().replace(/[:.]/g, '-');
+    const filepath = path.join(
+      RECORDINGS_DIR,
+      `${platform}-${suiteName}-${testName}-${stamp}.mp4`,
+    );
+
+    try {
+      // Add delay to ensure the recording is complete.
+      await new Promise((resolve) => setTimeout(resolve, 2_000));
+      await browser.saveRecordingScreen(filepath);
+      console.log(`Screen recording saved: ${filepath}`);
+    } catch (error) {
+      console.warn(
+        `Failed to save screen recording for "${test.title}":`,
+        error,
+      );
+    }
   },
 };

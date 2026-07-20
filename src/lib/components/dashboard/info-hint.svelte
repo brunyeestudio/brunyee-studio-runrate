@@ -25,6 +25,7 @@
       side="top"
       sideOffset={4}
       class="max-w-64 text-left leading-snug"
+      data-testid="info-hint-tooltip"
     >
       {text}
     </Tooltip.Content>

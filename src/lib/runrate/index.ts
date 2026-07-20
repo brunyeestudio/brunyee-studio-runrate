@@ -16,15 +16,29 @@ export {
 } from './classify-invoices';
 export { classifyHourlyWip, isHourlyBillingType } from './classify-projects';
 export {
+  countWeekdaysInMonth,
+  countWeekendDaysInMonth,
   forecastEndOfMonth,
   getMonthContext,
   isDateInRange,
   isSameDay,
+  isWeekdayDate,
   monthDayProgress,
   parseIsoDate,
   scheduleDate,
   toIsoDate,
+  weekdayProgress,
+  weekendProgress,
 } from './dates';
+export {
+  DEFAULT_ASSUMED_WEEKDAY_HOURS,
+  capacityOverflow,
+  dailyEarnAtAssumedHours,
+  hoursPerDayEvenSpread,
+  requiredDailyEarn,
+  workDaysAtAssumedHours,
+} from './pace';
+export type { CapacityOverflowInput, CapacityOverflowResult } from './pace';
 export {
   MissingExchangeRateError,
   emptyMoneyTotal,
@@ -39,12 +53,15 @@ export {
   parseAmount,
 } from './format';
 export {
+  DEFAULT_PACE_HOURS_MODE,
   TEMP_CONFIG_STORAGE_KEY,
   clearTempConfig,
   readTempConfig,
+  resolveAssumedWeekdayHours,
+  resolvePaceHoursMode,
   writeTempConfig,
 } from './session-config';
-export type { TempSessionConfig } from './session-config';
+export type { PaceHoursMode, TempSessionConfig } from './session-config';
 export type {
   CurrencyAmount,
   DashboardSnapshot,

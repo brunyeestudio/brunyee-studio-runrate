@@ -4,6 +4,7 @@
   import { sampleInvoices, sampleProjects, sampleSnapshot } from './fixtures';
   import KpiCard from './kpi-card.svelte';
   import { kpiInfo } from './kpi-info';
+  import { expectTooltipClosed, touchToggle } from './story-helpers';
 
   const { Story } = defineMeta({
     title: 'Dashboard/KpiCard',
@@ -32,9 +33,19 @@
       'Cash collected',
     );
     await expect(canvas.getByTestId('kpi-card')).toHaveTextContent(/£3,100/);
-    await expect(
-      canvas.getByRole('button', { name: 'How Paid this month is calculated' }),
-    ).toBeInTheDocument();
+    const infoHint = canvas.getByTestId('info-hint');
+    await expect(infoHint).toHaveAccessibleName(
+      'How Paid this month is calculated',
+    );
+
+    touchToggle(infoHint);
+    const infoTooltip = await within(document.body).findByTestId(
+      'info-hint-tooltip',
+    );
+    await expect(infoTooltip).toHaveTextContent(/cash received this month/i);
+
+    await userEvent.click(canvas.getByTestId('source-badge'));
+    await expectTooltipClosed('info-hint-tooltip');
 
     const trigger = canvas.getByTestId('kpi-details-trigger');
     await expect(trigger).toHaveTextContent('1 item');
@@ -67,8 +78,8 @@
     const canvas = within(canvasElement);
     await expect(canvas.getByTestId('kpi-card')).toHaveTextContent(/£2,500/);
     const split = canvas.getByTestId('kpi-payment-split');
-    await expect(split).toHaveTextContent(/£1,500 paid/);
-    await expect(split).toHaveTextContent(/£1,000 outstanding/);
+    await expect(split).toHaveTextContent(/£1,500(?:\.00)? paid/);
+    await expect(split).toHaveTextContent(/£1,000(?:\.00)? outstanding/);
   }}
 />
 
@@ -129,6 +140,18 @@
       'currency-amount-tooltip',
     );
     await expect(tooltip).toHaveTextContent(/€1,000/);
+
+    await userEvent.click(canvas.getByTestId('source-badge'));
+    await expectTooltipClosed('currency-amount-tooltip');
+
+    touchToggle(amountTrigger);
+    const touchTooltip = await within(document.body).findByTestId(
+      'currency-amount-tooltip',
+    );
+    await expect(touchTooltip).toHaveTextContent(/€1,000/);
+
+    await userEvent.click(canvas.getByTestId('source-badge'));
+    await expectTooltipClosed('currency-amount-tooltip');
 
     await userEvent.click(canvas.getByTestId('kpi-details-trigger'));
     await expect(

@@ -7,6 +7,10 @@ settings:
 importers:
 
   .:
+    dependencies:
+      date-fns:
+        specifier: ^4.4.0
+        version: 4.4.0
     devDependencies:
       '@chromatic-com/storybook':
         specifier: ^5.2.1
@@ -2246,6 +2250,9 @@ packages:
   data-uri-to-buffer@6.0.2:
     resolution: {integrity: sha512-7hvf7/GW8e86rW0ptuwS3OcBGDjIi6SZva7hCyWC0yYry2cOPmLIjXAUHI6DK2HsnwJd9ifmt57i8eV2n4YNpw==}
     engines: {node: '>= 14'}
+
+  date-fns@4.4.0:
+    resolution: {integrity: sha512-+1UMbeh68lH1SegH83CGWwpb6OHHbpSgr3+s5Eww5M4CAgswBpoWS0AjTOfEJ33HiYKz1hdj/KTFprzXHmq/6w==}
 
   dayjs@1.11.21:
     resolution: {integrity: sha512-98IT+HOahAisibz/yjKbzuOBwYcjJ7BCLPzARyHiyEBmRz4fatF+KPJszEHXsGYjUG234aH/cOjW1wwTbKUZlA==}
@@ -6603,6 +6610,8 @@ snapshots:
       d3-scale: 4.0.2
 
   data-uri-to-buffer@6.0.2: {}
+
+  date-fns@4.4.0: {}
 
   dayjs@1.11.21:
     optional: true

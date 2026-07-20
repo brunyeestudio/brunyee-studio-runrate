@@ -4,6 +4,7 @@
   import * as Card from '$lib/components/ui/card/index.js';
   import { Skeleton } from '$lib/components/ui/skeleton/index.js';
   import * as Tabs from '$lib/components/ui/tabs/index.js';
+  import type { PaceHoursMode } from '$lib/runrate/session-config';
   import type { DashboardSnapshot } from '$lib/runrate/types';
   import LinkSimpleIcon from 'phosphor-svelte/lib/LinkSimple';
   import DashboardHeader from './dashboard-header.svelte';
@@ -20,6 +21,10 @@
     errorCode = null,
     connected = false,
     monthTarget = $bindable<number | undefined>(undefined),
+    hourlyRate = $bindable<number | undefined>(undefined),
+    includeWeekends = $bindable(false),
+    assumedWeekdayHours = $bindable<number | undefined>(undefined),
+    paceHoursMode = $bindable<PaceHoursMode>('even-spread'),
     ondisconnect,
     onrefresh,
   }: {
@@ -29,6 +34,10 @@
     errorCode?: string | null;
     connected?: boolean;
     monthTarget?: number | undefined;
+    hourlyRate?: number | undefined;
+    includeWeekends?: boolean;
+    assumedWeekdayHours?: number | undefined;
+    paceHoursMode?: PaceHoursMode;
     ondisconnect?: () => void;
     onrefresh?: () => void;
   } = $props();
@@ -81,6 +90,10 @@
   {:else if snapshot}
     <MonthTargetInput
       bind:monthTarget
+      bind:hourlyRate
+      bind:includeWeekends
+      bind:assumedWeekdayHours
+      bind:paceHoursMode
       earnedThisMonth={snapshot.kpis.earnedPipeline.amount}
       paidThisMonth={snapshot.kpis.cashCollected.amount}
       asOf={snapshot.asOf}

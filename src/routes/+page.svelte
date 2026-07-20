@@ -3,7 +3,11 @@
   import { page } from '$app/state';
   import DashboardView from '$lib/components/dashboard/dashboard-view.svelte';
   import type { DashboardSnapshot } from '$lib/runrate/types';
-  import { readTempConfig, writeTempConfig } from '$lib/runrate/session-config';
+  import {
+    type PaceHoursMode,
+    readTempConfig,
+    writeTempConfig,
+  } from '$lib/runrate/session-config';
 
   let snapshot = $state<DashboardSnapshot | null>(null);
   let loading = $state(true);
@@ -11,6 +15,10 @@
   let errorCode = $state<string | null>(null);
   let connected = $state(false);
   let monthTarget = $state<number | undefined>(undefined);
+  let hourlyRate = $state<number | undefined>(undefined);
+  let includeWeekends = $state(false);
+  let assumedWeekdayHours = $state<number | undefined>(undefined);
+  let paceHoursMode = $state<PaceHoursMode>('even-spread');
   let hydrated = $state(false);
 
   async function loadDashboard() {
@@ -59,7 +67,12 @@
   }
 
   onMount(() => {
-    monthTarget = readTempConfig().monthTarget;
+    const config = readTempConfig();
+    monthTarget = config.monthTarget;
+    hourlyRate = config.hourlyRate;
+    includeWeekends = config.includeWeekends ?? false;
+    assumedWeekdayHours = config.assumedWeekdayHours;
+    paceHoursMode = config.paceHoursMode ?? 'even-spread';
     hydrated = true;
 
     const authError = page.url.searchParams.get('authError');
@@ -75,7 +88,13 @@
 
   $effect(() => {
     if (!hydrated) return;
-    writeTempConfig({ monthTarget });
+    writeTempConfig({
+      monthTarget,
+      hourlyRate,
+      includeWeekends,
+      assumedWeekdayHours,
+      paceHoursMode,
+    });
   });
 </script>
 
@@ -86,6 +105,10 @@
   {errorCode}
   {connected}
   bind:monthTarget
+  bind:hourlyRate
+  bind:includeWeekends
+  bind:assumedWeekdayHours
+  bind:paceHoursMode
   ondisconnect={disconnectZoho}
   onrefresh={loadDashboard}
 />

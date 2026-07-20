@@ -9,5 +9,7 @@ export const kpiInfo = {
   outstanding:
     'Remaining balance on unpaid and partially paid invoices (including sent, viewed, and overdue) with a balance greater than zero whose due date is today or earlier. Not-yet-due invoices are excluded.',
   monthTarget:
-    'Temporary testing target stored in this tab only. Progress compares earned this month to the target. The end-of-month forecast extrapolates that earning rate across the remaining days.',
+    'Temporary testing target stored in this tab only. Progress compares earned this month to the target. “On current pace” forecasts extrapolate the earning rate across remaining weekdays or all calendar days. “To hit target” pace and hours use remaining days after today (Mon–Fri workdays unless weekends are included).',
+  hourlyRate:
+    'Temporary planning inputs stored in this tab only. Even-spread hours divide the required daily earn by the hourly rate. Assumed-hours mode instead shows how many work days are needed at your assumed weekday hours/day. Capacity assumes fixed weekday hours/day, then counts how many remaining weekend days would still be needed at that same hours/day.',
 } as const;

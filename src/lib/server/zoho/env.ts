@@ -1,12 +1,4 @@
-import {
-  AUTH_SECRET,
-  ZOHO_ACCOUNTS_URL,
-  ZOHO_API_BASE_URL,
-  ZOHO_CLIENT_ID,
-  ZOHO_CLIENT_SECRET,
-  ZOHO_ORGANIZATION_ID,
-  ZOHO_REDIRECT_URI,
-} from '$env/static/private';
+import { env as privateEnv } from '$env/dynamic/private';
 
 export interface ZohoEnv {
   clientId: string;
@@ -34,7 +26,7 @@ function required(name: string, value: string | undefined): string {
 
 const MIN_AUTH_SECRET_LENGTH = 32;
 
-/** Source shape used by `readZohoEnv` — matches `$env/static/private` names. */
+/** Source shape used by `readZohoEnv` — matches `$env/dynamic/private` names. */
 export type ZohoEnvSource = {
   AUTH_SECRET?: string;
   ZOHO_CLIENT_ID?: string;
@@ -45,17 +37,7 @@ export type ZohoEnvSource = {
   ZOHO_API_BASE_URL?: string;
 };
 
-const staticPrivateEnv: ZohoEnvSource = {
-  AUTH_SECRET,
-  ZOHO_CLIENT_ID,
-  ZOHO_CLIENT_SECRET,
-  ZOHO_ORGANIZATION_ID,
-  ZOHO_REDIRECT_URI,
-  ZOHO_ACCOUNTS_URL,
-  ZOHO_API_BASE_URL,
-};
-
-export function readZohoEnv(env: ZohoEnvSource = staticPrivateEnv): ZohoEnv {
+export function readZohoEnv(env: ZohoEnvSource = privateEnv): ZohoEnv {
   const authSecret = required('AUTH_SECRET', env.AUTH_SECRET);
   if (authSecret.length < MIN_AUTH_SECRET_LENGTH) {
     throw new ZohoEnvError(

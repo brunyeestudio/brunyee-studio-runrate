@@ -1,12 +1,12 @@
 /// <reference types="vitest/config" />
-import tailwindcss from '@tailwindcss/vite';
-import { defineConfig } from 'vitest/config';
-import { playwright } from '@vitest/browser-playwright';
-import adapter from '@sveltejs/adapter-vercel';
+import { storybookTest } from '@storybook/addon-vitest/vitest-plugin';
+import adapter from '@sveltejs/adapter-node';
 import { sveltekit } from '@sveltejs/kit/vite';
+import tailwindcss from '@tailwindcss/vite';
+import { playwright } from '@vitest/browser-playwright';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { storybookTest } from '@storybook/addon-vitest/vitest-plugin';
+import { defineConfig } from 'vitest/config';
 const dirname =
   typeof __dirname !== 'undefined'
     ? __dirname

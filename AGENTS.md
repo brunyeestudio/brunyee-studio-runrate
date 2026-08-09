@@ -8,7 +8,7 @@
 
 ## Product
 
-**Runrate** is an in-month run-rate and receivables dashboard for Brunyee Studio. It reads Zoho Books invoices and unbilled hourly project WIP so the user can see whether they are on target for the current month.
+**Runrate** is not a in-month run-rate and receivables dashboard for Brunyee Studio. It reads Zoho Books invoices and unbilled hourly project WIP so the user can see whether they are on target for the current month.
 
 There is **no app-user authentication**, **no database**, and **no durable app settings**. Zoho Books is linked via a one-operator OAuth flow; tokens live in an encrypted httpOnly cookie. Temporary UI inputs (e.g. month target figures) live in **browser `sessionStorage`** and must be labeled as temporary in the UI.
 

@@ -37,13 +37,9 @@
     onrangechange?: (preset: AnalyticsRangePreset) => void;
   } = $props();
 
-  const view = $derived(
-    snapshot ? buildAnalyticsView(snapshot, hourlyRate) : null,
-  );
+  const view = $derived(snapshot ? buildAnalyticsView(snapshot, hourlyRate) : null);
 
-  const resolvedCurrency = $derived(
-    snapshot?.currencyCode ?? currencyCode,
-  );
+  const resolvedCurrency = $derived(snapshot?.currencyCode ?? currencyCode);
 
   const periodCaption = $derived.by(() => {
     if (!view) return null;
@@ -105,26 +101,18 @@
   }
 
   function handleHourlyRateInput(event: Event) {
-    hourlyRate = parseOptionalNumber(
-      (event.currentTarget as HTMLInputElement).value,
-    );
+    hourlyRate = parseOptionalNumber((event.currentTarget as HTMLInputElement).value);
   }
 </script>
 
-<div
-  class="mx-auto flex w-full max-w-7xl flex-col gap-6"
-  data-testid="analytics-view"
->
+<div class="mx-auto flex w-full max-w-7xl flex-col gap-6" data-testid="analytics-view">
   <div class="flex flex-wrap items-end justify-between gap-4">
     <div class="flex flex-wrap items-end gap-4">
-      <AnalyticsRangeToggle
-        bind:preset={rangePreset}
-        onchange={onrangechange}
-      />
+      <AnalyticsRangeToggle bind:preset={rangePreset} onchange={onrangechange} />
 
       <div class="flex flex-col gap-1.5">
         <label
-          class="text-muted-foreground text-[0.625rem] font-semibold tracking-widest uppercase"
+          class="text-[0.625rem] font-semibold tracking-widest text-muted-foreground uppercase"
           for="analytics-hourly-rate"
         >
           Hourly rate ({resolvedCurrency})
@@ -149,7 +137,7 @@
   </div>
 
   {#if periodCaption}
-    <p class="text-muted-foreground text-sm" data-testid="analytics-period">
+    <p class="text-sm text-muted-foreground" data-testid="analytics-period">
       {periodCaption}
     </p>
   {/if}
@@ -168,16 +156,11 @@
       {/each}
     </div>
   {:else if view}
-    <section
-      class="grid gap-4 md:grid-cols-2 xl:grid-cols-4"
-      data-testid="analytics-kpis"
-    >
+    <section class="grid gap-4 md:grid-cols-2 xl:grid-cols-4" data-testid="analytics-kpis">
       <Card.Root size="sm" class="bg-card/80" data-testid="analytics-kpi-hours">
         <Card.Header class="gap-2">
           <div class="flex items-center justify-between gap-3">
-            <Card.Description
-              class="text-[0.625rem] font-semibold tracking-widest uppercase"
-            >
+            <Card.Description class="text-[0.625rem] font-semibold tracking-widest uppercase">
               Hours spent
             </Card.Description>
             <SourceBadge source="Timesheets" />
@@ -186,7 +169,7 @@
             {formatHoursValue(view.studio.hoursSpent)}
           </Card.Title>
         </Card.Header>
-        <Card.Content class="text-muted-foreground text-xs tabular-nums">
+        <Card.Content class="text-xs text-muted-foreground tabular-nums">
           {formatSignedHours(view.studio.hoursDelta)}
           {#if view.studio.hoursChangePercent !== null}
             <span data-testid="analytics-kpi-hours-pct">
@@ -200,9 +183,7 @@
       <Card.Root size="sm" class="bg-card/80" data-testid="analytics-kpi-revenue">
         <Card.Header class="gap-2">
           <div class="flex items-center justify-between gap-3">
-            <Card.Description
-              class="text-[0.625rem] font-semibold tracking-widest uppercase"
-            >
+            <Card.Description class="text-[0.625rem] font-semibold tracking-widest uppercase">
               Issued revenue
             </Card.Description>
             <SourceBadge source="Issued" />
@@ -211,7 +192,7 @@
             {formatCurrency(view.studio.revenue, resolvedCurrency)}
           </Card.Title>
         </Card.Header>
-        <Card.Content class="text-muted-foreground text-xs tabular-nums">
+        <Card.Content class="text-xs text-muted-foreground tabular-nums">
           {formatSignedMoney(view.studio.revenueDelta)}
           {#if view.studio.revenueChangePercent !== null}
             <span data-testid="analytics-kpi-revenue-pct">
@@ -222,57 +203,38 @@
         </Card.Content>
       </Card.Root>
 
-      <Card.Root
-        size="sm"
-        class="bg-card/80"
-        data-testid="analytics-kpi-hours-vs-sold"
-      >
+      <Card.Root size="sm" class="bg-card/80" data-testid="analytics-kpi-hours-vs-sold">
         <Card.Header class="gap-2">
-          <Card.Description
-            class="text-[0.625rem] font-semibold tracking-widest uppercase"
-          >
+          <Card.Description class="text-[0.625rem] font-semibold tracking-widest uppercase">
             Hours vs sold
           </Card.Description>
           {#if view.hasHourlyRate && view.studio.status}
             <div class="flex flex-wrap items-center gap-2">
-              <Badge
-                variant={statusVariant(view.studio.status)}
-                data-testid="analytics-kpi-status"
-              >
+              <Badge variant={statusVariant(view.studio.status)} data-testid="analytics-kpi-status">
                 {statusLabel(view.studio.status)}
               </Badge>
-              <Card.Title
-                class="text-2xl font-medium tracking-tight tabular-nums"
-              >
+              <Card.Title class="text-2xl font-medium tracking-tight tabular-nums">
                 {formatSignedHours(view.studio.hoursVariance ?? 0)}
               </Card.Title>
             </div>
           {:else if view.hasHourlyRate}
-            <Card.Title class="text-muted-foreground text-base font-medium">
-              —
-            </Card.Title>
+            <Card.Title class="text-base font-medium text-muted-foreground">—</Card.Title>
           {:else}
-            <Card.Title class="text-muted-foreground text-base font-medium">
+            <Card.Title class="text-base font-medium text-muted-foreground">
               Enter hourly rate
             </Card.Title>
           {/if}
         </Card.Header>
         {#if view.hasHourlyRate && view.studio.moneyVariance !== null}
-          <Card.Content class="text-muted-foreground text-xs tabular-nums">
+          <Card.Content class="text-xs text-muted-foreground tabular-nums">
             {formatSignedMoney(view.studio.moneyVariance)} £ variance
           </Card.Content>
         {/if}
       </Card.Root>
 
-      <Card.Root
-        size="sm"
-        class="bg-card/80"
-        data-testid="analytics-kpi-effective-rate"
-      >
+      <Card.Root size="sm" class="bg-card/80" data-testid="analytics-kpi-effective-rate">
         <Card.Header class="gap-2">
-          <Card.Description
-            class="text-[0.625rem] font-semibold tracking-widest uppercase"
-          >
+          <Card.Description class="text-[0.625rem] font-semibold tracking-widest uppercase">
             Effective rate
           </Card.Description>
           {#if view.hasHourlyRate && view.studio.effectiveRate !== null}
@@ -280,17 +242,15 @@
               {formatCurrency(view.studio.effectiveRate, resolvedCurrency)}/h
             </Card.Title>
           {:else if view.hasHourlyRate}
-            <Card.Title class="text-muted-foreground text-base font-medium">
-              —
-            </Card.Title>
+            <Card.Title class="text-base font-medium text-muted-foreground">—</Card.Title>
           {:else}
-            <Card.Title class="text-muted-foreground text-base font-medium">
+            <Card.Title class="text-base font-medium text-muted-foreground">
               Enter hourly rate
             </Card.Title>
           {/if}
         </Card.Header>
         {#if view.hasHourlyRate && hourlyRate !== undefined}
-          <Card.Content class="text-muted-foreground text-xs tabular-nums">
+          <Card.Content class="text-xs text-muted-foreground tabular-nums">
             vs {formatCurrency(hourlyRate, resolvedCurrency)}/h configured
           </Card.Content>
         {/if}

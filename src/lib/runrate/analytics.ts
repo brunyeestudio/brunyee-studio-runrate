@@ -1,10 +1,4 @@
-import {
-  differenceInCalendarDays,
-  format,
-  isValid,
-  parseISO,
-  subDays,
-} from 'date-fns';
+import { differenceInCalendarDays, format, isValid, parseISO, subDays } from 'date-fns';
 import { isIssuedInvoice } from './classify-invoices';
 import { sumMoney } from './currency';
 import { isDateInRange } from './dates';
@@ -33,9 +27,7 @@ export const DEFAULT_ANALYTICS_RANGE_PRESET: AnalyticsRangePreset = '1m';
 
 const PRESET_VALUES = new Set<string>(Object.keys(ANALYTICS_RANGE_DAYS));
 
-export function isAnalyticsRangePreset(
-  value: unknown,
-): value is AnalyticsRangePreset {
+export function isAnalyticsRangePreset(value: unknown): value is AnalyticsRangePreset {
   return typeof value === 'string' && PRESET_VALUES.has(value);
 }
 
@@ -64,10 +56,7 @@ export function resolveAnalyticsRange(
   };
 }
 
-export function previousPeriod(bounds: {
-  from: string;
-  to: string;
-}): { from: string; to: string } {
+export function previousPeriod(bounds: { from: string; to: string }): { from: string; to: string } {
   const from = parseIsoDatePart(bounds.from);
   const to = parseIsoDatePart(bounds.to);
   if (!from || !to) {
@@ -95,12 +84,7 @@ export function parseAnalyticsDates(
 
 export const ON_RATE_HOURS_BAND = 0.5;
 
-export type AnalyticsStatus =
-  | 'overshoot'
-  | 'headroom'
-  | 'on-rate'
-  | 'no-time'
-  | 'no-invoices';
+export type AnalyticsStatus = 'overshoot' | 'headroom' | 'on-rate' | 'no-time' | 'no-invoices';
 
 export interface AnalyticsDerivedMetrics {
   soldHours: number | null;
@@ -222,9 +206,7 @@ export function rollupPeriod(
     isDateInRange(entry.logDate, bounds.from, bounds.to),
   );
   const inRangeInvoices = invoices.filter(
-    (invoice) =>
-      isIssuedInvoice(invoice) &&
-      isDateInRange(invoice.date, bounds.from, bounds.to),
+    (invoice) => isIssuedInvoice(invoice) && isDateInRange(invoice.date, bounds.from, bounds.to),
   );
 
   const byCustomer = new Map<string, ClientAccumulator>();
@@ -307,8 +289,7 @@ function compareClientRows(a: AnalyticsClientRow, b: AnalyticsClientRow): number
   const bNull = b.moneyVariance === null;
   if (aNull !== bNull) return aNull ? 1 : -1;
   if (!aNull && !bNull) {
-    const byAbsVariance =
-      Math.abs(b.moneyVariance as number) - Math.abs(a.moneyVariance as number);
+    const byAbsVariance = Math.abs(b.moneyVariance as number) - Math.abs(a.moneyVariance as number);
     if (byAbsVariance !== 0) return byAbsVariance;
   }
   return b.hoursSpent - a.hoursSpent;
@@ -322,16 +303,10 @@ export function buildAnalyticsView(
     snapshot.previous.clients.map((client) => [client.customerName, client]),
   );
 
-  const studio = toClientRow(
-    snapshot.current.studio,
-    snapshot.previous.studio,
-    hourlyRate,
-  );
+  const studio = toClientRow(snapshot.current.studio, snapshot.previous.studio, hourlyRate);
 
   const clients = snapshot.current.clients
-    .map((client) =>
-      toClientRow(client, previousByName.get(client.customerName), hourlyRate),
-    )
+    .map((client) => toClientRow(client, previousByName.get(client.customerName), hourlyRate))
     .sort(compareClientRows);
 
   return {

@@ -96,9 +96,7 @@ describe('assembleAnalyticsSnapshot', () => {
     expect(snapshot.current.bounds).toEqual(current);
     expect(snapshot.previous.bounds).toEqual(previous);
 
-    const quantum = snapshot.current.clients.find(
-      (client) => client.customerName === 'Quantum',
-    );
+    const quantum = snapshot.current.clients.find((client) => client.customerName === 'Quantum');
     expect(quantum).toMatchObject({
       hoursSpent: 12,
       revenue: 1000,

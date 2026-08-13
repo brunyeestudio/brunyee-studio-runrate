@@ -29,33 +29,19 @@
   play={async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     await expect(canvas.getByTestId('dashboard')).toBeInTheDocument();
-    await expect(
-      canvas.getByRole('heading', { name: 'Runrate' }),
-    ).toBeInTheDocument();
+    await expect(canvas.getByRole('heading', { name: 'Runrate' })).toBeInTheDocument();
     await expect(canvas.getByTestId('app-tabs')).toBeInTheDocument();
-    await expect(
-      canvas.getAllByTestId('temporary-label').length,
-    ).toBeGreaterThanOrEqual(1);
-    await expect(
-      canvas.getAllByText('Paid this month').length,
-    ).toBeGreaterThanOrEqual(1);
+    await expect(canvas.getAllByTestId('temporary-label').length).toBeGreaterThanOrEqual(1);
+    await expect(canvas.getAllByText('Paid this month').length).toBeGreaterThanOrEqual(1);
     await expect(canvas.getByText('Earned last month')).toBeInTheDocument();
     await expect(canvas.getByTestId('kpi-payment-split')).toHaveTextContent(
       /£0\.00 paid.*£850\.00 outstanding/,
     );
-    await expect(
-      canvas.getAllByText(/Earned this month/).length,
-    ).toBeGreaterThanOrEqual(1);
-    await expect(
-      canvas.getAllByText('Outstanding').length,
-    ).toBeGreaterThanOrEqual(1);
+    await expect(canvas.getAllByText(/Earned this month/).length).toBeGreaterThanOrEqual(1);
+    await expect(canvas.getAllByText('Outstanding').length).toBeGreaterThanOrEqual(1);
     await expect(canvas.getByTestId('month-forecast')).toBeInTheDocument();
-    await expect(
-      canvas.getByTestId('month-forecast-weekdays'),
-    ).toBeInTheDocument();
-    await expect(
-      canvas.getByTestId('month-forecast-all-days'),
-    ).toBeInTheDocument();
+    await expect(canvas.getByTestId('month-forecast-weekdays')).toBeInTheDocument();
+    await expect(canvas.getByTestId('month-forecast-all-days')).toBeInTheDocument();
     await expect(canvas.queryByText('Payment timing')).not.toBeInTheDocument();
     await expect(canvas.getByTestId('disconnect-zoho')).toBeInTheDocument();
 
@@ -90,9 +76,7 @@
   play={async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     await expect(canvas.getByTestId('app-tabs')).toBeInTheDocument();
-    await expect(
-      canvas.queryByTestId('analytics-view'),
-    ).not.toBeInTheDocument();
+    await expect(canvas.queryByTestId('analytics-view')).not.toBeInTheDocument();
     await userEvent.click(canvas.getByRole('tab', { name: 'Analytics' }));
     await expect(canvas.getByTestId('analytics-view')).toBeInTheDocument();
     await expect(canvas.getByTestId('analytics-range')).toBeInTheDocument();
@@ -113,9 +97,7 @@
     const canvas = within(canvasElement);
     await expect(canvas.getByTestId('zoho-connect')).toBeInTheDocument();
     await expect(canvas.getByTestId('connect-zoho')).toBeInTheDocument();
-    await expect(
-      canvas.queryByTestId('dashboard-error'),
-    ).not.toBeInTheDocument();
+    await expect(canvas.queryByTestId('dashboard-error')).not.toBeInTheDocument();
     await expect(canvas.getByTestId('app-tabs')).toBeInTheDocument();
   }}
 />

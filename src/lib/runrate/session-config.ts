@@ -1,7 +1,4 @@
-import {
-  isAnalyticsRangePreset,
-  type AnalyticsRangePreset,
-} from './analytics';
+import { isAnalyticsRangePreset, type AnalyticsRangePreset } from './analytics';
 import { DEFAULT_ASSUMED_WEEKDAY_HOURS } from './pace';
 
 const STORAGE_KEY = 'runrate:temp-config';
@@ -45,9 +42,7 @@ export function readTempConfig(): TempSessionConfig {
     const includeWeekends =
       typeof parsed.includeWeekends === 'boolean' ? parsed.includeWeekends : undefined;
     const paceHoursMode = readPaceHoursMode(parsed.paceHoursMode);
-    const analyticsRangePreset = isAnalyticsRangePreset(
-      parsed.analyticsRangePreset,
-    )
+    const analyticsRangePreset = isAnalyticsRangePreset(parsed.analyticsRangePreset)
       ? parsed.analyticsRangePreset
       : undefined;
 

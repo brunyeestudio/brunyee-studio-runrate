@@ -63,11 +63,11 @@ Foreign invoice amounts convert to GBP with the same Frankfurter path as Runrate
 
 ### Inclusions
 
-| Fact | Rule |
-| --- | --- |
-| Revenue | Non-draft, non-void invoices whose **invoice date** is in the period |
-| Hours | All Zoho time entries whose **log date** is in the period |
-| Client key | Zoho `customer_name`; blank → `Unassigned` |
+| Fact       | Rule                                                                                                                                             |
+| ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Revenue    | Non-draft, non-void invoices whose **invoice date** is in the period                                                                             |
+| Hours      | All Zoho time entries whose **log date** is in the period                                                                                        |
+| Client key | Zoho `customer_name`; blank → `Unassigned`                                                                                                       |
 | Client set | Union of customers that appear in hours or invoices in the **current** period. Previous-period figures attach to those same names (0 if absent). |
 
 ### Out of scope
@@ -84,24 +84,24 @@ All rate-based figures recompute in the browser from the existing `hourlyRate` i
 
 ### Per client and studio total
 
-| Metric | Formula | Source |
-| --- | --- | --- |
-| Hours spent | Sum of time-entry hours in range | `Timesheets` |
-| Revenue | Sum of issued invoice totals in range (GBP) | `Issued` |
-| Sold hours | Revenue ÷ hourly rate | Derived |
-| Hours variance | Hours spent − sold hours | Derived |
-| £ variance | Revenue − (hours spent × rate) | Derived |
-| Effective rate | Revenue ÷ hours spent | Derived |
+| Metric         | Formula                                     | Source       |
+| -------------- | ------------------------------------------- | ------------ |
+| Hours spent    | Sum of time-entry hours in range            | `Timesheets` |
+| Revenue        | Sum of issued invoice totals in range (GBP) | `Issued`     |
+| Sold hours     | Revenue ÷ hourly rate                       | Derived      |
+| Hours variance | Hours spent − sold hours                    | Derived      |
+| £ variance     | Revenue − (hours spent × rate)              | Derived      |
+| Effective rate | Revenue ÷ hours spent                       | Derived      |
 
 ### Status
 
-| Status | When |
-| --- | --- |
-| **Overshoot** | Hours variance > +0.5h. Spent more time than invoices paid for at the target rate. Effective rate is below the configured rate. £ variance is negative. |
-| **Headroom** | Hours variance < −0.5h. Invoices more than cover the time. Effective rate is above the configured rate. £ variance is positive. |
-| **On rate** | Absolute hours variance ≤ 0.5h. Slack exists so rounding does not flip the label. Exactly ±0.5h is On rate. |
-| **No time logged** | Hours spent = 0 and revenue > 0. Sold hours still shown when rate is set. Effective rate blank. |
-| **No invoices** | Hours spent > 0 and revenue = 0. Effective rate is £0. Full overshoot at any positive rate. |
+| Status             | When                                                                                                                                                    |
+| ------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Overshoot**      | Hours variance > +0.5h. Spent more time than invoices paid for at the target rate. Effective rate is below the configured rate. £ variance is negative. |
+| **Headroom**       | Hours variance < −0.5h. Invoices more than cover the time. Effective rate is above the configured rate. £ variance is positive.                         |
+| **On rate**        | Absolute hours variance ≤ 0.5h. Slack exists so rounding does not flip the label. Exactly ±0.5h is On rate.                                             |
+| **No time logged** | Hours spent = 0 and revenue > 0. Sold hours still shown when rate is set. Effective rate blank.                                                         |
+| **No invoices**    | Hours spent > 0 and revenue = 0. Effective rate is £0. Full overshoot at any positive rate.                                                             |
 
 ### Missing inputs
 
@@ -112,13 +112,13 @@ All rate-based figures recompute in the browser from the existing `hourlyRate` i
 
 Presets are rolling windows **ending today (inclusive)**:
 
-| Preset | Length |
-| --- | --- |
-| `7d` | 7 days |
-| `1m` | 30 days (default) |
-| `3m` | 90 days |
-| `6m` | 180 days |
-| `1y` | 365 days |
+| Preset | Length            |
+| ------ | ----------------- |
+| `7d`   | 7 days            |
+| `1m`   | 30 days (default) |
+| `3m`   | 90 days           |
+| `6m`   | 180 days          |
+| `1y`   | 365 days          |
 
 Previous period is the same length immediately before the current window.
 
@@ -175,15 +175,15 @@ Status badge colours: Overshoot destructive, Headroom positive, On rate muted, N
 
 ## File layout
 
-| Area | Path |
-| --- | --- |
-| Domain (pure TS) | `$lib/runrate/analytics.ts`, types in `$lib/runrate/types.ts` (or a sibling `analytics-types.ts` if `types.ts` would become crowded) |
-| Session | Extend `TempSessionConfig` with `analyticsRangePreset` |
-| Zoho time entries | `$lib/server/zoho/time-entries.ts` |
-| Zoho aggregation | `$lib/server/zoho/analytics.ts` (`buildZohoAnalytics`) |
-| Route | `src/routes/api/analytics/+server.ts` |
-| UI | `$lib/components/dashboard/analytics-view.svelte`, `client-analytics-table.svelte`, range-preset control |
-| Shell | Top-level tabs in `dashboard-view.svelte`; fetch wiring in `+page.svelte` |
+| Area              | Path                                                                                                                                 |
+| ----------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
+| Domain (pure TS)  | `$lib/runrate/analytics.ts`, types in `$lib/runrate/types.ts` (or a sibling `analytics-types.ts` if `types.ts` would become crowded) |
+| Session           | Extend `TempSessionConfig` with `analyticsRangePreset`                                                                               |
+| Zoho time entries | `$lib/server/zoho/time-entries.ts`                                                                                                   |
+| Zoho aggregation  | `$lib/server/zoho/analytics.ts` (`buildZohoAnalytics`)                                                                               |
+| Route             | `src/routes/api/analytics/+server.ts`                                                                                                |
+| UI                | `$lib/components/dashboard/analytics-view.svelte`, `client-analytics-table.svelte`, range-preset control                             |
+| Shell             | Top-level tabs in `dashboard-view.svelte`; fetch wiring in `+page.svelte`                                                            |
 
 Hours parsing must accept Zoho `HH:MM` and decimal hour strings.
 
@@ -193,14 +193,14 @@ Browser calls `/api/dashboard` and `/api/auth/zoho/*` today; add `/api/analytics
 
 ## Error handling
 
-| Situation | Behaviour |
-| --- | --- |
-| Zoho not connected | Same connect alert as Runrate. Analytics tab is visible but does not call the API. |
-| Analytics fetch fails | Destructive alert in the Analytics body only. Runrate snapshot is left alone. |
-| Zoho time-entries API missing or unauthorized | Surface as a fetch error with the Zoho message. Do not silently show 0 hours. |
-| Empty range (connected, no time entries and no issued invoices) | Empty table plus “No timesheets or issued invoices in this range”. |
-| Hourly rate missing | KPIs 1–2 still fill. Cards 3–4 and sold/variance columns show “Enter hourly rate”. |
-| Invalid `from`/`to` | HTTP 400. UI does not send free-form dates. |
+| Situation                                                       | Behaviour                                                                          |
+| --------------------------------------------------------------- | ---------------------------------------------------------------------------------- |
+| Zoho not connected                                              | Same connect alert as Runrate. Analytics tab is visible but does not call the API. |
+| Analytics fetch fails                                           | Destructive alert in the Analytics body only. Runrate snapshot is left alone.      |
+| Zoho time-entries API missing or unauthorized                   | Surface as a fetch error with the Zoho message. Do not silently show 0 hours.      |
+| Empty range (connected, no time entries and no issued invoices) | Empty table plus “No timesheets or issued invoices in this range”.                 |
+| Hourly rate missing                                             | KPIs 1–2 still fill. Cards 3–4 and sold/variance columns show “Enter hourly rate”. |
+| Invalid `from`/`to`                                             | HTTP 400. UI does not send free-form dates.                                        |
 
 ## Testing
 

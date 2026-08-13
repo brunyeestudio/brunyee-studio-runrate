@@ -26,28 +26,29 @@
 
 ## File map
 
-| File | Responsibility |
-| --- | --- |
-| `src/lib/runrate/types.ts` | Add `Timesheets` source, `TimeEntry`, `AnalyticsSnapshot` fact types |
-| `src/lib/runrate/format.ts` | `parseHours` (`HH:MM` and decimal) |
-| `src/lib/runrate/analytics.ts` | Range presets, previous period, rollup, rate-derived metrics, view model |
-| `src/lib/runrate/session-config.ts` | Persist `analyticsRangePreset` |
-| `src/lib/server/zoho/time-entries.ts` | Map + paginate `/projects/timeentries` |
-| `src/lib/server/zoho/invoices.ts` | Date-bounded invoice list for Analytics |
-| `src/lib/server/zoho/analytics.ts` | `buildZohoAnalytics` |
-| `src/lib/server/zoho/oauth.ts` | Add timesheet read scope |
-| `src/routes/api/analytics/+server.ts` | GET handler |
-| `src/lib/components/dashboard/analytics-view.svelte` | Analytics chrome + KPIs |
-| `src/lib/components/dashboard/client-analytics-table.svelte` | Studio + per-client table |
-| `src/lib/components/dashboard/analytics-range-toggle.svelte` | Preset toggle |
-| `src/lib/components/dashboard/dashboard-view.svelte` | Top-level Runrate / Analytics tabs |
-| `src/routes/+page.svelte` | Fetch analytics on tab/preset; bind rate + preset |
+| File                                                         | Responsibility                                                           |
+| ------------------------------------------------------------ | ------------------------------------------------------------------------ |
+| `src/lib/runrate/types.ts`                                   | Add `Timesheets` source, `TimeEntry`, `AnalyticsSnapshot` fact types     |
+| `src/lib/runrate/format.ts`                                  | `parseHours` (`HH:MM` and decimal)                                       |
+| `src/lib/runrate/analytics.ts`                               | Range presets, previous period, rollup, rate-derived metrics, view model |
+| `src/lib/runrate/session-config.ts`                          | Persist `analyticsRangePreset`                                           |
+| `src/lib/server/zoho/time-entries.ts`                        | Map + paginate `/projects/timeentries`                                   |
+| `src/lib/server/zoho/invoices.ts`                            | Date-bounded invoice list for Analytics                                  |
+| `src/lib/server/zoho/analytics.ts`                           | `buildZohoAnalytics`                                                     |
+| `src/lib/server/zoho/oauth.ts`                               | Add timesheet read scope                                                 |
+| `src/routes/api/analytics/+server.ts`                        | GET handler                                                              |
+| `src/lib/components/dashboard/analytics-view.svelte`         | Analytics chrome + KPIs                                                  |
+| `src/lib/components/dashboard/client-analytics-table.svelte` | Studio + per-client table                                                |
+| `src/lib/components/dashboard/analytics-range-toggle.svelte` | Preset toggle                                                            |
+| `src/lib/components/dashboard/dashboard-view.svelte`         | Top-level Runrate / Analytics tabs                                       |
+| `src/routes/+page.svelte`                                    | Fetch analytics on tab/preset; bind rate + preset                        |
 
 ---
 
 ### Task 1: Hours parsing and issued-invoice helper
 
 **Files:**
+
 - Modify: `src/lib/runrate/format.ts`
 - Modify: `src/lib/runrate/format.test.ts`
 - Modify: `src/lib/runrate/classify-invoices.ts`
@@ -56,6 +57,7 @@
 - Modify: `src/lib/runrate/types.ts` (add `'Timesheets'` to `RevenueSource` only)
 
 **Interfaces:**
+
 - Consumes: existing `parseAmount`, `isDraftInvoice`
 - Produces: `parseHours(value: unknown): number`; `isIssuedInvoice(invoice: Invoice): boolean`; `RevenueSource` includes `'Timesheets'`
 
@@ -190,11 +192,13 @@ EOF
 ### Task 2: Range presets and previous period
 
 **Files:**
+
 - Create: `src/lib/runrate/analytics.ts`
 - Create: `src/lib/runrate/analytics.test.ts`
 - Modify: `src/lib/runrate/index.ts`
 
 **Interfaces:**
+
 - Consumes: `date-fns` (`subDays`, `differenceInCalendarDays`, `parseISO`, `format`, `isValid`)
 - Produces:
 
@@ -255,9 +259,10 @@ describe('analytics range', () => {
   });
 
   it('computes an equal-length previous period immediately before from', () => {
-    expect(
-      previousPeriod({ from: '2026-07-15', to: '2026-08-13' }),
-    ).toEqual({ from: '2026-06-15', to: '2026-07-14' });
+    expect(previousPeriod({ from: '2026-07-15', to: '2026-08-13' })).toEqual({
+      from: '2026-06-15',
+      to: '2026-07-14',
+    });
     expect(previousPeriod({ from: '2026-08-07', to: '2026-08-13' })).toEqual({
       from: '2026-07-31',
       to: '2026-08-06',
@@ -312,22 +317,19 @@ EOF
 ### Task 3: Rate-derived metrics and status
 
 **Files:**
+
 - Modify: `src/lib/runrate/analytics.ts`
 - Modify: `src/lib/runrate/analytics.test.ts`
 - Modify: `src/lib/runrate/index.ts`
 
 **Interfaces:**
+
 - Consumes: Task 2 module
 - Produces:
 
 ```ts
 export const ON_RATE_HOURS_BAND = 0.5;
-export type AnalyticsStatus =
-  | 'overshoot'
-  | 'headroom'
-  | 'on-rate'
-  | 'no-time'
-  | 'no-invoices';
+export type AnalyticsStatus = 'overshoot' | 'headroom' | 'on-rate' | 'no-time' | 'no-invoices';
 export interface AnalyticsDerivedMetrics {
   soldHours: number | null;
   hoursVariance: number | null;
@@ -345,6 +347,7 @@ export function percentChange(current: number, previous: number): number | null;
 ```
 
 Rules (copy exactly):
+
 - No rate (unset, non-finite, or ≤ 0) → all derived fields `null` including status.
 - Hours = 0 and revenue > 0 → `soldHours` set when rate exists; `effectiveRate` null; status `'no-time'`.
 - Hours > 0 and revenue = 0 → `effectiveRate` 0; status `'no-invoices'`.
@@ -442,12 +445,14 @@ EOF
 ### Task 4: Period rollup and view model
 
 **Files:**
+
 - Modify: `src/lib/runrate/types.ts`
 - Modify: `src/lib/runrate/analytics.ts`
 - Modify: `src/lib/runrate/analytics.test.ts`
 - Modify: `src/lib/runrate/index.ts`
 
 **Interfaces:**
+
 - Consumes: `TimeEntry`, `Invoice`, `FxContext`, `sumMoney`, `isDateInRange`, `isIssuedInvoice`, `deriveMetrics`, `percentChange`
 - Produces: types below plus `rollupPeriod`, `buildAnalyticsView`
 
@@ -528,6 +533,7 @@ export function buildAnalyticsView(
 ```
 
 Rollup rules:
+
 - Filter entries by `logDate` in bounds; invoices by `isIssuedInvoice` and `date` in bounds.
 - `customerKey('')` → `Unassigned`.
 - Studio facts are the sums of all in-range items (`customerName: 'Studio'`).
@@ -680,17 +686,13 @@ describe('buildAnalyticsView', () => {
     expect(quantum?.revenuePrevious).toBe(800);
     expect(quantum?.status).toBe('overshoot');
     expect(view.clients.map((c) => c.customerName)[0]).toBe('Quantum');
-    expect(view.clients.some((c) => c.customerName === 'OnlyPrevious')).toBe(
-      false,
-    );
+    expect(view.clients.some((c) => c.customerName === 'OnlyPrevious')).toBe(false);
   });
 
   it('sorts missing-rate rows after computable variance', () => {
     const view = buildAnalyticsView(snapshot, undefined);
     expect(view.clients.every((c) => c.moneyVariance === null)).toBe(true);
-    expect(view.clients[0]?.hoursSpent).toBeGreaterThanOrEqual(
-      view.clients[1]?.hoursSpent ?? 0,
-    );
+    expect(view.clients[0]?.hoursSpent).toBeGreaterThanOrEqual(view.clients[1]?.hoursSpent ?? 0);
   });
 });
 ```
@@ -725,10 +727,12 @@ EOF
 ### Task 5: Persist analytics range preset
 
 **Files:**
+
 - Modify: `src/lib/runrate/session-config.ts`
 - Modify: `src/lib/runrate/session-config.test.ts`
 
 **Interfaces:**
+
 - Consumes: `isAnalyticsRangePreset`, `AnalyticsRangePreset`
 - Produces: `TempSessionConfig.analyticsRangePreset?: AnalyticsRangePreset` read/written like other fields
 
@@ -764,12 +768,14 @@ EOF
 ### Task 6: Zoho time-entry mapper and timesheet scope
 
 **Files:**
+
 - Create: `src/lib/server/zoho/time-entries.ts`
 - Modify: `src/lib/server/zoho/zoho.test.ts`
 - Modify: `src/lib/server/zoho/oauth.ts`
 - Modify: `src/lib/server/zoho/index.ts`
 
 **Interfaces:**
+
 - Consumes: `zohoFetch`, `parseHours`, `customerKey` (mapper stores raw name; rollup applies `customerKey`)
 - Produces:
 
@@ -785,6 +791,7 @@ export async function fetchTimeEntriesInRange(
 `ZohoTimeEntryRaw` fields (all optional): `time_entry_id`, `customer_name`, `project_name`, `log_date`, `date`, `hours`, `billed_hours`, `time`.
 
 Mapper:
+
 - id from `time_entry_id`; skip if missing
 - `logDate` from `log_date` or `date`, sliced to 10 chars; skip if not `yyyy-MM-dd`
 - `hours` from `hours` ?? `billed_hours` ?? `time` via `parseHours`
@@ -866,12 +873,14 @@ EOF
 ### Task 7: Date-bounded invoices and `buildZohoAnalytics`
 
 **Files:**
+
 - Modify: `src/lib/server/zoho/invoices.ts`
 - Create: `src/lib/server/zoho/analytics.ts`
 - Modify: `src/lib/server/zoho/index.ts`
 - Create: `src/lib/server/zoho/analytics.test.ts` (pure assembly with stubbed lists — or test `buildAnalyticsSnapshot` wrapper)
 
 **Interfaces:**
+
 - Consumes: `listInvoicesPage`, `fetchTimeEntriesInRange`, `rollupPeriod`, `previousPeriod`, `parseAnalyticsDates`, Frankfurter FX
 - Produces:
 
@@ -892,6 +901,7 @@ export async function buildZohoAnalytics(
 `fetchInvoicesInRange`: paginate `/invoices` with `date_start`, `date_end`, `per_page: 200`, max 50 pages. Deduplicate by `invoiceId` like `fetchDashboardInvoices`. Domain rollup still drops draft/void.
 
 `buildZohoAnalytics`:
+
 1. `current = { from, to }`; `previous = previousPeriod(current)`.
 2. Fetch invoices and time entries for **current.from through current.to** and **previous.from through previous.to** (four calls, or two wider fetches covering `previous.from`–`current.to` then filter — prefer two wider fetches: invoices + time entries for `previous.from`–`current.to`, then filter in `rollupPeriod`).
 3. Collect currency codes from invoices; `fetchFrankfurterFx` with `DEFAULT_BASE_CURRENCY`.
@@ -940,19 +950,18 @@ EOF
 ### Task 8: `GET /api/analytics`
 
 **Files:**
+
 - Create: `src/routes/api/analytics/+server.ts`
 
 **Interfaces:**
+
 - Consumes: `parseAnalyticsDates`, `buildZohoAnalytics`, same error mapping as `src/routes/api/dashboard/+server.ts`
 - Produces: `200` JSON `AnalyticsSnapshot`; `400` `{ error, code: 'ANALYTICS_RANGE' }` when dates are invalid; Zoho/FX errors use the same codes as dashboard (`ZOHO_AUTH`, `ZOHO_ENV`, `ZOHO_API`, `FX_ERROR`)
 
 - [ ] **Step 1: Implement the handler** by copying the dashboard try/catch and replacing the happy path:
 
 ```ts
-const bounds = parseAnalyticsDates(
-  url.searchParams.get('from'),
-  url.searchParams.get('to'),
-);
+const bounds = parseAnalyticsDates(url.searchParams.get('from'), url.searchParams.get('to'));
 if (!bounds) {
   return json(
     { error: 'from and to must be yyyy-MM-dd with from ≤ to', code: 'ANALYTICS_RANGE' },
@@ -982,6 +991,7 @@ EOF
 ### Task 9: Range toggle and client table (Storybook)
 
 **Files:**
+
 - Create: `src/lib/components/dashboard/analytics-fixtures.ts`
 - Create: `src/lib/components/dashboard/analytics-range-toggle.svelte`
 - Create: `src/lib/components/dashboard/analytics-range-toggle.stories.svelte`
@@ -989,6 +999,7 @@ EOF
 - Create: `src/lib/components/dashboard/client-analytics-table.stories.svelte`
 
 **Interfaces:**
+
 - Consumes: `AnalyticsRangePreset`, `AnalyticsClientRow`, `formatCurrency`, `SourceBadge`, `Badge`, `Table`, `ToggleGroup`
 - Produces: presentational components only
 
@@ -997,6 +1008,7 @@ Fixture: `sampleAnalyticsView` with studio + Quantum (overshoot) + Northwind (he
 Range toggle: line `ToggleGroup` values `7d|1m|3m|6m|1y`, `data-testid="analytics-range"`, bindable `preset`.
 
 Client table:
+
 - `data-testid="client-analytics-table"`
 - First body row is studio (`data-testid="analytics-studio-row"`)
 - Then clients; Quantum before Northwind when sorted by |£ variance|
@@ -1031,10 +1043,12 @@ EOF
 ### Task 10: Analytics view
 
 **Files:**
+
 - Create: `src/lib/components/dashboard/analytics-view.svelte`
 - Create: `src/lib/components/dashboard/analytics-view.stories.svelte`
 
 **Interfaces:**
+
 - Consumes: `AnalyticsSnapshot`, `buildAnalyticsView`, range toggle, client table, hourly rate bindable
 - Produces: `AnalyticsView` props:
 
@@ -1051,6 +1065,7 @@ EOF
 ```
 
 Layout:
+
 1. Chrome: range toggle, hourly rate number input (`data-testid="analytics-hourly-rate"`), temporary label (`data-testid="temporary-label"`), period caption (`data-testid="analytics-period"`) formatted `d MMM yyyy – d MMM yyyy` vs previous.
 2. Four KPI cards (`data-testid="analytics-kpis"`): Hours spent (`Timesheets`), Issued revenue (`Issued`), Hours vs sold (status + £ variance), Effective rate vs configured rate.
 3. Client table.
@@ -1085,15 +1100,18 @@ EOF
 ### Task 11: Top-level tabs and page fetch
 
 **Files:**
+
 - Modify: `src/lib/components/dashboard/dashboard-view.svelte`
 - Modify: `src/lib/components/dashboard/dashboard-view.stories.svelte`
 - Modify: `src/routes/+page.svelte`
 
 **Interfaces:**
+
 - Consumes: existing dashboard props plus analytics props
 - Produces: dashboard-view bindable `view: 'runrate' | 'analytics'`, analytics snapshot/loading/error, `rangePreset`, `onanalyticsrefresh`
 
 `+page.svelte`:
+
 - Read `view` from `?view=analytics`, default `'runrate'`.
 - Hydrate `analyticsRangePreset` from `readTempConfig()` (default `'1m'`).
 - Persist `analyticsRangePreset` in the existing `writeTempConfig` effect.
@@ -1134,28 +1152,28 @@ EOF
 
 ## Spec coverage
 
-| Spec requirement | Task |
-| --- | --- |
-| Top-level Runrate / Analytics tabs | 11 |
-| `GET /api/analytics?from=&to=` | 8 |
-| Previous period = equal length before `from` | 2, 7 |
-| Server facts only; rate math in browser | 3, 4, 10 |
-| Issued non-draft non-void by invoice date | 1, 4, 7 |
-| All time entries by log date | 4, 6 |
-| Per-client rows + studio total; Quantum not special-cased | 4, 9 |
-| Unassigned blank customer | 4 |
-| Sold hours, hours/£ variance, effective rate | 3 |
-| Overshoot / Headroom / On rate (≤ 0.5h) / No time / No invoices | 3, 9 |
-| Rolling 7d / 1m / 3m / 6m / 1y | 2, 9 |
-| Session hourly rate + temporary label | 5, 10, 11 |
-| `analyticsRangePreset` in session config | 5 |
-| `?view=analytics` | 11 |
-| Fetch only on tab open / preset change | 11 |
-| Connect / analytics error / empty / missing rate / 400 dates | 8, 10, 11 |
-| Timesheet scope + do not swallow 401 as 0 hours | 6, 8 |
-| Vitest domain + Zoho mapper tests | 1–7 |
-| Storybook play tests | 9–11 |
-| Source badges Timesheets / Issued | 9, 10 |
+| Spec requirement                                                | Task      |
+| --------------------------------------------------------------- | --------- |
+| Top-level Runrate / Analytics tabs                              | 11        |
+| `GET /api/analytics?from=&to=`                                  | 8         |
+| Previous period = equal length before `from`                    | 2, 7      |
+| Server facts only; rate math in browser                         | 3, 4, 10  |
+| Issued non-draft non-void by invoice date                       | 1, 4, 7   |
+| All time entries by log date                                    | 4, 6      |
+| Per-client rows + studio total; Quantum not special-cased       | 4, 9      |
+| Unassigned blank customer                                       | 4         |
+| Sold hours, hours/£ variance, effective rate                    | 3         |
+| Overshoot / Headroom / On rate (≤ 0.5h) / No time / No invoices | 3, 9      |
+| Rolling 7d / 1m / 3m / 6m / 1y                                  | 2, 9      |
+| Session hourly rate + temporary label                           | 5, 10, 11 |
+| `analyticsRangePreset` in session config                        | 5         |
+| `?view=analytics`                                               | 11        |
+| Fetch only on tab open / preset change                          | 11        |
+| Connect / analytics error / empty / missing rate / 400 dates    | 8, 10, 11 |
+| Timesheet scope + do not swallow 401 as 0 hours                 | 6, 8      |
+| Vitest domain + Zoho mapper tests                               | 1–7       |
+| Storybook play tests                                            | 9–11      |
+| Source badges Timesheets / Issued                               | 9, 10     |
 
 ## Placeholder / type check
 

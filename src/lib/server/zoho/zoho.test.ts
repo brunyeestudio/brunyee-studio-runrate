@@ -154,9 +154,7 @@ describe('zoho oauth helpers', () => {
     expect(url.searchParams.get('response_type')).toBe('code');
     expect(url.searchParams.get('access_type')).toBe('offline');
     expect(url.searchParams.get('prompt')).toBe('consent');
-    expect(ZOHO_OAUTH_SCOPES).toBe(
-      'ZohoBooks.invoices.READ,ZohoBooks.projects.READ',
-    );
+    expect(ZOHO_OAUTH_SCOPES).toBe('ZohoBooks.invoices.READ,ZohoBooks.projects.READ');
     expect(url.searchParams.get('scope')).toBe(ZOHO_OAUTH_SCOPES);
     expect(url.searchParams.get('state')).toBe('state-123');
   });

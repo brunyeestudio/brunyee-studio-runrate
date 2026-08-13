@@ -21,9 +21,7 @@
   } = $props();
 
   const isEmpty = $derived(
-    view.clients.length === 0 &&
-      view.studio.hoursSpent === 0 &&
-      view.studio.revenue === 0,
+    view.clients.length === 0 && view.studio.hoursSpent === 0 && view.studio.revenue === 0,
   );
 
   function formatHoursValue(hours: number): string {
@@ -82,7 +80,7 @@
   <Table.Cell class="font-medium">{row.customerName}</Table.Cell>
   <Table.Cell class="tabular-nums">
     <div>{formatHoursValue(row.hoursSpent)}</div>
-    <div class="text-muted-foreground text-xs">
+    <div class="text-xs text-muted-foreground">
       {formatSignedHours(row.hoursDelta)}
       {#if row.hoursChangePercent !== null}
         ({formatChangePercent(row.hoursChangePercent)})
@@ -91,7 +89,7 @@
   </Table.Cell>
   <Table.Cell class="tabular-nums">
     <div>{formatCurrency(row.revenue, currencyCode)}</div>
-    <div class="text-muted-foreground text-xs">
+    <div class="text-xs text-muted-foreground">
       {formatSignedMoney(row.revenueDelta)}
       {#if row.revenueChangePercent !== null}
         ({formatChangePercent(row.revenueChangePercent)})
@@ -104,14 +102,11 @@
   <Table.Cell>
     <div class="flex flex-wrap items-center gap-2">
       {#if row.status}
-        <Badge
-          variant={statusVariant(row.status)}
-          data-testid="analytics-status"
-        >
+        <Badge variant={statusVariant(row.status)} data-testid="analytics-status">
           {statusLabel(row.status)}
         </Badge>
       {/if}
-      <span class="tabular-nums text-sm">
+      <span class="text-sm tabular-nums">
         {rateDependent(row.hoursVariance, formatSignedHours)}
       </span>
     </div>
@@ -120,17 +115,13 @@
     {rateDependent(row.moneyVariance, formatSignedMoney)}
   </Table.Cell>
   <Table.Cell class="text-right tabular-nums">
-    {rateDependent(row.effectiveRate, (rate) =>
-      formatCurrency(rate, currencyCode),
-    )}
+    {rateDependent(row.effectiveRate, (rate) => formatCurrency(rate, currencyCode))}
   </Table.Cell>
 {/snippet}
 
 <div class="space-y-3" data-testid="client-analytics-table">
   <div class="flex flex-wrap items-center justify-between gap-2">
-    <p class="text-muted-foreground text-xs tracking-widest uppercase">
-      Source
-    </p>
+    <p class="text-xs tracking-widest text-muted-foreground uppercase">Source</p>
     <div class="flex flex-wrap items-center gap-3">
       <SourceBadge source="Timesheets" />
       <SourceBadge source="Issued" />
@@ -138,7 +129,7 @@
   </div>
 
   {#if isEmpty}
-    <p class="text-muted-foreground text-sm">{emptyMessage}</p>
+    <p class="text-sm text-muted-foreground">{emptyMessage}</p>
   {:else}
     <Table.Root>
       <Table.Header>

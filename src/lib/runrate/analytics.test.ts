@@ -33,9 +33,10 @@ describe('analytics range', () => {
   });
 
   it('computes an equal-length previous period immediately before from', () => {
-    expect(
-      previousPeriod({ from: '2026-07-15', to: '2026-08-13' }),
-    ).toEqual({ from: '2026-06-15', to: '2026-07-14' });
+    expect(previousPeriod({ from: '2026-07-15', to: '2026-08-13' })).toEqual({
+      from: '2026-06-15',
+      to: '2026-07-14',
+    });
     expect(previousPeriod({ from: '2026-08-07', to: '2026-08-13' })).toEqual({
       from: '2026-07-31',
       to: '2026-08-06',
@@ -246,16 +247,12 @@ describe('buildAnalyticsView', () => {
     expect(quantum?.revenuePrevious).toBe(800);
     expect(quantum?.status).toBe('overshoot');
     expect(view.clients.map((c) => c.customerName)[0]).toBe('Quantum');
-    expect(view.clients.some((c) => c.customerName === 'OnlyPrevious')).toBe(
-      false,
-    );
+    expect(view.clients.some((c) => c.customerName === 'OnlyPrevious')).toBe(false);
   });
 
   it('sorts missing-rate rows after computable variance', () => {
     const view = buildAnalyticsView(snapshot, undefined);
     expect(view.clients.every((c) => c.moneyVariance === null)).toBe(true);
-    expect(view.clients[0]?.hoursSpent).toBeGreaterThanOrEqual(
-      view.clients[1]?.hoursSpent ?? 0,
-    );
+    expect(view.clients[0]?.hoursSpent).toBeGreaterThanOrEqual(view.clients[1]?.hoursSpent ?? 0);
   });
 });

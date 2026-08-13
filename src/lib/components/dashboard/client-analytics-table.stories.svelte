@@ -23,12 +23,8 @@
   }}
   play={async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-    await expect(
-      canvas.getByTestId('client-analytics-table'),
-    ).toBeInTheDocument();
-    await expect(canvas.getByTestId('analytics-studio-row')).toHaveTextContent(
-      'Studio',
-    );
+    await expect(canvas.getByTestId('client-analytics-table')).toBeInTheDocument();
+    await expect(canvas.getByTestId('analytics-studio-row')).toHaveTextContent('Studio');
 
     const quantum = canvas.getByTestId('analytics-client-Quantum');
     const northwind = canvas.getByTestId('analytics-client-Northwind');
@@ -42,12 +38,8 @@
     await expect(northwindIndex).toBeGreaterThan(quantumIndex);
 
     const statuses = canvas.getAllByTestId('analytics-status');
-    await expect(
-      statuses.some((el) => el.textContent?.includes('Overshoot')),
-    ).toBe(true);
-    await expect(
-      statuses.some((el) => el.textContent?.includes('Headroom')),
-    ).toBe(true);
+    await expect(statuses.some((el) => el.textContent?.includes('Overshoot'))).toBe(true);
+    await expect(statuses.some((el) => el.textContent?.includes('Headroom'))).toBe(true);
   }}
 />
 
@@ -60,9 +52,7 @@
   play={async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     await expect(canvas.getByText(/No timesheets or issued invoices/)).toBeInTheDocument();
-    await expect(
-      canvas.queryByTestId('analytics-studio-row'),
-    ).not.toBeInTheDocument();
+    await expect(canvas.queryByTestId('analytics-studio-row')).not.toBeInTheDocument();
   }}
 />
 
@@ -75,9 +65,7 @@
   play={async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     await expect(canvas.getByText('Quantum')).toBeInTheDocument();
-    await expect(canvas.getAllByText('Enter hourly rate').length).toBeGreaterThan(
-      0,
-    );
+    await expect(canvas.getAllByText('Enter hourly rate').length).toBeGreaterThan(0);
     await expect(canvas.queryByText('Overshoot')).not.toBeInTheDocument();
   }}
 />

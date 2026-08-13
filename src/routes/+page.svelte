@@ -1,6 +1,7 @@
 <script lang="ts">
   import { onMount } from 'svelte';
   import { replaceState } from '$app/navigation';
+  import { resolve } from '$app/paths';
   import { page } from '$app/state';
   import DashboardView from '$lib/components/dashboard/dashboard-view.svelte';
   import {
@@ -10,11 +11,7 @@
     type AnalyticsRangePreset,
   } from '$lib/runrate/analytics';
   import type { AnalyticsSnapshot, DashboardSnapshot } from '$lib/runrate/types';
-  import {
-    type PaceHoursMode,
-    readTempConfig,
-    writeTempConfig,
-  } from '$lib/runrate/session-config';
+  import { type PaceHoursMode, readTempConfig, writeTempConfig } from '$lib/runrate/session-config';
 
   let snapshot = $state<DashboardSnapshot | null>(null);
   let loading = $state(true);
@@ -34,9 +31,7 @@
   let analyticsSnapshot = $state<AnalyticsSnapshot | null>(null);
   let analyticsLoading = $state(false);
   let analyticsError = $state<string | null>(null);
-  let analyticsRangePreset = $state<AnalyticsRangePreset>(
-    DEFAULT_ANALYTICS_RANGE_PRESET,
-  );
+  let analyticsRangePreset = $state<AnalyticsRangePreset>(DEFAULT_ANALYTICS_RANGE_PRESET);
   let fetchedAnalyticsPreset = $state<AnalyticsRangePreset | null>(null);
 
   function todayIso(): string {
@@ -51,10 +46,7 @@
       const response = await fetch('/api/dashboard');
       const data = await response.json();
       if (!response.ok) {
-        error =
-          typeof data.error === 'string'
-            ? data.error
-            : 'Failed to load dashboard';
+        error = typeof data.error === 'string' ? data.error : 'Failed to load dashboard';
         errorCode = typeof data.code === 'string' ? data.code : null;
         snapshot = null;
         connected = errorCode !== 'ZOHO_AUTH';
@@ -98,10 +90,7 @@
       // Ignore stale responses if the user changed the preset mid-flight.
       if (preset !== analyticsRangePreset) return;
       if (!response.ok) {
-        analyticsError =
-          typeof data.error === 'string'
-            ? data.error
-            : 'Failed to load analytics';
+        analyticsError = typeof data.error === 'string' ? data.error : 'Failed to load analytics';
         if (typeof data.code === 'string' && data.code === 'ZOHO_AUTH') {
           errorCode = 'ZOHO_AUTH';
           error =
@@ -117,8 +106,7 @@
       analyticsSnapshot = data as AnalyticsSnapshot;
     } catch (err) {
       if (preset !== analyticsRangePreset) return;
-      analyticsError =
-        err instanceof Error ? err.message : 'Failed to load analytics';
+      analyticsError = err instanceof Error ? err.message : 'Failed to load analytics';
       analyticsSnapshot = null;
     } finally {
       if (preset === analyticsRangePreset) {
@@ -195,11 +183,11 @@
     if (view === 'analytics') {
       if (url.searchParams.get('view') !== 'analytics') {
         url.searchParams.set('view', 'analytics');
-        replaceState(url, page.state);
+        replaceState(resolve(`/${url.search}${url.hash}`), page.state);
       }
     } else if (url.searchParams.has('view')) {
       url.searchParams.delete('view');
-      replaceState(url, page.state);
+      replaceState(resolve(`/${url.search}${url.hash}`), page.state);
     }
   });
 </script>

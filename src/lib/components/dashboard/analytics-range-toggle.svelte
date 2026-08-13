@@ -22,13 +22,7 @@
   } = $props();
 
   function handleValueChange(value: string | undefined) {
-    if (
-      value === '7d' ||
-      value === '1m' ||
-      value === '3m' ||
-      value === '6m' ||
-      value === '1y'
-    ) {
+    if (value === '7d' || value === '1m' || value === '3m' || value === '6m' || value === '1y') {
       preset = value;
       onchange?.(value);
     }

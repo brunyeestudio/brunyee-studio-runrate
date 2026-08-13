@@ -27,18 +27,8 @@ export function assembleAnalyticsSnapshot(input: {
     asOf: input.now.toISOString(),
     currencyCode: input.fx.baseCurrencyCode,
     exchangeRates: input.fx.rates,
-    current: rollupPeriod(
-      input.entries,
-      input.invoices,
-      input.fx,
-      input.current,
-    ),
-    previous: rollupPeriod(
-      input.entries,
-      input.invoices,
-      input.fx,
-      input.previous,
-    ),
+    current: rollupPeriod(input.entries, input.invoices, input.fx, input.current),
+    previous: rollupPeriod(input.entries, input.invoices, input.fx, input.previous),
   };
 }
 
@@ -56,11 +46,7 @@ export async function buildZohoAnalytics(
     fetchTimeEntriesInRange(previous.from, current.to, options),
   ]);
   const currencyCodes = collectCurrencyCodes(invoices);
-  const fx = await fetchFrankfurterFx(
-    DEFAULT_BASE_CURRENCY,
-    currencyCodes,
-    fetchImpl,
-  );
+  const fx = await fetchFrankfurterFx(DEFAULT_BASE_CURRENCY, currencyCodes, fetchImpl);
   return assembleAnalyticsSnapshot({
     invoices,
     entries,

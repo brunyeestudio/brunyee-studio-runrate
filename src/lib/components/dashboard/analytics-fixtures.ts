@@ -1,7 +1,4 @@
-import {
-  buildAnalyticsView,
-  rollupPeriod,
-} from '$lib/runrate/analytics';
+import { buildAnalyticsView, rollupPeriod } from '$lib/runrate/analytics';
 import type { AnalyticsViewModel } from '$lib/runrate/analytics';
 import type { AnalyticsSnapshot, Invoice, TimeEntry } from '$lib/runrate/types';
 
@@ -110,8 +107,10 @@ export const sampleAnalyticsView: AnalyticsViewModel = buildAnalyticsView(
   100,
 );
 
-export const sampleAnalyticsViewMissingRate: AnalyticsViewModel =
-  buildAnalyticsView(sampleAnalyticsSnapshot, undefined);
+export const sampleAnalyticsViewMissingRate: AnalyticsViewModel = buildAnalyticsView(
+  sampleAnalyticsSnapshot,
+  undefined,
+);
 
 export const emptyAnalyticsView: AnalyticsViewModel = buildAnalyticsView(
   emptyAnalyticsSnapshot,

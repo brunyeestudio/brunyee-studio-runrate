@@ -2,10 +2,7 @@
   import { defineMeta } from '@storybook/addon-svelte-csf';
   import { expect, within } from 'storybook/test';
   import AnalyticsView from './analytics-view.svelte';
-  import {
-    emptyAnalyticsSnapshot,
-    sampleAnalyticsSnapshot,
-  } from './analytics-fixtures';
+  import { emptyAnalyticsSnapshot, sampleAnalyticsSnapshot } from './analytics-fixtures';
 
   const { Story } = defineMeta({
     title: 'Dashboard/AnalyticsView',
@@ -36,19 +33,13 @@
     await expect(canvas.getByTestId('analytics-kpis')).toBeInTheDocument();
 
     const badges = canvas.getAllByTestId('source-badge');
-    await expect(
-      badges.some((el) => el.textContent?.includes('Timesheets')),
-    ).toBe(true);
-    await expect(badges.some((el) => el.textContent?.includes('Issued'))).toBe(
-      true,
-    );
+    await expect(badges.some((el) => el.textContent?.includes('Timesheets'))).toBe(true);
+    await expect(badges.some((el) => el.textContent?.includes('Issued'))).toBe(true);
 
     await expect(canvas.getByText('Hours spent')).toBeInTheDocument();
     await expect(canvas.getByText('Issued revenue')).toBeInTheDocument();
     await expect(canvas.getByTestId('analytics-client-Quantum')).toBeInTheDocument();
-    await expect(canvas.getByTestId('analytics-client-Quantum')).toHaveTextContent(
-      'Overshoot',
-    );
+    await expect(canvas.getByTestId('analytics-client-Quantum')).toHaveTextContent('Overshoot');
   }}
 />
 
@@ -65,12 +56,8 @@
   play={async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     await expect(canvas.getByTestId('analytics-view')).toBeInTheDocument();
-    await expect(
-      canvas.getByText(/No timesheets or issued invoices/),
-    ).toBeInTheDocument();
-    await expect(
-      canvas.queryByTestId('analytics-studio-row'),
-    ).not.toBeInTheDocument();
+    await expect(canvas.getByText(/No timesheets or issued invoices/)).toBeInTheDocument();
+    await expect(canvas.queryByTestId('analytics-studio-row')).not.toBeInTheDocument();
   }}
 />
 
@@ -87,15 +74,13 @@
   play={async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     await expect(canvas.getByText('Quantum')).toBeInTheDocument();
-    await expect(
-      canvas.getAllByText('Enter hourly rate').length,
-    ).toBeGreaterThan(0);
+    await expect(canvas.getAllByText('Enter hourly rate').length).toBeGreaterThan(0);
     await expect(canvas.getByTestId('analytics-kpi-hours-vs-sold')).toHaveTextContent(
       'Enter hourly rate',
     );
-    await expect(
-      canvas.getByTestId('analytics-kpi-effective-rate'),
-    ).toHaveTextContent('Enter hourly rate');
+    await expect(canvas.getByTestId('analytics-kpi-effective-rate')).toHaveTextContent(
+      'Enter hourly rate',
+    );
     await expect(canvas.queryByText('Overshoot')).not.toBeInTheDocument();
   }}
 />
@@ -113,9 +98,7 @@
   play={async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     await expect(canvas.getByTestId('analytics-error')).toBeInTheDocument();
-    await expect(
-      canvas.getByText(/Zoho time entries request failed/),
-    ).toBeInTheDocument();
+    await expect(canvas.getByText(/Zoho time entries request failed/)).toBeInTheDocument();
     await expect(canvas.queryByTestId('analytics-kpis')).not.toBeInTheDocument();
   }}
 />

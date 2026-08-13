@@ -78,10 +78,7 @@ describe('session-config', () => {
     });
     expect(readTempConfig()).toEqual({});
 
-    storage.setItem(
-      TEMP_CONFIG_STORAGE_KEY,
-      JSON.stringify({ analyticsRangePreset: '2m' }),
-    );
+    storage.setItem(TEMP_CONFIG_STORAGE_KEY, JSON.stringify({ analyticsRangePreset: '2m' }));
     expect(readTempConfig()).toEqual({});
   });
 

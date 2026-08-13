@@ -50,6 +50,7 @@ describe('session-config', () => {
       includeWeekends: true,
       assumedWeekdayHours: 6,
       paceHoursMode: 'assumed-hours',
+      analyticsRangePreset: '3m',
     });
     expect(readTempConfig()).toEqual({
       monthTarget: 12000,
@@ -57,9 +58,30 @@ describe('session-config', () => {
       includeWeekends: true,
       assumedWeekdayHours: 6,
       paceHoursMode: 'assumed-hours',
+      analyticsRangePreset: '3m',
     });
     expect(storage.getItem(TEMP_CONFIG_STORAGE_KEY)).toContain('12000');
     clearTempConfig();
+    expect(readTempConfig()).toEqual({});
+  });
+
+  it('ignores invalid analytics range preset', () => {
+    const storage = new MemoryStorage();
+    Object.defineProperty(globalThis, 'sessionStorage', {
+      value: storage,
+      configurable: true,
+      writable: true,
+    });
+
+    writeTempConfig({
+      analyticsRangePreset: '2m' as never,
+    });
+    expect(readTempConfig()).toEqual({});
+
+    storage.setItem(
+      TEMP_CONFIG_STORAGE_KEY,
+      JSON.stringify({ analyticsRangePreset: '2m' }),
+    );
     expect(readTempConfig()).toEqual({});
   });
 

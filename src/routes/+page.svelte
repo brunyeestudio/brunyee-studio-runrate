@@ -183,11 +183,11 @@
     if (view === 'analytics') {
       if (url.searchParams.get('view') !== 'analytics') {
         url.searchParams.set('view', 'analytics');
-        replaceState(resolve(`/${url.search}${url.hash}`), page.state);
+        replaceState(resolve(`/${url.search}${url.hash}` as '/'), page.state);
       }
     } else if (url.searchParams.has('view')) {
       url.searchParams.delete('view');
-      replaceState(resolve(`/${url.search}${url.hash}`), page.state);
+      replaceState(resolve(`/${url.search}${url.hash}` as '/'), page.state);
     }
   });
 </script>

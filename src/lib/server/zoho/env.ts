@@ -37,7 +37,9 @@ export type ZohoEnvSource = {
   ZOHO_API_BASE_URL?: string;
 };
 
-export function readZohoEnv(env: ZohoEnvSource = privateEnv): ZohoEnv {
+export function readZohoEnv(
+  env: ZohoEnvSource = privateEnv as ZohoEnvSource,
+): ZohoEnv {
   const authSecret = required('AUTH_SECRET', env.AUTH_SECRET);
   if (authSecret.length < MIN_AUTH_SECRET_LENGTH) {
     throw new ZohoEnvError(

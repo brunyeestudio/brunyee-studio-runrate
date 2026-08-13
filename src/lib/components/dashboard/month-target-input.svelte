@@ -91,12 +91,7 @@
     />
 
     <div class="grid gap-5 {model.hasTargetShortfall ? 'md:grid-cols-2' : ''}">
-      <Status
-        {model}
-        {earnedThisMonth}
-        {paidThisMonth}
-        {currencyCode}
-      />
+      <Status {model} {earnedThisMonth} {paidThisMonth} {currencyCode} />
 
       {#if model.hasTargetShortfall}
         <PacePanel

@@ -32,10 +32,7 @@
       Paid this month: {formatCurrency(paidThisMonth, currencyCode)}
     </p>
     {#if model.isOnTarget}
-      <p
-        class="text-foreground text-xs font-medium"
-        data-testid="on-target"
-      >
+      <p class="text-foreground text-xs font-medium" data-testid="on-target">
         On target
       </p>
     {/if}

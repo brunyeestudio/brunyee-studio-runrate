@@ -1,11 +1,8 @@
-// For more info, see https://github.com/storybookjs/eslint-plugin-storybook#configuration-flat-config-format
-import storybook from 'eslint-plugin-storybook';
-
 import prettier from 'eslint-config-prettier';
 import path from 'node:path';
 import js from '@eslint/js';
 import svelte from 'eslint-plugin-svelte';
-import { defineConfig, includeIgnoreFile } from 'eslint/config';
+import { defineConfig, globalIgnores, includeIgnoreFile } from 'eslint/config';
 import globals from 'globals';
 import ts from 'typescript-eslint';
 
@@ -13,6 +10,20 @@ const gitignorePath = path.resolve(import.meta.dirname, '.gitignore');
 
 export default defineConfig(
   includeIgnoreFile(gitignorePath),
+  globalIgnores([
+    '.agents/**',
+    'skills/**',
+    'plugins/**',
+    'coverage/**',
+    'playwright-report/**',
+    'test-results/**',
+    '.svelte-kit/**',
+    'build/**',
+    '.output/**',
+    'storybook-static/**',
+    'openapi-all/**',
+    'src/lib/components/ui/**',
+  ]),
   js.configs.recommended,
   ts.configs.recommended,
   svelte.configs.recommended,
@@ -35,10 +46,15 @@ export default defineConfig(
         parser: ts.parser,
       },
     },
+    rules: {
+      // `$bindable()` defaults in `$props()` look unused to this rule.
+      'no-useless-assignment': 'off',
+    },
   },
   {
-    // Override or add rule settings here, such as:
-    // 'svelte/button-has-type': 'error'
-    rules: {},
+    files: ['vite.config.ts'],
+    rules: {
+      '@typescript-eslint/triple-slash-reference': 'off',
+    },
   },
 );

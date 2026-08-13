@@ -8,6 +8,20 @@ node_modules
 /.svelte-kit
 /build
 
+# codegraph
+.codegraph/
+
+# testing
+/coverage
+/playwright-report/
+/test-results/
+/blob-report/
+
+# agent / subagent runtime
+.pi/
+.pi-subagents/
+.superpowers/
+
 # OS
 .DS_Store
 Thumbs.db
@@ -22,8 +36,8 @@ Thumbs.db
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
 
-# Playwright
-test-results
+# typescript
+*.tsbuildinfo
 
 *storybook.log
 storybook-static

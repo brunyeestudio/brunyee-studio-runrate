@@ -1,18 +1,44 @@
-## Project Configuration
+# Runrate
 
-- **Language**: TypeScript
-- **Package Manager**: pnpm
-- **Add-ons**: prettier, eslint, vitest, playwright, tailwindcss, sveltekit-adapter, mcp, storybook
-
----
-
-## Product
-
-**Runrate** is an in-month run-rate and receivables dashboard for Brunyee Studio. It reads Zoho Books invoices and unbilled hourly project WIP so the user can see whether they are on target for the current month.
+In-month run-rate and receivables dashboard for Brunyee Studio. It reads Zoho Books invoices and unbilled hourly project WIP so the operator can see whether they are on target for the current month.
 
 There is **no app-user authentication**, **no database**, and **no durable app settings**. Zoho Books is linked via a one-operator OAuth flow; tokens live in an encrypted httpOnly cookie. Temporary UI inputs (e.g. month target figures) live in **browser `sessionStorage`** and must be labeled as temporary in the UI.
 
----
+## Directory map
+
+| Path                                                | Role                                      |
+| --------------------------------------------------- | ----------------------------------------- |
+| `src/lib/runrate/`                                  | Pure domain (classify, aggregate, format) |
+| `src/lib/server/zoho/`                              | Zoho auth + HTTP + dashboard aggregation  |
+| `src/lib/components/dashboard/`                     | App UI (shadcn-svelte)                    |
+| `src/routes/api/dashboard/`                         | GET snapshot JSON                         |
+| `src/routes/+page.svelte`                           | Dashboard shell                           |
+| `.agents/`                                          | Skills, Superpowers plugin, shared rules  |
+| `.cursor/rules`, `.claude/rules`, `.windsurf/rules` | Harness mirrors of `.agents/rules/`       |
+| `.github/`                                          | CI, Copilot instructions, PR template     |
+
+## Setup
+
+1. `mise install` — Node 24 (Corepack) + Codegraph tool postinstall
+2. `pnpm install`
+3. `pnpm exec playwright install --with-deps chromium` (first machine / CI image; Storybook / browser Vitest)
+4. `pnpm setup:hooks` — Lefthook (format/lint pre-commit, commitlint)
+
+## Commands
+
+| Command                             | Purpose                                            |
+| ----------------------------------- | -------------------------------------------------- |
+| `pnpm dev`                          | Vite / SvelteKit dev server                        |
+| `pnpm build` / `pnpm start`         | Production build and preview (`vite preview`)      |
+| `pnpm lint`                         | ESLint                                             |
+| `pnpm format` / `pnpm format:check` | Prettier write / check (Svelte + Tailwind plugins) |
+| `pnpm typecheck`                    | `svelte-kit sync` + `svelte-check`                 |
+| `pnpm test`                         | Vitest server/unit project                         |
+| `pnpm test:coverage`                | Same suite with v8 coverage gate                   |
+| `pnpm test:unit`                    | All Vitest projects (server, client, Storybook)    |
+| `pnpm storybook`                    | Component stories                                  |
+| `pnpm commit`                       | Commitizen conventional commit                     |
+| `pnpm setup:hooks`                  | Install Lefthook git hooks                         |
 
 ## Stack & conventions
 
@@ -23,8 +49,7 @@ There is **no app-user authentication**, **no database**, and **no durable app s
 - Reuse theme tokens from `src/routes/layout.css`
 - Icons: Phosphor (`phosphor-svelte`)
 - Specs for Zoho Books live in `openapi-all/` (reference only; do not generate a full SDK unless needed)
-
----
+- Formatter is **Prettier** (Svelte + Tailwind plugins), not Oxfmt
 
 ## Architecture rules
 
@@ -68,15 +93,15 @@ Every money figure shown in the UI should carry a clear **source** label/badge (
 
 Hourly billing types: `based_on_project_hours`, `based_on_staff_hours`, `based_on_task_hours`.
 
----
+## Testing & coverage requirements
 
-## Testing rules
+Every domain/server change must be covered by tests and must not regress coverage.
 
-| What                                                          | How                                                            |
-| ------------------------------------------------------------- | -------------------------------------------------------------- |
-| Domain logic, formatters, session-config, Zoho client helpers | **Vitest** `*.test.ts` (server/node project)                   |
-| UI components                                                 | **Storybook** `*.stories.svelte` with `play` interaction tests |
-| Do **not** use Vitest browser/component tests for UI coverage | Prefer Storybook + `@storybook/addon-vitest`                   |
+- **Unit tests** (`src/**/*.test.ts`, Vitest server project) cover domain logic, formatters, session-config, and Zoho client helpers.
+- `pnpm test:coverage` runs that suite with the v8 provider and fails when coverage drops below the thresholds in `vite.config.ts`.
+- **Storybook stories** (`src/**/*.stories.svelte`) are required for dashboard components and should cover the main visual states (`play` interaction tests).
+- Do **not** use Vitest browser/component tests for UI coverage — prefer Storybook + `@storybook/addon-vitest`.
+- **Gate before merge:** `pnpm typecheck`, `pnpm lint`, `pnpm test:coverage`. CI also builds Storybook. Do not remove or weaken coverage thresholds to make a failing suite pass; add the missing tests instead.
 
 Co-locate tests with features:
 
@@ -84,19 +109,15 @@ Co-locate tests with features:
 - `$lib/server/zoho/*.test.ts`
 - `$lib/components/dashboard/*.stories.svelte`
 
----
+## Agent assets
 
-## File layout (app)
+| Kind           | Location                                                                                 |
+| -------------- | ---------------------------------------------------------------------------------------- |
+| Rules          | `.agents/rules/` (`clean-code`, `context-mode`) + Cursor/Claude/Windsurf/Copilot mirrors |
+| Project skills | `.agents/skills/` (optional)                                                             |
+| Superpowers    | `.agents/plugins/superpowers/` (plugin skills, hooks, harness manifests)                 |
 
-```
-src/lib/runrate/           # pure domain
-src/lib/server/zoho/       # Zoho auth + HTTP + dashboard aggregation
-src/lib/components/dashboard/  # app UI (shadcn-based)
-src/routes/api/dashboard/  # GET snapshot JSON
-src/routes/+page.svelte    # dashboard shell
-```
-
----
+Follow shared rules always. Prefer Superpowers skills under `.agents/plugins/superpowers/skills/` when they apply (`using-superpowers`, brainstorming, plans, TDD, debugging). Install the plugin in your harness so bootstrap runs — see [`README.md`](README.md#superpowers) and [`.agents/plugins/superpowers/README.md`](.agents/plugins/superpowers/README.md). Claude loads this file via `CLAUDE.md` (`@AGENTS.md`). Gemini uses `.gemini/settings.json`.
 
 ## Available Svelte MCP Tools
 
@@ -110,7 +131,7 @@ When asked about Svelte or SvelteKit topics, ALWAYS use this tool at the start o
 ### 2. get-documentation
 
 Retrieves full documentation content for specific sections. Accepts single or multiple sections.
-After calling the list-sections tool, you MUST analyze the returned documentation sections (especially the use_cases field) and then use the get-documentation tool to fetch ALL documentation sections that are relevant for the user's task.
+After calling the list-sections tool, you MUST analyze the returned documentation sections (especially the use_cases field) and then use the get-documentation tool to fetch ALL documentation sections that are relevant to the user's task.
 
 ### 3. svelte-autofixer
 

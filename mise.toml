@@ -1,0 +1,6 @@
+[tools]
+node = { version = "24", postinstall = "corepack enable" }
+"npm:@colbymchenry/codegraph" = { version = "1.5.0", postinstall = "codegraph install --yes && codegraph init" }
+
+[settings]
+experimental = true

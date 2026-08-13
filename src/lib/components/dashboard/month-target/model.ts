@@ -110,8 +110,7 @@ export function deriveMonthTargetModel(
     monthTarget !== undefined && Number.isFinite(monthTarget)
       ? Math.max(0, monthTarget - earnedThisMonth)
       : 0;
-  const hasTarget =
-    monthTarget !== undefined && Number.isFinite(monthTarget);
+  const hasTarget = monthTarget !== undefined && Number.isFinite(monthTarget);
   const hasTargetShortfall = shortfall > 0;
   const isOnTarget = hasTarget && !hasTargetShortfall;
 
@@ -124,8 +123,7 @@ export function deriveMonthTargetModel(
       ? requiredDailyEarn(monthTarget, earnedThisMonth, remainingDaysForPace)
       : null;
 
-  const resolvedAssumedHours =
-    resolveAssumedWeekdayHours(assumedWeekdayHours);
+  const resolvedAssumedHours = resolveAssumedWeekdayHours(assumedWeekdayHours);
 
   const assumedDailyEarn = dailyEarnAtAssumedHours(
     hourlyRate ?? 0,
@@ -144,9 +142,7 @@ export function deriveMonthTargetModel(
   );
 
   const hasHourlyRate =
-    hourlyRate !== undefined &&
-    Number.isFinite(hourlyRate) &&
-    hourlyRate > 0;
+    hourlyRate !== undefined && Number.isFinite(hourlyRate) && hourlyRate > 0;
 
   const showAssumedHoursMode = paceHoursMode === 'assumed-hours';
 

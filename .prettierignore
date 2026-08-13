@@ -7,3 +7,24 @@ bun.lockb
 
 # Miscellaneous
 /static/
+
+# Agent assets
+.agents/**
+skills/**
+plugins/**
+.claude/**
+.cursor/**
+.windsurf/**
+.codex/**
+.gemini/**
+.github/instructions/**
+
+# Build / test output
+.svelte-kit/**
+build/**
+.output/**
+coverage/**
+playwright-report/**
+test-results/**
+storybook-static/**
+openapi-all/**

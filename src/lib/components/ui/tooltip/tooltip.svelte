@@ -54,8 +54,4 @@
   });
 </script>
 
-<TooltipPrimitive.Root
-  bind:open
-  {disableCloseOnTriggerClick}
-  {...restProps}
-/>
+<TooltipPrimitive.Root bind:open {disableCloseOnTriggerClick} {...restProps} />

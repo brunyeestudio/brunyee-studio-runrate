@@ -29,6 +29,22 @@ export default defineConfig({
     expect: {
       requireAssertions: true,
     },
+    coverage: {
+      provider: 'v8',
+      reporter: ['text', 'json-summary', 'html'],
+      include: ['src/lib/runrate/**/*.ts', 'src/lib/server/**/*.ts'],
+      exclude: [
+        'src/**/*.test.ts',
+        'src/**/*.stories.*',
+        'src/lib/server/zoho/types.ts',
+      ],
+      thresholds: {
+        statements: 74,
+        branches: 69,
+        functions: 76,
+        lines: 76,
+      },
+    },
     projects: [
       {
         extends: './vite.config.ts',

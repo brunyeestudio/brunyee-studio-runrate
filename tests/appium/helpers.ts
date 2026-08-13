@@ -5,18 +5,18 @@ import { browser } from '@wdio/globals';
  * Android emulator → 10.0.2.2 (host loopback); iOS Simulator → localhost.
  */
 export function getAppBaseUrl(): string {
-	if (process.env.APPIUM_BASE_URL) {
-		return process.env.APPIUM_BASE_URL.replace(/\/$/, '');
-	}
+  if (process.env.APPIUM_BASE_URL) {
+    return process.env.APPIUM_BASE_URL.replace(/\/$/, '');
+  }
 
-	const port = process.env.APPIUM_APP_PORT ?? '4173';
-	const platformName = String(
-		(browser.capabilities as WebdriverIO.Capabilities).platformName ?? ''
-	).toLowerCase();
+  const port = process.env.APPIUM_APP_PORT ?? '4173';
+  const platformName = String(
+    (browser.capabilities as WebdriverIO.Capabilities).platformName ?? '',
+  ).toLowerCase();
 
-	if (platformName === 'android') {
-		return `http://10.0.2.2:${port}`;
-	}
+  if (platformName === 'android') {
+    return `http://10.0.2.2:${port}`;
+  }
 
-	return `http://localhost:${port}`;
+  return `http://localhost:${port}`;
 }

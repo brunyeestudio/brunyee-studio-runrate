@@ -3,7 +3,7 @@ import {
   rollupPeriod,
 } from '$lib/runrate/analytics';
 import type { AnalyticsViewModel } from '$lib/runrate/analytics';
-import type { Invoice, TimeEntry } from '$lib/runrate/types';
+import type { AnalyticsSnapshot, Invoice, TimeEntry } from '$lib/runrate/types';
 
 const fx = { baseCurrencyCode: 'GBP', rates: { GBP: 1 } };
 const current = { from: '2026-07-15', to: '2026-08-13' };
@@ -88,7 +88,7 @@ const entries: TimeEntry[] = [
   }),
 ];
 
-const sampleSnapshot = {
+export const sampleAnalyticsSnapshot: AnalyticsSnapshot = {
   asOf: '2026-08-13T10:00:00.000Z',
   currencyCode: 'GBP',
   exchangeRates: { GBP: 1 },
@@ -96,22 +96,24 @@ const sampleSnapshot = {
   previous: rollupPeriod(entries, invoices, fx, previous),
 };
 
+export const emptyAnalyticsSnapshot: AnalyticsSnapshot = {
+  asOf: '2026-08-13T10:00:00.000Z',
+  currencyCode: 'GBP',
+  exchangeRates: { GBP: 1 },
+  current: rollupPeriod([], [], fx, current),
+  previous: rollupPeriod([], [], fx, previous),
+};
+
 /** Studio + Quantum (overshoot) + Northwind (headroom); Quantum sorts first by |£ variance|. */
 export const sampleAnalyticsView: AnalyticsViewModel = buildAnalyticsView(
-  sampleSnapshot,
+  sampleAnalyticsSnapshot,
   100,
 );
 
 export const sampleAnalyticsViewMissingRate: AnalyticsViewModel =
-  buildAnalyticsView(sampleSnapshot, undefined);
+  buildAnalyticsView(sampleAnalyticsSnapshot, undefined);
 
 export const emptyAnalyticsView: AnalyticsViewModel = buildAnalyticsView(
-  {
-    asOf: '2026-08-13T10:00:00.000Z',
-    currencyCode: 'GBP',
-    exchangeRates: { GBP: 1 },
-    current: rollupPeriod([], [], fx, current),
-    previous: rollupPeriod([], [], fx, previous),
-  },
+  emptyAnalyticsSnapshot,
   100,
 );

@@ -15,8 +15,10 @@
 
   let {
     preset = $bindable<AnalyticsRangePreset>(DEFAULT_ANALYTICS_RANGE_PRESET),
+    onchange,
   }: {
     preset?: AnalyticsRangePreset;
+    onchange?: (preset: AnalyticsRangePreset) => void;
   } = $props();
 
   function handleValueChange(value: string | undefined) {
@@ -28,6 +30,7 @@
       value === '1y'
     ) {
       preset = value;
+      onchange?.(value);
     }
   }
 </script>

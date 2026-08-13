@@ -102,3 +102,36 @@ export async function fetchDashboardInvoices(options: ZohoClientOptions = {}): P
   }
   return [...byId.values()];
 }
+
+/** Paginate invoices whose invoice date falls in [from, to] (max 200 per page). */
+export async function fetchInvoicesInRange(
+  from: string,
+  to: string,
+  options: ZohoClientOptions = {},
+): Promise<Invoice[]> {
+  const byId = new Map<string, Invoice>();
+  let page = 1;
+  let hasMore = true;
+
+  while (hasMore) {
+    const batch = await listInvoicesPage(
+      {
+        date_start: from,
+        date_end: to,
+        page,
+        per_page: 200,
+        sort_column: 'date',
+      },
+      options,
+    );
+    for (const invoice of batch.invoices) {
+      if (!invoice.invoiceId) continue;
+      byId.set(invoice.invoiceId, invoice);
+    }
+    hasMore = batch.hasMore;
+    page += 1;
+    if (page > 50) break;
+  }
+
+  return [...byId.values()];
+}

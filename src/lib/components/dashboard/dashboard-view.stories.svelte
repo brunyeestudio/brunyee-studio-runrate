@@ -1,6 +1,7 @@
 <script module>
   import { defineMeta } from '@storybook/addon-svelte-csf';
   import { expect, userEvent, within } from 'storybook/test';
+  import { sampleAnalyticsSnapshot } from './analytics-fixtures';
   import DashboardView from './dashboard-view.svelte';
   import { sampleSnapshot } from './fixtures';
 
@@ -20,12 +21,17 @@
     errorCode: null,
     connected: true,
     monthTarget: 12000,
+    analyticsSnapshot: sampleAnalyticsSnapshot,
+    analyticsLoading: false,
+    analyticsError: null,
+    hourlyRate: 100,
   }}
   play={async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     await expect(canvas.getByTestId('dashboard')).toBeInTheDocument();
-    await expect(canvas.getByText('Runrate')).toBeInTheDocument();
-    await expect(canvas.getByTestId('temporary-label')).toBeInTheDocument();
+    await expect(canvas.getByRole('heading', { name: 'Runrate' })).toBeInTheDocument();
+    await expect(canvas.getByTestId('app-tabs')).toBeInTheDocument();
+    await expect(canvas.getAllByTestId('temporary-label').length).toBeGreaterThanOrEqual(1);
     await expect(canvas.getAllByText('Paid this month').length).toBeGreaterThanOrEqual(1);
     await expect(canvas.getByText('Earned last month')).toBeInTheDocument();
     await expect(canvas.getByTestId('kpi-payment-split')).toHaveTextContent(
@@ -46,6 +52,35 @@
     const invoice = await canvas.findByText('INV-0998');
     await expect(invoice.closest('[hidden]')).toBeNull();
     await expect(canvas.getByText(/Fabrikam/)).toBeInTheDocument();
+
+    await userEvent.click(canvas.getByRole('tab', { name: 'Analytics' }));
+    await expect(canvas.getByTestId('analytics-view')).toBeInTheDocument();
+  }}
+/>
+
+<Story
+  name="AnalyticsTab"
+  args={{
+    snapshot: sampleSnapshot,
+    loading: false,
+    error: null,
+    errorCode: null,
+    connected: true,
+    monthTarget: 12000,
+    view: 'runrate',
+    analyticsSnapshot: sampleAnalyticsSnapshot,
+    analyticsLoading: false,
+    analyticsError: null,
+    hourlyRate: 100,
+  }}
+  play={async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await expect(canvas.getByTestId('app-tabs')).toBeInTheDocument();
+    await expect(canvas.queryByTestId('analytics-view')).not.toBeInTheDocument();
+    await userEvent.click(canvas.getByRole('tab', { name: 'Analytics' }));
+    await expect(canvas.getByTestId('analytics-view')).toBeInTheDocument();
+    await expect(canvas.getByTestId('analytics-range')).toBeInTheDocument();
+    await expect(canvas.getByText('Quantum')).toBeInTheDocument();
   }}
 />
 
@@ -63,6 +98,7 @@
     await expect(canvas.getByTestId('zoho-connect')).toBeInTheDocument();
     await expect(canvas.getByTestId('connect-zoho')).toBeInTheDocument();
     await expect(canvas.queryByTestId('dashboard-error')).not.toBeInTheDocument();
+    await expect(canvas.getByTestId('app-tabs')).toBeInTheDocument();
   }}
 />
 

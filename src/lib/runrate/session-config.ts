@@ -1,3 +1,4 @@
+import { isAnalyticsRangePreset, type AnalyticsRangePreset } from './analytics';
 import { DEFAULT_ASSUMED_WEEKDAY_HOURS } from './pace';
 
 const STORAGE_KEY = 'runrate:temp-config';
@@ -13,6 +14,7 @@ export interface TempSessionConfig {
   includeWeekends?: boolean;
   assumedWeekdayHours?: number;
   paceHoursMode?: PaceHoursMode;
+  analyticsRangePreset?: AnalyticsRangePreset;
 }
 
 function readPaceHoursMode(value: unknown): PaceHoursMode | undefined {
@@ -40,6 +42,9 @@ export function readTempConfig(): TempSessionConfig {
     const includeWeekends =
       typeof parsed.includeWeekends === 'boolean' ? parsed.includeWeekends : undefined;
     const paceHoursMode = readPaceHoursMode(parsed.paceHoursMode);
+    const analyticsRangePreset = isAnalyticsRangePreset(parsed.analyticsRangePreset)
+      ? parsed.analyticsRangePreset
+      : undefined;
 
     const next: TempSessionConfig = {};
     if (monthTarget !== undefined) next.monthTarget = monthTarget;
@@ -49,6 +54,9 @@ export function readTempConfig(): TempSessionConfig {
       next.assumedWeekdayHours = assumedWeekdayHours;
     }
     if (paceHoursMode !== undefined) next.paceHoursMode = paceHoursMode;
+    if (analyticsRangePreset !== undefined) {
+      next.analyticsRangePreset = analyticsRangePreset;
+    }
     return next;
   } catch {
     return {};
@@ -75,6 +83,9 @@ export function writeTempConfig(config: TempSessionConfig): void {
   }
   if (config.paceHoursMode === 'even-spread' || config.paceHoursMode === 'assumed-hours') {
     next.paceHoursMode = config.paceHoursMode;
+  }
+  if (isAnalyticsRangePreset(config.analyticsRangePreset)) {
+    next.analyticsRangePreset = config.analyticsRangePreset;
   }
   sessionStorage.setItem(STORAGE_KEY, JSON.stringify(next));
 }

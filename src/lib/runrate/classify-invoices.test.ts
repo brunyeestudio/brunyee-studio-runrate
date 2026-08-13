@@ -10,6 +10,7 @@ import {
   classifyIssuedThisMonth,
   classifyOutstanding,
   classifyScheduledNextMonth,
+  isIssuedInvoice,
 } from './classify-invoices';
 import { getMonthContext } from './dates';
 import type { FxContext, Invoice } from './types';
@@ -34,6 +35,54 @@ function invoice(partial: Partial<Invoice> & Pick<Invoice, 'invoiceId'>): Invoic
 }
 
 describe('classify-invoices', () => {
+  it('treats non-draft non-void invoices as issued', () => {
+    expect(
+      isIssuedInvoice({
+        invoiceId: '1',
+        invoiceNumber: 'INV-1',
+        customerName: 'Quantum',
+        status: 'sent',
+        date: '2026-08-01',
+        dueDate: '2026-08-31',
+        total: 1000,
+        balance: 1000,
+        scheduleTime: null,
+        lastPaymentDate: null,
+        currencyCode: 'GBP',
+      }),
+    ).toBe(true);
+    expect(
+      isIssuedInvoice({
+        invoiceId: '2',
+        invoiceNumber: 'D-1',
+        customerName: 'Quantum',
+        status: 'draft',
+        date: '2026-08-01',
+        dueDate: '2026-08-31',
+        total: 1000,
+        balance: 1000,
+        scheduleTime: null,
+        lastPaymentDate: null,
+        currencyCode: 'GBP',
+      }),
+    ).toBe(false);
+    expect(
+      isIssuedInvoice({
+        invoiceId: '3',
+        invoiceNumber: 'V-1',
+        customerName: 'Quantum',
+        status: 'void',
+        date: '2026-08-01',
+        dueDate: '2026-08-31',
+        total: 1000,
+        balance: 0,
+        scheduleTime: null,
+        lastPaymentDate: null,
+        currencyCode: 'GBP',
+      }),
+    ).toBe(false);
+  });
+
   it('classifies outstanding as due today or earlier only', () => {
     const invoices = [
       invoice({

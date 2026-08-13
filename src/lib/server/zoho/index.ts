@@ -9,10 +9,17 @@ export {
 } from './auth';
 export type { StoredZohoTokens, TokenStore, TokenCache, ZohoToken } from './auth';
 export { buildZohoUrl, zohoFetch, ZohoApiError } from './client';
+export { assembleAnalyticsSnapshot, buildZohoAnalytics } from './analytics';
 export { buildZohoDashboard } from './dashboard';
 export { readZohoEnv, ZohoEnvError } from './env';
-export { fetchDashboardInvoices, listAllInvoices, mapZohoInvoice } from './invoices';
+export {
+  fetchDashboardInvoices,
+  fetchInvoicesInRange,
+  listAllInvoices,
+  mapZohoInvoice,
+} from './invoices';
 export { fetchHourlyProjectWip, mapZohoProjectDetail } from './projects';
+export { fetchTimeEntriesInRange, mapZohoTimeEntry } from './time-entries';
 export {
   buildAuthorizeUrl,
   completeOAuthCallback,

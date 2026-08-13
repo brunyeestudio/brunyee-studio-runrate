@@ -19,9 +19,7 @@
     children: Snippet;
   } = $props();
 
-  const showSplit = $derived(
-    hasMultipleCurrencies(byCurrency, baseCurrencyCode),
-  );
+  const showSplit = $derived(hasMultipleCurrencies(byCurrency, baseCurrencyCode));
 </script>
 
 {#if showSplit}
@@ -41,19 +39,13 @@
         class="flex max-w-64 min-w-44 flex-col items-stretch gap-1.5 text-left leading-snug"
         data-testid="currency-amount-tooltip"
       >
-        <p
-          class="text-[0.625rem] font-semibold tracking-widest text-background/65 uppercase"
-        >
+        <p class="text-[0.625rem] font-semibold tracking-widest text-background/65 uppercase">
           By currency
         </p>
         <ul class="w-full space-y-1">
           {#each byCurrency as entry (entry.currencyCode)}
-            <li
-              class="flex w-full items-baseline justify-between gap-3 text-xs"
-            >
-              <span class="tabular-nums"
-                >{formatCurrency(entry.amount, entry.currencyCode)}</span
-              >
+            <li class="flex w-full items-baseline justify-between gap-3 text-xs">
+              <span class="tabular-nums">{formatCurrency(entry.amount, entry.currencyCode)}</span>
               {#if entry.currencyCode !== baseCurrencyCode}
                 <span class="shrink-0 text-background/65 tabular-nums">
                   ≈ {formatCurrency(entry.convertedAmount, baseCurrencyCode)}

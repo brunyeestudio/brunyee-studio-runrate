@@ -48,17 +48,13 @@ function resolveAndroidSdk(): { androidHome: string; adbPath: string } {
 
   const adbPath = path.join(androidHome, 'platform-tools', 'adb');
   if (!existsSync(adbPath)) {
-    throw new Error(
-      `adb not found at $ANDROID_HOME/platform-tools/adb (${adbPath})`,
-    );
+    throw new Error(`adb not found at $ANDROID_HOME/platform-tools/adb (${adbPath})`);
   }
 
   const platformTools = path.join(androidHome, 'platform-tools');
   const emulatorDir = path.join(androidHome, 'emulator');
   process.env.ANDROID_SDK_ROOT ??= androidHome;
-  process.env.PATH = [platformTools, emulatorDir, process.env.PATH ?? ''].join(
-    path.delimiter,
-  );
+  process.env.PATH = [platformTools, emulatorDir, process.env.PATH ?? ''].join(path.delimiter);
 
   return { androidHome, adbPath };
 }
@@ -164,17 +160,13 @@ export const config: WebdriverIO.Config = {
   async afterTest(test) {
     const platform = sanitizeFileName(
       String(
-        (browser.capabilities as WebdriverIO.Capabilities).platformName ??
-          'unknown',
+        (browser.capabilities as WebdriverIO.Capabilities).platformName ?? 'unknown',
       ).toLowerCase(),
     );
     const suiteName = sanitizeFileName(test.parent ?? 'suite');
     const testName = sanitizeFileName(test.title);
     const stamp = new Date().toISOString().replace(/[:.]/g, '-');
-    const filepath = path.join(
-      RECORDINGS_DIR,
-      `${platform}-${suiteName}-${testName}-${stamp}.mp4`,
-    );
+    const filepath = path.join(RECORDINGS_DIR, `${platform}-${suiteName}-${testName}-${stamp}.mp4`);
 
     try {
       // Add delay to ensure the recording is complete.
@@ -182,10 +174,7 @@ export const config: WebdriverIO.Config = {
       await browser.saveRecordingScreen(filepath);
       console.log(`Screen recording saved: ${filepath}`);
     } catch (error) {
-      console.warn(
-        `Failed to save screen recording for "${test.title}":`,
-        error,
-      );
+      console.warn(`Failed to save screen recording for "${test.title}":`, error);
     }
   },
 };

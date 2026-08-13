@@ -1,10 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import {
-  clampProgress,
-  formatCurrency,
-  formatHours,
-  parseAmount,
-} from './format';
+import { clampProgress, formatCurrency, formatHours, parseAmount } from './format';
 
 describe('format', () => {
   it('parses amounts and formats currency', () => {

@@ -32,19 +32,14 @@
       Paid this month: {formatCurrency(paidThisMonth, currencyCode)}
     </p>
     {#if model.isOnTarget}
-      <p class="text-xs font-medium text-foreground" data-testid="on-target">
-        On target
-      </p>
+      <p class="text-xs font-medium text-foreground" data-testid="on-target">On target</p>
     {/if}
   </div>
 
   <div class="space-y-2 border-t pt-4" data-testid="month-forecast">
     <p class="text-sm font-medium">On current pace</p>
     <div class="grid gap-2 sm:grid-cols-2">
-      <div
-        class="space-y-1 border border-border/80 p-3"
-        data-testid="month-forecast-weekdays"
-      >
+      <div class="space-y-1 border border-border/80 p-3" data-testid="month-forecast-weekdays">
         <p class="text-xs text-muted-foreground">Weekdays</p>
         <p class="text-lg text-foreground tabular-nums">
           {formatCurrency(model.endOfMonthForecastWeekdays, currencyCode)}
@@ -53,8 +48,7 @@
           {model.forecastProgressWeekdays}% of target
           {#if model.weekProgress}
             <span class="text-muted-foreground/80">
-              · {model.weekProgress.weekdaysElapsed} of {model.weekProgress
-                .weekdaysInMonth} weekdays
+              · {model.weekProgress.weekdaysElapsed} of {model.weekProgress.weekdaysInMonth} weekdays
             </span>
           {/if}
         </p>
@@ -71,8 +65,7 @@
           {model.forecastProgressAllDays}% of target
           {#if model.dayProgress}
             <span class="text-muted-foreground/80">
-              · {model.dayProgress.daysElapsed} of {model.dayProgress
-                .daysInMonth} days
+              · {model.dayProgress.daysElapsed} of {model.dayProgress.daysInMonth} days
             </span>
           {/if}
         </p>

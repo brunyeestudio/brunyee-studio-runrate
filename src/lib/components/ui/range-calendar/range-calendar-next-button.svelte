@@ -1,10 +1,7 @@
 <script lang="ts">
   import { RangeCalendar as RangeCalendarPrimitive } from 'bits-ui';
   import CaretRightIcon from 'phosphor-svelte/lib/CaretRight';
-  import {
-    buttonVariants,
-    type ButtonVariant,
-  } from '$lib/components/ui/button/index.js';
+  import { buttonVariants, type ButtonVariant } from '$lib/components/ui/button/index.js';
   import { cn } from '$lib/utils.js';
 
   let {

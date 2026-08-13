@@ -3,10 +3,7 @@
   import type { HTMLSelectAttributes } from 'svelte/elements';
   import CaretDownIcon from 'phosphor-svelte/lib/CaretDown';
 
-  type NativeSelectProps = Omit<
-    WithElementRef<HTMLSelectAttributes>,
-    'size'
-  > & {
+  type NativeSelectProps = Omit<WithElementRef<HTMLSelectAttributes>, 'size'> & {
     size?: 'sm' | 'default';
   };
 

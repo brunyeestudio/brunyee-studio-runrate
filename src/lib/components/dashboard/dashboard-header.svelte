@@ -18,14 +18,9 @@
   } = $props();
 </script>
 
-<header
-  class="flex flex-wrap items-end justify-between gap-4"
-  data-testid="dashboard-header"
->
+<header class="flex flex-wrap items-end justify-between gap-4" data-testid="dashboard-header">
   <div class="space-y-1">
-    <p
-      class="text-[0.625rem] font-semibold tracking-[0.2em] text-muted-foreground uppercase"
-    >
+    <p class="text-[0.625rem] font-semibold tracking-[0.2em] text-muted-foreground uppercase">
       Brunyee Studio
     </p>
     <h1 class="text-3xl font-medium tracking-tight">Runrate</h1>
@@ -46,12 +41,7 @@
         Disconnect Zoho
       </Button>
     {/if}
-    <Button
-      variant="outline"
-      size="sm"
-      disabled={loading}
-      onclick={() => onrefresh?.()}
-    >
+    <Button variant="outline" size="sm" disabled={loading} onclick={() => onrefresh?.()}>
       <ArrowClockwiseIcon class={loading ? 'animate-spin' : ''} />
       Refresh
     </Button>

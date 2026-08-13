@@ -11,9 +11,7 @@
     class: className,
     ...restProps
   }: ContextMenuPrimitive.ContentProps & {
-    portalProps?: WithoutChildrenOrChild<
-      ComponentProps<typeof ContextMenuPortal>
-    >;
+    portalProps?: WithoutChildrenOrChild<ComponentProps<typeof ContextMenuPortal>>;
   } = $props();
 </script>
 

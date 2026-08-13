@@ -45,10 +45,7 @@
   const needsConnect = $derived(errorCode === 'ZOHO_AUTH');
 </script>
 
-<div
-  class="mx-auto flex w-full max-w-7xl flex-col gap-8 px-4 py-8 sm:px-6"
-  data-testid="dashboard"
->
+<div class="mx-auto flex w-full max-w-7xl flex-col gap-8 px-4 py-8 sm:px-6" data-testid="dashboard">
   <DashboardHeader
     monthLabel={snapshot?.monthLabel ?? '…'}
     {loading}
@@ -63,14 +60,12 @@
       <Alert.Title>Connect Zoho Books</Alert.Title>
       <div>
         <Alert.Description>
-          Link your Zoho Books organization to load invoices and hourly project
-          WIP. Tokens stay in an encrypted cookie on this browser. Foreign
-          amounts are converted to GBP using ECB rates via Frankfurter.
+          Link your Zoho Books organization to load invoices and hourly project WIP. Tokens stay in
+          an encrypted cookie on this browser. Foreign amounts are converted to GBP using ECB rates
+          via Frankfurter.
         </Alert.Description>
-        <Button
-          href="/api/auth/zoho/login"
-          class="mt-2"
-          data-testid="connect-zoho">Connect Zoho Books</Button
+        <Button href="/api/auth/zoho/login" class="mt-2" data-testid="connect-zoho"
+          >Connect Zoho Books</Button
         >
       </div>
     </Alert.Root>
@@ -159,8 +154,7 @@
       <Card.Header>
         <Card.Title class="text-base">Invoice & project detail</Card.Title>
         <Card.Description>
-          Each tab shows its data source badge so draft invoices and hourly
-          projects stay distinct.
+          Each tab shows its data source badge so draft invoices and hourly projects stay distinct.
         </Card.Description>
       </Card.Header>
       <Card.Content>
@@ -169,9 +163,7 @@
             <Tabs.Trigger value="outstanding">Outstanding</Tabs.Trigger>
             <Tabs.Trigger value="drafts">Drafts</Tabs.Trigger>
             <Tabs.Trigger value="scheduled">Scheduled</Tabs.Trigger>
-            <Tabs.Trigger value="draft-first"
-              >Draft (1st next month)</Tabs.Trigger
-            >
+            <Tabs.Trigger value="draft-first">Draft (1st next month)</Tabs.Trigger>
             <Tabs.Trigger value="hourly">Hourly WIP</Tabs.Trigger>
           </Tabs.List>
 

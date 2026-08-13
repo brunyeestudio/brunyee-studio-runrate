@@ -19,9 +19,7 @@ describe('currency', () => {
   });
 
   it('throws when an exchange rate is missing', () => {
-    expect(() => toBaseAmount(50, 'USD', 'GBP', gbpFx.rates)).toThrow(
-      MissingExchangeRateError,
-    );
+    expect(() => toBaseAmount(50, 'USD', 'GBP', gbpFx.rates)).toThrow(MissingExchangeRateError);
   });
 
   it('sums mixed currencies with conversion and per-currency breakdown', () => {

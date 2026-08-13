@@ -25,10 +25,7 @@ export function toBaseAmount(
   return amount * rate;
 }
 
-function sortByCurrency(
-  entries: CurrencyAmount[],
-  baseCurrencyCode: string,
-): CurrencyAmount[] {
+function sortByCurrency(entries: CurrencyAmount[], baseCurrencyCode: string): CurrencyAmount[] {
   return [...entries].sort((a, b) => {
     if (a.currencyCode === baseCurrencyCode) return -1;
     if (b.currencyCode === baseCurrencyCode) return 1;
@@ -46,20 +43,12 @@ export function sumMoney<T>(
   getCurrency: (item: T) => string,
   fx: FxContext,
 ): MoneyTotal {
-  const byCode = new Map<
-    string,
-    { amount: number; convertedAmount: number; count: number }
-  >();
+  const byCode = new Map<string, { amount: number; convertedAmount: number; count: number }>();
 
   for (const item of items) {
     const currencyCode = getCurrency(item);
     const amount = getAmount(item);
-    const convertedAmount = toBaseAmount(
-      amount,
-      currencyCode,
-      fx.baseCurrencyCode,
-      fx.rates,
-    );
+    const convertedAmount = toBaseAmount(amount, currencyCode, fx.baseCurrencyCode, fx.rates);
     const existing = byCode.get(currencyCode);
     if (existing) {
       existing.amount += amount;

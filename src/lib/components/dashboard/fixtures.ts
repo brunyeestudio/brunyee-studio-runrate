@@ -1,9 +1,4 @@
-import type {
-  CurrencyAmount,
-  DashboardSnapshot,
-  Invoice,
-  ProjectWip,
-} from '$lib/runrate/types';
+import type { CurrencyAmount, DashboardSnapshot, Invoice, ProjectWip } from '$lib/runrate/types';
 
 function gbp(amount: number, count = 1): CurrencyAmount[] {
   return [{ currencyCode: 'GBP', amount, convertedAmount: amount, count }];
@@ -94,9 +89,7 @@ export const sampleSnapshot: DashboardSnapshot = {
       amount: 850,
       source: 'Issued',
       count: 1,
-      byCurrency: [
-        { currencyCode: 'EUR', amount: 1000, convertedAmount: 850, count: 1 },
-      ],
+      byCurrency: [{ currencyCode: 'EUR', amount: 1000, convertedAmount: 850, count: 1 }],
     },
     earnedPipeline: {
       amount: 6787.5,
@@ -122,9 +115,7 @@ export const sampleSnapshot: DashboardSnapshot = {
       amount: 850,
       source: 'Outstanding',
       count: 1,
-      byCurrency: [
-        { currencyCode: 'EUR', amount: 1000, convertedAmount: 850, count: 1 },
-      ],
+      byCurrency: [{ currencyCode: 'EUR', amount: 1000, convertedAmount: 850, count: 1 }],
     },
     issuedOnMonthStart: {
       amount: 4200,
@@ -144,9 +135,7 @@ export const sampleSnapshot: DashboardSnapshot = {
       amount: 850,
       source: 'Outstanding',
       count: 1,
-      byCurrency: [
-        { currencyCode: 'EUR', amount: 1000, convertedAmount: 850, count: 1 },
-      ],
+      byCurrency: [{ currencyCode: 'EUR', amount: 1000, convertedAmount: 850, count: 1 }],
     },
     dueNextMonth: {
       amount: 4200,
@@ -160,12 +149,8 @@ export const sampleSnapshot: DashboardSnapshot = {
       invoices: [sampleInvoices[3]],
       total: 850,
       balance: 850,
-      totalByCurrency: [
-        { currencyCode: 'EUR', amount: 1000, convertedAmount: 850, count: 1 },
-      ],
-      balanceByCurrency: [
-        { currencyCode: 'EUR', amount: 1000, convertedAmount: 850, count: 1 },
-      ],
+      totalByCurrency: [{ currencyCode: 'EUR', amount: 1000, convertedAmount: 850, count: 1 }],
+      balanceByCurrency: [{ currencyCode: 'EUR', amount: 1000, convertedAmount: 850, count: 1 }],
       source: 'Outstanding',
     },
     drafts: {
@@ -196,12 +181,8 @@ export const sampleSnapshot: DashboardSnapshot = {
       invoices: [sampleInvoices[3]],
       total: 850,
       balance: 850,
-      totalByCurrency: [
-        { currencyCode: 'EUR', amount: 1000, convertedAmount: 850, count: 1 },
-      ],
-      balanceByCurrency: [
-        { currencyCode: 'EUR', amount: 1000, convertedAmount: 850, count: 1 },
-      ],
+      totalByCurrency: [{ currencyCode: 'EUR', amount: 1000, convertedAmount: 850, count: 1 }],
+      balanceByCurrency: [{ currencyCode: 'EUR', amount: 1000, convertedAmount: 850, count: 1 }],
       source: 'Issued',
     },
     issuedOnMonthStart: {
@@ -232,12 +213,8 @@ export const sampleSnapshot: DashboardSnapshot = {
       invoices: [sampleInvoices[3]],
       total: 850,
       balance: 850,
-      totalByCurrency: [
-        { currencyCode: 'EUR', amount: 1000, convertedAmount: 850, count: 1 },
-      ],
-      balanceByCurrency: [
-        { currencyCode: 'EUR', amount: 1000, convertedAmount: 850, count: 1 },
-      ],
+      totalByCurrency: [{ currencyCode: 'EUR', amount: 1000, convertedAmount: 850, count: 1 }],
+      balanceByCurrency: [{ currencyCode: 'EUR', amount: 1000, convertedAmount: 850, count: 1 }],
       source: 'Outstanding',
     },
     dueNextMonth: {

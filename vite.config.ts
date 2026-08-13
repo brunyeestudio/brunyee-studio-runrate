@@ -8,9 +8,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { storybookTest } from '@storybook/addon-vitest/vitest-plugin';
 const dirname =
-  typeof __dirname !== 'undefined'
-    ? __dirname
-    : path.dirname(fileURLToPath(import.meta.url));
+  typeof __dirname !== 'undefined' ? __dirname : path.dirname(fileURLToPath(import.meta.url));
 
 // More info at: https://storybook.js.org/docs/next/writing-tests/integrations/vitest-addon
 export default defineConfig({
@@ -33,11 +31,7 @@ export default defineConfig({
       provider: 'v8',
       reporter: ['text', 'json-summary', 'html'],
       include: ['src/lib/runrate/**/*.ts', 'src/lib/server/**/*.ts'],
-      exclude: [
-        'src/**/*.test.ts',
-        'src/**/*.stories.*',
-        'src/lib/server/zoho/types.ts',
-      ],
+      exclude: ['src/**/*.test.ts', 'src/**/*.stories.*', 'src/lib/server/zoho/types.ts'],
       thresholds: {
         statements: 74,
         branches: 69,

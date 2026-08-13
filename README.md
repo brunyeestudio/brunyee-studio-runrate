@@ -42,7 +42,7 @@ Then open `/api/auth/zoho/login` to connect the operator Zoho account.
 | `pnpm dev`                          | Development server                                    |
 | `pnpm build` / `pnpm start`         | Production build / preview (`vite preview`)           |
 | `pnpm lint`                         | ESLint                                                |
-| `pnpm format` / `pnpm format:check` | Format with Prettier                                  |
+| `pnpm format` / `pnpm format:check` | Oxfmt write / check                                   |
 | `pnpm typecheck`                    | `svelte-check`                                        |
 | `pnpm test`                         | Vitest server/unit tests                              |
 | `pnpm test:coverage`                | Same suite with v8 coverage; fails if thresholds drop |
@@ -57,7 +57,7 @@ Then open `/api/auth/zoho/login` to connect the operator Zoho account.
 | ------- | ----------------------------------------------------------- |
 | App     | SvelteKit, Svelte 5, TypeScript, Tailwind v4, shadcn-svelte |
 | Data    | Zoho Books API (server-only OAuth); no app database         |
-| Quality | Vitest, Storybook, ESLint, Prettier, Lefthook               |
+| Quality | Vitest, Storybook, ESLint, Oxfmt, Lefthook                  |
 | Tooling | pnpm, mise, Commitizen / commitlint, GitHub Actions         |
 
 ## AI agents
@@ -105,8 +105,8 @@ the suite pass.
 | `pnpm test:coverage` | Same suite with v8 coverage; fails if thresholds in `vite.config.ts` drop |
 | `pnpm storybook`     | Component stories                                                         |
 
-Before merge: `pnpm typecheck`, `pnpm lint`, `pnpm test:coverage`. CI also
-builds Storybook and enforces the coverage floor.
+Before merge: `pnpm typecheck`, `pnpm lint`, `pnpm format:check`, `pnpm test:coverage`.
+CI also builds Storybook, checks Oxfmt, and enforces the coverage floor.
 
 ## Quality gates
 

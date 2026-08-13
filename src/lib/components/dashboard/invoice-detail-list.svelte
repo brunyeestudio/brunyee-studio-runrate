@@ -20,15 +20,11 @@
 {:else}
   <ul class="divide-y divide-border" data-testid="invoice-detail-list">
     {#each invoices as invoice (invoice.invoiceId)}
-      <li
-        class="flex items-start justify-between gap-3 py-2 first:pt-0 last:pb-0"
-      >
+      <li class="flex items-start justify-between gap-3 py-2 first:pt-0 last:pb-0">
         <div class="min-w-0">
           <p class="mb-0! truncate text-xs font-medium">
             {invoice.invoiceNumber}
-            <span class="font-normal text-muted-foreground"
-              >· {invoice.customerName}</span
-            >
+            <span class="font-normal text-muted-foreground">· {invoice.customerName}</span>
           </p>
           <p class="truncate text-[0.6875rem] text-muted-foreground capitalize">
             {invoice.status.replaceAll('_', ' ')}

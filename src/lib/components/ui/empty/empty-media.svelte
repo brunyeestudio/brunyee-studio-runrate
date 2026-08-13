@@ -14,9 +14,7 @@
     },
   });
 
-  export type EmptyMediaVariant = VariantProps<
-    typeof emptyMediaVariants
-  >['variant'];
+  export type EmptyMediaVariant = VariantProps<typeof emptyMediaVariants>['variant'];
 </script>
 
 <script lang="ts">

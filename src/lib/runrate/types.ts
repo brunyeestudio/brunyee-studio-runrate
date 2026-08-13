@@ -19,7 +19,9 @@ export type InvoiceStatus =
   | string;
 
 export type HourlyBillingType =
-  'based_on_project_hours' | 'based_on_staff_hours' | 'based_on_task_hours';
+  | 'based_on_project_hours'
+  | 'based_on_staff_hours'
+  | 'based_on_task_hours';
 
 export const HOURLY_BILLING_TYPES: readonly HourlyBillingType[] = [
   'based_on_project_hours',

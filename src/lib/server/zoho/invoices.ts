@@ -47,11 +47,7 @@ export async function listInvoicesPage(
   query: Record<string, QueryValue>,
   options: ZohoClientOptions = {},
 ): Promise<{ invoices: Invoice[]; hasMore: boolean; page: number }> {
-  const data = await zohoFetch<ListInvoicesResponse>(
-    '/invoices',
-    query,
-    options,
-  );
+  const data = await zohoFetch<ListInvoicesResponse>('/invoices', query, options);
   const page = data.page_context?.page ?? Number(query.page ?? 1);
   return {
     invoices: (data.invoices ?? []).map(mapZohoInvoice),
@@ -88,9 +84,7 @@ export async function listAllInvoices(
   return results;
 }
 
-export async function fetchDashboardInvoices(
-  options: ZohoClientOptions = {},
-): Promise<Invoice[]> {
+export async function fetchDashboardInvoices(options: ZohoClientOptions = {}): Promise<Invoice[]> {
   const filters = [
     'Status.Unpaid',
     'Status.PartiallyPaid',
@@ -100,9 +94,7 @@ export async function fetchDashboardInvoices(
     'Status.Sent',
   ];
 
-  const batches = await Promise.all(
-    filters.map((filter) => listAllInvoices(filter, options)),
-  );
+  const batches = await Promise.all(filters.map((filter) => listAllInvoices(filter, options)));
   const byId = new Map<string, Invoice>();
   for (const invoice of batches.flat()) {
     if (!invoice.invoiceId) continue;

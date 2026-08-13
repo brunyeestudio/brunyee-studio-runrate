@@ -46,9 +46,7 @@
     info: string;
   } = $props();
 
-  const showCurrencyBreakdown = $derived(
-    hasMultipleCurrencies(byCurrency, currencyCode),
-  );
+  const showCurrencyBreakdown = $derived(hasMultipleCurrencies(byCurrency, currencyCode));
   const hasDetails = $derived(
     invoices !== undefined ||
       projects !== undefined ||
@@ -62,9 +60,7 @@
   <Card.Header class="gap-2">
     <div class="flex items-center justify-between gap-3">
       <div class="flex items-center gap-1.5">
-        <Card.Description
-          class="text-[0.625rem] font-semibold tracking-widest uppercase"
-        >
+        <Card.Description class="text-[0.625rem] font-semibold tracking-widest uppercase">
           {title}
         </Card.Description>
         <InfoHint label={`How ${title} is calculated`} text={info} />
@@ -105,15 +101,8 @@
           </Accordion.Trigger>
           <Accordion.Content class="pt-2 pb-0 text-xs" forceMount={false}>
             {#if showCurrencyBreakdown}
-              <p
-                class="mb-1! text-[0.625rem] font-semibold tracking-widest uppercase"
-              >
-                Currency
-              </p>
-              <CurrencyBreakdownList
-                {byCurrency}
-                baseCurrencyCode={currencyCode}
-              />
+              <p class="mb-1! text-[0.625rem] font-semibold tracking-widest uppercase">Currency</p>
+              <CurrencyBreakdownList {byCurrency} baseCurrencyCode={currencyCode} />
             {/if}
 
             {#if breakdown.length > 0}
@@ -121,9 +110,7 @@
                 {#each breakdown as item (item.source)}
                   <li class="flex items-center justify-between gap-2">
                     <span>{item.source}</span>
-                    <span class="tabular-nums"
-                      >{formatCurrency(item.amount, currencyCode)}</span
-                    >
+                    <span class="tabular-nums">{formatCurrency(item.amount, currencyCode)}</span>
                   </li>
                 {/each}
               </ul>
@@ -132,17 +119,13 @@
             {#if invoices !== undefined && projects !== undefined}
               <div class="space-y-3">
                 <div class="space-y-1.5">
-                  <p
-                    class="mb-1! text-[0.625rem] font-semibold tracking-widest uppercase"
-                  >
+                  <p class="mb-1! text-[0.625rem] font-semibold tracking-widest uppercase">
                     Draft invoices
                   </p>
                   <InvoiceDetailList {invoices} amountField="total" />
                 </div>
                 <div class="space-y-1.5">
-                  <p
-                    class="mb-1! text-[0.625rem] font-semibold tracking-widest uppercase"
-                  >
+                  <p class="mb-1! text-[0.625rem] font-semibold tracking-widest uppercase">
                     Projects (hourly)
                   </p>
                   <ProjectDetailList {projects} />

@@ -15,9 +15,7 @@
 
 <div class="space-y-3" data-testid="project-wip-table">
   <div class="flex items-center justify-between gap-2">
-    <p class="text-xs tracking-widest text-muted-foreground uppercase">
-      Source
-    </p>
+    <p class="text-xs tracking-widest text-muted-foreground uppercase">Source</p>
     <SourceBadge source="Projects (hourly)" />
   </div>
 
@@ -44,9 +42,7 @@
               {project.billingType.replaceAll('_', ' ')}
             </Table.Cell>
             <Table.Cell>{project.currencyCode}</Table.Cell>
-            <Table.Cell class="tabular-nums"
-              >{formatHours(project.unBilledHours)}</Table.Cell
-            >
+            <Table.Cell class="tabular-nums">{formatHours(project.unBilledHours)}</Table.Cell>
             <Table.Cell class="text-right tabular-nums">
               {formatCurrency(project.unBilledAmount, project.currencyCode)}
             </Table.Cell>

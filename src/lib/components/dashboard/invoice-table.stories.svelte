@@ -19,9 +19,7 @@
   }}
   play={async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-    await expect(canvas.getByTestId('source-badge')).toHaveTextContent(
-      'Outstanding',
-    );
+    await expect(canvas.getByTestId('source-badge')).toHaveTextContent('Outstanding');
     await expect(canvas.getByText('INV-1001')).toBeInTheDocument();
     await expect(canvas.getByText('Northwind Ltd')).toBeInTheDocument();
     await expect(canvas.getByText('INV-EUR-12')).toBeInTheDocument();

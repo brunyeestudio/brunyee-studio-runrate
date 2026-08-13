@@ -17,9 +17,7 @@
 
 <div class="space-y-3" data-testid="invoice-table">
   <div class="flex items-center justify-between gap-2">
-    <p class="text-xs tracking-widest text-muted-foreground uppercase">
-      Source
-    </p>
+    <p class="text-xs tracking-widest text-muted-foreground uppercase">Source</p>
     <SourceBadge {source} />
   </div>
 
@@ -44,9 +42,7 @@
           <Table.Row>
             <Table.Cell class="font-medium">{invoice.invoiceNumber}</Table.Cell>
             <Table.Cell>{invoice.customerName}</Table.Cell>
-            <Table.Cell class="capitalize"
-              >{invoice.status.replaceAll('_', ' ')}</Table.Cell
-            >
+            <Table.Cell class="capitalize">{invoice.status.replaceAll('_', ' ')}</Table.Cell>
             <Table.Cell>{invoice.date}</Table.Cell>
             <Table.Cell>{invoice.dueDate}</Table.Cell>
             <Table.Cell>{invoice.currencyCode}</Table.Cell>

@@ -18,15 +18,11 @@
 {:else}
   <ul class="divide-y divide-border" data-testid="project-detail-list">
     {#each projects as project (project.projectId)}
-      <li
-        class="flex items-start justify-between gap-3 py-2 first:pt-0 last:pb-0"
-      >
+      <li class="flex items-start justify-between gap-3 py-2 first:pt-0 last:pb-0">
         <div class="min-w-0 space-y-0.5">
           <p class="mb-0! truncate text-xs font-medium">
             {project.projectName}
-            <span class="font-normal text-muted-foreground"
-              >· {project.customerName}</span
-            >
+            <span class="font-normal text-muted-foreground">· {project.customerName}</span>
           </p>
           <p class="truncate text-[0.6875rem] text-muted-foreground capitalize">
             {formatHours(project.unBilledHours)} unbilled ·

@@ -1,8 +1,7 @@
 import { exchangeAuthorizationCode, type StoredZohoTokens } from './auth';
 import type { ZohoEnv } from './env';
 
-export const ZOHO_OAUTH_SCOPES =
-  'ZohoBooks.invoices.READ,ZohoBooks.projects.READ';
+export const ZOHO_OAUTH_SCOPES = 'ZohoBooks.invoices.READ,ZohoBooks.projects.READ';
 
 export function createOAuthState(): string {
   const bytes = crypto.getRandomValues(new Uint8Array(24));
@@ -10,10 +9,7 @@ export function createOAuthState(): string {
   for (const byte of bytes) {
     binary += String.fromCharCode(byte);
   }
-  return btoa(binary)
-    .replace(/\+/g, '-')
-    .replace(/\//g, '_')
-    .replace(/=+$/, '');
+  return btoa(binary).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
 }
 
 export function buildAuthorizeUrl(env: ZohoEnv, state: string): string {
@@ -28,10 +24,7 @@ export function buildAuthorizeUrl(env: ZohoEnv, state: string): string {
   return url.toString();
 }
 
-export function assertOAuthState(
-  expected: string | undefined,
-  actual: string | null,
-): void {
+export function assertOAuthState(expected: string | undefined, actual: string | null): void {
   if (!expected || !actual || expected !== actual) {
     throw new Error('Invalid OAuth state. Start the Zoho connect flow again.');
   }
@@ -61,11 +54,7 @@ export async function completeOAuthCallback(
   fetchImpl: typeof fetch = fetch,
 ): Promise<StoredZohoTokens> {
   const accountsUrl = accountsUrlForLocation(params.location, env.accountsUrl);
-  const tokens = await exchangeAuthorizationCode(
-    { ...env, accountsUrl },
-    params.code,
-    fetchImpl,
-  );
+  const tokens = await exchangeAuthorizationCode({ ...env, accountsUrl }, params.code, fetchImpl);
   return {
     ...tokens,
     accountsUrl,

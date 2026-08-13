@@ -41,11 +41,7 @@ export function buildDashboardSnapshot(
   const drafts = classifyDrafts(invoices, fx);
   const scheduledNextMonth = classifyScheduledNextMonth(invoices, ctx, fx);
   const draftDatedNextFirst = classifyDraftDatedNextFirst(invoices, ctx, fx);
-  const issuedOnPreviousMonthStart = classifyIssuedOnPreviousMonthStart(
-    invoices,
-    ctx,
-    fx,
-  );
+  const issuedOnPreviousMonthStart = classifyIssuedOnPreviousMonthStart(invoices, ctx, fx);
   const issuedOnMonthStart = classifyIssuedOnMonthStart(invoices, ctx, fx);
   const issuedThisMonth = classifyIssuedThisMonth(invoices, ctx, fx);
   const cashCollected = classifyCashCollected(invoices, ctx, fx);

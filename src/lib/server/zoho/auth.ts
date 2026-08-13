@@ -47,9 +47,7 @@ export function createMemoryTokenCache(): TokenCache {
   };
 }
 
-export function createMemoryTokenStore(
-  initial: StoredZohoTokens | null = null,
-): TokenStore {
+export function createMemoryTokenStore(initial: StoredZohoTokens | null = null): TokenStore {
   let stored: StoredZohoTokens | null = initial;
   return {
     get: () => stored,
@@ -65,10 +63,7 @@ export function createMemoryTokenStore(
 /** Refresh skew so we renew slightly before Zoho expiry. */
 const EXPIRY_SKEW_MS = 60_000;
 
-export function isTokenValid(
-  token: ZohoToken | null,
-  now = Date.now(),
-): boolean {
+export function isTokenValid(token: ZohoToken | null, now = Date.now()): boolean {
   if (!token?.accessToken) return false;
   return token.expiresAt - EXPIRY_SKEW_MS > now;
 }
@@ -96,8 +91,7 @@ function parseTokenResponse(
     throw new Error(`Zoho token request failed: ${detail}`);
   }
 
-  const expiresInSec =
-    typeof data.expires_in === 'number' ? data.expires_in : 3600;
+  const expiresInSec = typeof data.expires_in === 'number' ? data.expires_in : 3600;
   const apiDomain = data.api_domain?.replace(/\/$/, '');
   return {
     accessToken: data.access_token,
@@ -135,10 +129,7 @@ export async function refreshAccessToken(
 }
 
 export async function exchangeAuthorizationCode(
-  env: Pick<
-    ZohoEnv,
-    'clientId' | 'clientSecret' | 'accountsUrl' | 'redirectUri'
-  >,
+  env: Pick<ZohoEnv, 'clientId' | 'clientSecret' | 'accountsUrl' | 'redirectUri'>,
   code: string,
   fetchImpl: typeof fetch = fetch,
 ): Promise<StoredZohoTokens> {

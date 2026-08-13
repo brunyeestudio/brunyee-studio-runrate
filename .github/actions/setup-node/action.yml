@@ -1,19 +1,13 @@
 name: Setup Node
-description: Install pnpm, Node 24, and frozen-lockfile dependencies
+description: Install Node 24 via mise, then frozen-lockfile dependencies
 
 runs:
   using: composite
   steps:
-    - name: Install pnpm
-      uses: pnpm/action-setup@v4
+    - name: Install mise tools
+      uses: jdx/mise-action@v3
       with:
-        version: 11.19.0
-
-    - name: Setup Node
-      uses: actions/setup-node@v4
-      with:
-        node-version: 24
-        cache: pnpm
+        experimental: true
 
     - name: Install dependencies
       shell: bash

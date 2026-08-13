@@ -61,12 +61,8 @@ describe('zoho env', () => {
 
 describe('zoho auth', () => {
   it('validates token expiry with skew', () => {
-    expect(
-      isTokenValid({ accessToken: 't', expiresAt: Date.now() + 120_000 }),
-    ).toBe(true);
-    expect(
-      isTokenValid({ accessToken: 't', expiresAt: Date.now() + 10_000 }),
-    ).toBe(false);
+    expect(isTokenValid({ accessToken: 't', expiresAt: Date.now() + 120_000 })).toBe(true);
+    expect(isTokenValid({ accessToken: 't', expiresAt: Date.now() + 10_000 })).toBe(false);
   });
 
   it('refreshes access token via fetch', async () => {
@@ -101,11 +97,7 @@ describe('zoho auth', () => {
         { status: 200, headers: { 'Content-Type': 'application/json' } },
       );
 
-    const tokens = await exchangeAuthorizationCode(
-      baseEnv(),
-      'auth-code',
-      fetchImpl,
-    );
+    const tokens = await exchangeAuthorizationCode(baseEnv(), 'auth-code', fetchImpl);
     expect(tokens.accessToken).toBe('access');
     expect(tokens.refreshToken).toBe('refresh');
     expect(tokens.apiBaseUrl).toBe('https://www.zohoapis.eu/books/v3');
@@ -157,9 +149,7 @@ describe('zoho auth', () => {
 describe('zoho oauth helpers', () => {
   it('builds authorize url with offline consent params', () => {
     const url = new URL(buildAuthorizeUrl(baseEnv(), 'state-123'));
-    expect(url.origin + url.pathname).toBe(
-      'https://accounts.zoho.eu/oauth/v2/auth',
-    );
+    expect(url.origin + url.pathname).toBe('https://accounts.zoho.eu/oauth/v2/auth');
     expect(url.searchParams.get('response_type')).toBe('code');
     expect(url.searchParams.get('access_type')).toBe('offline');
     expect(url.searchParams.get('prompt')).toBe('consent');
@@ -170,9 +160,7 @@ describe('zoho oauth helpers', () => {
   it('asserts oauth state', () => {
     expect(() => assertOAuthState('abc', 'abc')).not.toThrow();
     expect(() => assertOAuthState('abc', 'xyz')).toThrow(/Invalid OAuth state/);
-    expect(() => assertOAuthState(undefined, 'abc')).toThrow(
-      /Invalid OAuth state/,
-    );
+    expect(() => assertOAuthState(undefined, 'abc')).toThrow(/Invalid OAuth state/);
   });
 
   it('maps location to accounts host', () => {
@@ -209,27 +197,18 @@ describe('token cookie crypto', () => {
       },
       AUTH_SECRET,
     );
-    expect(
-      await unsealTokenPayload(sealed, 'wrong-secret-with-32-plus-characters'),
-    ).toBeNull();
-    expect(
-      await unsealTokenPayload(sealed.slice(0, -4) + 'xxxx', AUTH_SECRET),
-    ).toBeNull();
+    expect(await unsealTokenPayload(sealed, 'wrong-secret-with-32-plus-characters')).toBeNull();
+    expect(await unsealTokenPayload(sealed.slice(0, -4) + 'xxxx', AUTH_SECRET)).toBeNull();
   });
 });
 
 describe('zoho client helpers', () => {
   it('builds urls with organization_id and query', () => {
-    const url = buildZohoUrl(
-      'https://www.zohoapis.com/books/v3',
-      '/invoices',
-      '102',
-      {
-        filter_by: 'Status.Draft',
-        page: 2,
-        empty: undefined,
-      },
-    );
+    const url = buildZohoUrl('https://www.zohoapis.com/books/v3', '/invoices', '102', {
+      filter_by: 'Status.Draft',
+      page: 2,
+      empty: undefined,
+    });
     expect(url).toContain('organization_id=102');
     expect(url).toContain('filter_by=Status.Draft');
     expect(url).toContain('page=2');

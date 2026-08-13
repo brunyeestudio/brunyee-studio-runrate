@@ -3,11 +3,7 @@
   import { page } from '$app/state';
   import DashboardView from '$lib/components/dashboard/dashboard-view.svelte';
   import type { DashboardSnapshot } from '$lib/runrate/types';
-  import {
-    type PaceHoursMode,
-    readTempConfig,
-    writeTempConfig,
-  } from '$lib/runrate/session-config';
+  import { type PaceHoursMode, readTempConfig, writeTempConfig } from '$lib/runrate/session-config';
 
   let snapshot = $state<DashboardSnapshot | null>(null);
   let loading = $state(true);
@@ -29,10 +25,7 @@
       const response = await fetch('/api/dashboard');
       const data = await response.json();
       if (!response.ok) {
-        error =
-          typeof data.error === 'string'
-            ? data.error
-            : 'Failed to load dashboard';
+        error = typeof data.error === 'string' ? data.error : 'Failed to load dashboard';
         errorCode = typeof data.code === 'string' ? data.code : null;
         snapshot = null;
         connected = errorCode !== 'ZOHO_AUTH';

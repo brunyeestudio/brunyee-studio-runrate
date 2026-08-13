@@ -1,11 +1,8 @@
 {
   "name": "runrate",
-  "private": true,
   "version": "0.0.1",
+  "private": true,
   "type": "module",
-  "engines": {
-    "node": "24.x"
-  },
   "scripts": {
     "dev": "vite dev",
     "build": "vite build",
@@ -15,8 +12,8 @@
     "check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
     "check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
     "lint": "eslint .",
-    "format": "prettier --write .",
-    "format:check": "prettier --check .",
+    "format": "oxfmt --write .",
+    "format:check": "oxfmt --check .",
     "typecheck": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
     "test": "vitest run --project server",
     "test:unit": "vitest",
@@ -29,6 +26,9 @@
     "build-storybook": "storybook build",
     "commit": "cz",
     "setup:hooks": "lefthook install"
+  },
+  "dependencies": {
+    "date-fns": "^4.4.0"
   },
   "devDependencies": {
     "@chromatic-com/storybook": "^5.2.1",
@@ -74,11 +74,9 @@
     "layerchart": "2.0.0-next.48",
     "lefthook": "2.1.10",
     "mode-watcher": "^1.1.0",
+    "oxfmt": "0.62.0",
     "phosphor-svelte": "^3.1.0",
     "playwright": "^1.60.0",
-    "prettier": "^3.8.3",
-    "prettier-plugin-svelte": "^4.1.0",
-    "prettier-plugin-tailwindcss": "^0.8.0",
     "shadcn-svelte": "^1.4.1",
     "storybook": "^10.5.0",
     "svelte": "^5.56.1",
@@ -98,13 +96,13 @@
     "vitest-browser-svelte": "^2.1.1",
     "webdriverio": "^9.29.1"
   },
-  "dependencies": {
-    "date-fns": "^4.4.0"
-  },
   "config": {
     "commitizen": {
       "path": "cz-conventional-changelog"
     }
+  },
+  "engines": {
+    "node": "24.x"
   },
   "packageManager": "pnpm@11.19.0+sha512.7881f3ed590d472c4a955e2b88b2121791116066dcc88cbca3849ec9b60f1bbaa6d2ccb221fa91da4e1c65bef2bcbe379365aea7ac539c7bf86dedc3a1b22dce"
 }

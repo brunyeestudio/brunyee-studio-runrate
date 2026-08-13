@@ -26,19 +26,19 @@ There is **no app-user authentication**, **no database**, and **no durable app s
 
 ## Commands
 
-| Command                             | Purpose                                            |
-| ----------------------------------- | -------------------------------------------------- |
-| `pnpm dev`                          | Vite / SvelteKit dev server                        |
-| `pnpm build` / `pnpm start`         | Production build and preview (`vite preview`)      |
-| `pnpm lint`                         | ESLint                                             |
-| `pnpm format` / `pnpm format:check` | Prettier write / check (Svelte + Tailwind plugins) |
-| `pnpm typecheck`                    | `svelte-kit sync` + `svelte-check`                 |
-| `pnpm test`                         | Vitest server/unit project                         |
-| `pnpm test:coverage`                | Same suite with v8 coverage gate                   |
-| `pnpm test:unit`                    | All Vitest projects (server, client, Storybook)    |
-| `pnpm storybook`                    | Component stories                                  |
-| `pnpm commit`                       | Commitizen conventional commit                     |
-| `pnpm setup:hooks`                  | Install Lefthook git hooks                         |
+| Command                             | Purpose                                         |
+| ----------------------------------- | ----------------------------------------------- |
+| `pnpm dev`                          | Vite / SvelteKit dev server                     |
+| `pnpm build` / `pnpm start`         | Production build and preview (`vite preview`)   |
+| `pnpm lint`                         | ESLint                                          |
+| `pnpm format` / `pnpm format:check` | Oxfmt write / check                             |
+| `pnpm typecheck`                    | `svelte-kit sync` + `svelte-check`              |
+| `pnpm test`                         | Vitest server/unit project                      |
+| `pnpm test:coverage`                | Same suite with v8 coverage gate                |
+| `pnpm test:unit`                    | All Vitest projects (server, client, Storybook) |
+| `pnpm storybook`                    | Component stories                               |
+| `pnpm commit`                       | Commitizen conventional commit                  |
+| `pnpm setup:hooks`                  | Install Lefthook git hooks                      |
 
 ## Stack & conventions
 
@@ -49,7 +49,7 @@ There is **no app-user authentication**, **no database**, and **no durable app s
 - Reuse theme tokens from `src/routes/layout.css`
 - Icons: Phosphor (`phosphor-svelte`)
 - Specs for Zoho Books live in `openapi-all/` (reference only; do not generate a full SDK unless needed)
-- Formatter is **Prettier** (Svelte + Tailwind plugins), not Oxfmt
+- Formatter is **Oxfmt** (Svelte + Tailwind class sorting enabled in `.oxfmtrc.json`)
 
 ## Architecture rules
 
@@ -101,7 +101,7 @@ Every domain/server change must be covered by tests and must not regress coverag
 - `pnpm test:coverage` runs that suite with the v8 provider and fails when coverage drops below the thresholds in `vite.config.ts`.
 - **Storybook stories** (`src/**/*.stories.svelte`) are required for dashboard components and should cover the main visual states (`play` interaction tests).
 - Do **not** use Vitest browser/component tests for UI coverage — prefer Storybook + `@storybook/addon-vitest`.
-- **Gate before merge:** `pnpm typecheck`, `pnpm lint`, `pnpm test:coverage`. CI also builds Storybook. Do not remove or weaken coverage thresholds to make a failing suite pass; add the missing tests instead.
+- **Gate before merge:** `pnpm typecheck`, `pnpm lint`, `pnpm format:check`, `pnpm test:coverage`. CI also builds Storybook and checks Oxfmt. Do not remove or weaken coverage thresholds to make a failing suite pass; add the missing tests instead.
 
 Co-locate tests with features:
 

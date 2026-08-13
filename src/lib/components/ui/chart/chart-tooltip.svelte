@@ -1,11 +1,7 @@
 <script lang="ts">
   import { cn, type WithElementRef, type WithoutChildren } from '$lib/utils.js';
   import type { HTMLAttributes } from 'svelte/elements';
-  import {
-    getPayloadConfigFromPayload,
-    useChart,
-    type TooltipPayload,
-  } from './chart-utils.js';
+  import { getPayloadConfigFromPayload, useChart, type TooltipPayload } from './chart-utils.js';
   import { getChartContext, Tooltip as TooltipPrimitive } from 'layerchart';
   import type { Snippet } from 'svelte';
 
@@ -38,8 +34,7 @@
     labelClassName?: string;
     labelFormatter?:
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      | ((value: any, payload: TooltipPayload[]) => string | number | Snippet)
-      | null;
+      ((value: any, payload: TooltipPayload[]) => string | number | Snippet) | null;
     formatter?: Snippet<
       [
         {
@@ -59,9 +54,7 @@
   // Filter to series with defined values (important for item-based charts like Pie/Arc
   // where only the hovered item has a value)
   const visibleSeries = $derived(
-    chartCtx.tooltip.series.filter(
-      (s: TooltipPayload) => s.value !== undefined,
-    ),
+    chartCtx.tooltip.series.filter((s: TooltipPayload) => s.value !== undefined),
   );
 
   const formattedLabel = $derived.by(() => {
@@ -152,16 +145,12 @@
             {:else if !hideIndicator}
               <div
                 style="--color-bg: {indicatorColor}; --color-border: {indicatorColor};"
-                class={cn(
-                  'shrink-0 rounded-[2px] border-(--color-border) bg-(--color-bg)',
-                  {
-                    'size-2.5': indicator === 'dot',
-                    'h-full w-1': indicator === 'line',
-                    'w-0 border-[1.5px] border-dashed bg-transparent':
-                      indicator === 'dashed',
-                    'my-0.5': nestLabel && indicator === 'dashed',
-                  },
-                )}
+                class={cn('shrink-0 rounded-[2px] border-(--color-border) bg-(--color-bg)', {
+                  'size-2.5': indicator === 'dot',
+                  'h-full w-1': indicator === 'line',
+                  'w-0 border-[1.5px] border-dashed bg-transparent': indicator === 'dashed',
+                  'my-0.5': nestLabel && indicator === 'dashed',
+                })}
               ></div>
             {/if}
             <div
@@ -179,9 +168,7 @@
                 </span>
               </div>
               {#if item.value !== undefined}
-                <span
-                  class="font-mono font-medium text-foreground tabular-nums"
-                >
+                <span class="font-mono font-medium text-foreground tabular-nums">
                   {item.value.toLocaleString()}
                 </span>
               {/if}

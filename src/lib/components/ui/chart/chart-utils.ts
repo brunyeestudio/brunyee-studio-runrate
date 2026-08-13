@@ -28,9 +28,7 @@ export function getPayloadConfigFromPayload(
   if (typeof payload !== 'object' || payload === null) return undefined;
 
   const payloadConfig =
-    'config' in payload &&
-    typeof payload.config === 'object' &&
-    payload.config !== null
+    'config' in payload && typeof payload.config === 'object' && payload.config !== null
       ? payload.config
       : undefined;
 
@@ -40,10 +38,7 @@ export function getPayloadConfigFromPayload(
     configLabelKey = payload.key;
   } else if (payload.label === key) {
     configLabelKey = payload.label;
-  } else if (
-    key in payload &&
-    typeof payload[key as keyof typeof payload] === 'string'
-  ) {
+  } else if (key in payload && typeof payload[key as keyof typeof payload] === 'string') {
     configLabelKey = payload[key as keyof typeof payload] as string;
   } else if (
     payloadConfig !== undefined &&
@@ -55,9 +50,7 @@ export function getPayloadConfigFromPayload(
     configLabelKey = data[key] as string;
   }
 
-  return configLabelKey in config
-    ? config[configLabelKey]
-    : config[key as keyof typeof config];
+  return configLabelKey in config ? config[configLabelKey] : config[key as keyof typeof config];
 }
 
 type ChartContextValue = {

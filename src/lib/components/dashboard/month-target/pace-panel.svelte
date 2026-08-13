@@ -33,10 +33,7 @@
   <div class="space-y-3">
     <div class="flex flex-wrap items-center justify-between gap-x-4 gap-y-2">
       <p class="text-sm font-medium">To hit target</p>
-      <label
-        class="flex items-center gap-2 text-xs text-muted-foreground"
-        for="include-weekends"
-      >
+      <label class="flex items-center gap-2 text-xs text-muted-foreground" for="include-weekends">
         <span>Include weekends</span>
         <Switch
           id="include-weekends"
@@ -87,9 +84,7 @@
             {formatWorkDays(model.daysLeftForDisplay)} to hit target
           </p>
         {:else}
-          <p class="text-sm text-muted-foreground">
-            Cannot compute daily earn.
-          </p>
+          <p class="text-sm text-muted-foreground">Cannot compute daily earn.</p>
         {/if}
       {:else if model.dailyEarnNeeded !== null && model.daysLeftForDisplay !== null}
         <p class="text-xl text-foreground tabular-nums">
@@ -114,10 +109,7 @@
         <p class="text-sm text-muted-foreground">Enter hourly rate</p>
       {:else if model.showAssumedHoursMode}
         {#if model.assumedWorkDays !== null}
-          <p
-            class="text-xl text-foreground tabular-nums"
-            data-testid="assumed-work-days"
-          >
+          <p class="text-xl text-foreground tabular-nums" data-testid="assumed-work-days">
             {formatWorkDays(model.assumedWorkDays)}
           </p>
           <p class="text-xs text-muted-foreground">
@@ -134,17 +126,12 @@
           across remaining {model.remainingDayLabel}
         </p>
       {:else}
-        <p class="text-sm text-muted-foreground">
-          Cannot compute hours — no remaining days.
-        </p>
+        <p class="text-sm text-muted-foreground">Cannot compute hours — no remaining days.</p>
       {/if}
       {#if model.weekendStats}
-        <p
-          class="mt-1 text-xs text-muted-foreground/80"
-          data-testid="weekend-planning-counts"
-        >
-          {model.weekendStats.weekendsRemaining} weekends left ({model
-            .weekendStats.weekendDaysRemaining} days)
+        <p class="mt-1 text-xs text-muted-foreground/80" data-testid="weekend-planning-counts">
+          {model.weekendStats.weekendsRemaining} weekends left ({model.weekendStats
+            .weekendDaysRemaining} days)
         </p>
       {/if}
     </div>
@@ -153,33 +140,26 @@
   <div class="space-y-1.5" data-testid="capacity-overflow">
     <p class="text-xs text-muted-foreground">Capacity</p>
     {#if !model.hasHourlyRate}
-      <p class="text-xs text-muted-foreground">
-        Enter hourly rate to check weekend capacity.
-      </p>
+      <p class="text-xs text-muted-foreground">Enter hourly rate to check weekend capacity.</p>
     {:else if model.overflow}
       <p class="text-xs text-muted-foreground">
-        Weekday capacity: {formatCurrency(
-          model.overflow.weekdayCapacity,
-          currencyCode,
-        )} at {model.resolvedAssumedHours}h/day
+        Weekday capacity: {formatCurrency(model.overflow.weekdayCapacity, currencyCode)} at {model.resolvedAssumedHours}h/day
       </p>
       {#if model.overflow.weekdaysAloneEnough}
-        <Badge variant="default" data-testid="overflow-result"
-          >Weekdays enough</Badge
-        >
+        <Badge variant="default" data-testid="overflow-result">Weekdays enough</Badge>
       {:else if model.overflow.exceedsRemainingWeekends}
         <p data-testid="overflow-result">
           <Badge variant="destructive">Exceeds remaining weekends</Badge>
           <Badge variant="default" class="mt-0.5 block">
-            Need {model.overflow.weekendDaysNeeded} of {model.weekendStats
-              ?.weekendDaysRemaining ?? 0} weekend days
+            Need {model.overflow.weekendDaysNeeded} of {model.weekendStats?.weekendDaysRemaining ??
+              0} weekend days
           </Badge>
         </p>
       {:else}
         <p data-testid="overflow-result">
           <Badge
-            >Need {model.overflow.weekendDaysNeeded} of {model.weekendStats
-              ?.weekendDaysRemaining ?? 0} weekend days</Badge
+            >Need {model.overflow.weekendDaysNeeded} of {model.weekendStats?.weekendDaysRemaining ??
+              0} weekend days</Badge
           >
         </p>
       {/if}

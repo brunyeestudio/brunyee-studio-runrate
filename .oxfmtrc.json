@@ -1,0 +1,41 @@
+{
+  "$schema": "./node_modules/oxfmt/configuration_schema.json",
+  "printWidth": 100,
+  "tabWidth": 2,
+  "useTabs": false,
+  "semi": true,
+  "singleQuote": true,
+  "jsxSingleQuote": true,
+  "trailingComma": "all",
+  "arrowParens": "always",
+  "bracketSpacing": true,
+  "bracketSameLine": false,
+  "quoteProps": "as-needed",
+  "endOfLine": "lf",
+  "insertFinalNewline": true,
+  "svelte": true,
+  "sortTailwindcss": {
+    "stylesheet": "./src/routes/layout.css"
+  },
+  "ignorePatterns": [
+    ".svelte-kit/**",
+    "build/**",
+    ".output/**",
+    "coverage/**",
+    "playwright-report/**",
+    "test-results/**",
+    "storybook-static/**",
+    "openapi-all/**",
+    "node_modules/**",
+    "static/**",
+    ".agents/**",
+    "skills/**",
+    "plugins/**",
+    ".claude/**",
+    ".cursor/**",
+    ".windsurf/**",
+    ".github/instructions/**",
+    ".codex/**",
+    ".gemini/**"
+  ]
+}

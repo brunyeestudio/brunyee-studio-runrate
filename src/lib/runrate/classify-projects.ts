@@ -7,19 +7,13 @@ import {
   type ProjectWip,
 } from './types';
 
-export function isHourlyBillingType(
-  billingType: string,
-): billingType is HourlyBillingType {
+export function isHourlyBillingType(billingType: string): billingType is HourlyBillingType {
   return (HOURLY_BILLING_TYPES as readonly string[]).includes(billingType);
 }
 
-export function classifyHourlyWip(
-  projects: ProjectWip[],
-  fx: FxContext,
-): ProjectBucket {
+export function classifyHourlyWip(projects: ProjectWip[], fx: FxContext): ProjectBucket {
   const hourly = projects.filter(
-    (project) =>
-      isHourlyBillingType(project.billingType) && project.unBilledAmount > 0,
+    (project) => isHourlyBillingType(project.billingType) && project.unBilledAmount > 0,
   );
   const money = sumMoney(
     hourly,

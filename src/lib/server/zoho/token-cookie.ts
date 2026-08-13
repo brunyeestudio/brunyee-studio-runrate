@@ -13,10 +13,7 @@ function toBase64Url(bytes: Uint8Array): string {
   for (const byte of bytes) {
     binary += String.fromCharCode(byte);
   }
-  return btoa(binary)
-    .replace(/\+/g, '-')
-    .replace(/\//g, '_')
-    .replace(/=+$/, '');
+  return btoa(binary).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
 }
 
 function fromBase64Url(value: string): Uint8Array {
@@ -32,14 +29,8 @@ function fromBase64Url(value: string): Uint8Array {
 }
 
 async function deriveAesKey(secret: string): Promise<CryptoKey> {
-  const digest = await crypto.subtle.digest(
-    'SHA-256',
-    new TextEncoder().encode(secret),
-  );
-  return crypto.subtle.importKey('raw', digest, { name: 'AES-GCM' }, false, [
-    'encrypt',
-    'decrypt',
-  ]);
+  const digest = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(secret));
+  return crypto.subtle.importKey('raw', digest, { name: 'AES-GCM' }, false, ['encrypt', 'decrypt']);
 }
 
 export async function sealTokenPayload(
@@ -68,14 +59,8 @@ export async function unsealTokenPayload(
     const iv = combined.slice(0, 12);
     const ciphertext = combined.slice(12);
     const key = await deriveAesKey(authSecret);
-    const plaintext = await crypto.subtle.decrypt(
-      { name: 'AES-GCM', iv },
-      key,
-      ciphertext,
-    );
-    const parsed = JSON.parse(
-      new TextDecoder().decode(plaintext),
-    ) as Partial<StoredZohoTokens>;
+    const plaintext = await crypto.subtle.decrypt({ name: 'AES-GCM', iv }, key, ciphertext);
+    const parsed = JSON.parse(new TextDecoder().decode(plaintext)) as Partial<StoredZohoTokens>;
     if (
       typeof parsed.refreshToken !== 'string' ||
       typeof parsed.accessToken !== 'string' ||
@@ -87,10 +72,8 @@ export async function unsealTokenPayload(
       refreshToken: parsed.refreshToken,
       accessToken: parsed.accessToken,
       expiresAt: parsed.expiresAt,
-      accountsUrl:
-        typeof parsed.accountsUrl === 'string' ? parsed.accountsUrl : undefined,
-      apiBaseUrl:
-        typeof parsed.apiBaseUrl === 'string' ? parsed.apiBaseUrl : undefined,
+      accountsUrl: typeof parsed.accountsUrl === 'string' ? parsed.accountsUrl : undefined,
+      apiBaseUrl: typeof parsed.apiBaseUrl === 'string' ? parsed.apiBaseUrl : undefined,
     };
   } catch {
     return null;
@@ -107,9 +90,7 @@ export interface CookieTokenStoreOptions {
  * Synchronous TokenStore facade over an async-sealed cookie.
  * Call `flush()` after Zoho calls so Set-Cookie reflects refreshed access tokens.
  */
-export function createCookieTokenStore(
-  options: CookieTokenStoreOptions,
-): TokenStore & {
+export function createCookieTokenStore(options: CookieTokenStoreOptions): TokenStore & {
   hydrate: () => Promise<void>;
   flush: () => Promise<void>;
   isConnected: () => boolean;
@@ -157,11 +138,7 @@ export function createCookieTokenStore(
   };
 }
 
-export function setOAuthStateCookie(
-  cookies: Cookies,
-  state: string,
-  secure: boolean,
-): void {
+export function setOAuthStateCookie(cookies: Cookies, state: string, secure: boolean): void {
   cookies.set(ZOHO_OAUTH_STATE_COOKIE, state, {
     path: '/',
     httpOnly: true,

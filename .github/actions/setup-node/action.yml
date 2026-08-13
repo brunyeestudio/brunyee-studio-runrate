@@ -1,0 +1,14 @@
+name: Setup Node
+description: Install Node 24 via mise, then frozen-lockfile dependencies
+
+runs:
+  using: composite
+  steps:
+    - name: Install mise tools
+      uses: jdx/mise-action@v3
+      with:
+        experimental: true
+
+    - name: Install dependencies
+      shell: bash
+      run: pnpm install --frozen-lockfile

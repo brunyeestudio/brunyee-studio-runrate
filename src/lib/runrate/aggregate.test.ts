@@ -97,26 +97,19 @@ describe('aggregate', () => {
         amount: 960,
         source: 'Projects (hourly)',
         count: 1,
-        byCurrency: [
-          { currencyCode: 'GBP', amount: 960, convertedAmount: 960, count: 1 },
-        ],
+        byCurrency: [{ currencyCode: 'GBP', amount: 960, convertedAmount: 960, count: 1 }],
       },
     ]);
     expect(snapshot.kpis.cashCollected.amount).toBe(750);
     expect(snapshot.kpis.outstandingBalance.amount).toBe(500);
     expect(snapshot.kpis.earnedLastMonth.amount).toBe(1250);
-    expect(
-      snapshot.buckets.issuedOnPreviousMonthStart.invoices.map(
-        (i) => i.invoiceId,
-      ),
-    ).toEqual(['o1', 'p1']);
+    expect(snapshot.buckets.issuedOnPreviousMonthStart.invoices.map((i) => i.invoiceId)).toEqual([
+      'o1',
+      'p1',
+    ]);
     expect(snapshot.kpis.issuedOnMonthStart.amount).toBe(1800);
-    expect(
-      snapshot.buckets.issuedOnMonthStart.invoices.map((i) => i.invoiceId),
-    ).toEqual(['bom1']);
-    expect(
-      snapshot.buckets.outstanding.invoices.map((i) => i.invoiceId),
-    ).toEqual(['o1']);
+    expect(snapshot.buckets.issuedOnMonthStart.invoices.map((i) => i.invoiceId)).toEqual(['bom1']);
+    expect(snapshot.buckets.outstanding.invoices.map((i) => i.invoiceId)).toEqual(['o1']);
     expect(snapshot.paymentTiming.dueThisMonth.amount).toBe(2300);
     expect(snapshot.monthLabel).toBe('July 2026');
   });

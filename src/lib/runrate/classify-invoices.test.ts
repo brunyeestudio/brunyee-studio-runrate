@@ -17,9 +17,7 @@ import type { FxContext, Invoice } from './types';
 const ctx = getMonthContext(new Date(2026, 6, 14));
 const fx: FxContext = { baseCurrencyCode: 'GBP', rates: { GBP: 1 } };
 
-function invoice(
-  partial: Partial<Invoice> & Pick<Invoice, 'invoiceId'>,
-): Invoice {
+function invoice(partial: Partial<Invoice> & Pick<Invoice, 'invoiceId'>): Invoice {
   return {
     invoiceNumber: partial.invoiceNumber ?? `INV-${partial.invoiceId}`,
     customerName: partial.customerName ?? 'Client',

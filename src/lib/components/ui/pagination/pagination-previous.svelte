@@ -14,11 +14,7 @@
 <PaginationPrimitive.PrevButton
   bind:ref
   aria-label="Go to previous page"
-  class={cn(
-    buttonVariants({ variant: 'ghost', size: 'default' }),
-    'pl-2!',
-    className,
-  )}
+  class={cn(buttonVariants({ variant: 'ghost', size: 'default' }), 'pl-2!', className)}
   {...restProps}
 >
   <CaretLeftIcon data-icon="inline-start" />

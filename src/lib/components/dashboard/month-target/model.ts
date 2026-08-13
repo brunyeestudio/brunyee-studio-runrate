@@ -13,10 +13,7 @@ import {
   workDaysAtAssumedHours,
   type CapacityOverflowResult,
 } from '$lib/runrate/pace';
-import {
-  type PaceHoursMode,
-  resolveAssumedWeekdayHours,
-} from '$lib/runrate/session-config';
+import { type PaceHoursMode, resolveAssumedWeekdayHours } from '$lib/runrate/session-config';
 import { displayOptionalNumber } from './format';
 
 type DayProgress = ReturnType<typeof monthDayProgress>;
@@ -63,9 +60,7 @@ export interface MonthTargetModel {
   remainingDayLabel: string;
 }
 
-export function deriveMonthTargetModel(
-  input: MonthTargetModelInput,
-): MonthTargetModel {
+export function deriveMonthTargetModel(input: MonthTargetModelInput): MonthTargetModel {
   const {
     monthTarget,
     hourlyRate,
@@ -81,11 +76,7 @@ export function deriveMonthTargetModel(
   const weekendStats = weekendProgress(asOf);
 
   const endOfMonthForecastAllDays = dayProgress
-    ? forecastEndOfMonth(
-        earnedThisMonth,
-        dayProgress.daysElapsed,
-        dayProgress.daysInMonth,
-      )
+    ? forecastEndOfMonth(earnedThisMonth, dayProgress.daysElapsed, dayProgress.daysInMonth)
     : 0;
   const endOfMonthForecastWeekdays = weekProgress
     ? forecastEndOfMonth(
@@ -97,21 +88,14 @@ export function deriveMonthTargetModel(
 
   const targetForProgress = monthTarget ?? 0;
   const progress = clampProgress(earnedThisMonth, targetForProgress);
-  const forecastProgressAllDays = clampProgress(
-    endOfMonthForecastAllDays,
-    targetForProgress,
-  );
-  const forecastProgressWeekdays = clampProgress(
-    endOfMonthForecastWeekdays,
-    targetForProgress,
-  );
+  const forecastProgressAllDays = clampProgress(endOfMonthForecastAllDays, targetForProgress);
+  const forecastProgressWeekdays = clampProgress(endOfMonthForecastWeekdays, targetForProgress);
 
   const shortfall =
     monthTarget !== undefined && Number.isFinite(monthTarget)
       ? Math.max(0, monthTarget - earnedThisMonth)
       : 0;
-  const hasTarget =
-    monthTarget !== undefined && Number.isFinite(monthTarget);
+  const hasTarget = monthTarget !== undefined && Number.isFinite(monthTarget);
   const hasTargetShortfall = shortfall > 0;
   const isOnTarget = hasTarget && !hasTargetShortfall;
 
@@ -124,39 +108,21 @@ export function deriveMonthTargetModel(
       ? requiredDailyEarn(monthTarget, earnedThisMonth, remainingDaysForPace)
       : null;
 
-  const resolvedAssumedHours =
-    resolveAssumedWeekdayHours(assumedWeekdayHours);
+  const resolvedAssumedHours = resolveAssumedWeekdayHours(assumedWeekdayHours);
 
-  const assumedDailyEarn = dailyEarnAtAssumedHours(
-    hourlyRate ?? 0,
-    resolvedAssumedHours,
-  );
+  const assumedDailyEarn = dailyEarnAtAssumedHours(hourlyRate ?? 0, resolvedAssumedHours);
 
-  const evenSpreadHours = hoursPerDayEvenSpread(
-    evenSpreadDailyEarn,
-    hourlyRate ?? 0,
-  );
+  const evenSpreadHours = hoursPerDayEvenSpread(evenSpreadDailyEarn, hourlyRate ?? 0);
 
-  const assumedWorkDays = workDaysAtAssumedHours(
-    shortfall,
-    hourlyRate ?? 0,
-    resolvedAssumedHours,
-  );
+  const assumedWorkDays = workDaysAtAssumedHours(shortfall, hourlyRate ?? 0, resolvedAssumedHours);
 
-  const hasHourlyRate =
-    hourlyRate !== undefined &&
-    Number.isFinite(hourlyRate) &&
-    hourlyRate > 0;
+  const hasHourlyRate = hourlyRate !== undefined && Number.isFinite(hourlyRate) && hourlyRate > 0;
 
   const showAssumedHoursMode = paceHoursMode === 'assumed-hours';
 
-  const dailyEarnNeeded = showAssumedHoursMode
-    ? assumedDailyEarn
-    : evenSpreadDailyEarn;
+  const dailyEarnNeeded = showAssumedHoursMode ? assumedDailyEarn : evenSpreadDailyEarn;
 
-  const daysLeftForDisplay = showAssumedHoursMode
-    ? assumedWorkDays
-    : remainingDaysForPace;
+  const daysLeftForDisplay = showAssumedHoursMode ? assumedWorkDays : remainingDaysForPace;
 
   const overflow =
     monthTarget === undefined ||
@@ -201,10 +167,7 @@ export function deriveMonthTargetModel(
     overflow,
     displayTarget: displayOptionalNumber(monthTarget),
     displayHourlyRate: displayOptionalNumber(hourlyRate),
-    displayAssumedHours: displayOptionalNumber(
-      assumedWeekdayHours,
-      String(resolvedAssumedHours),
-    ),
+    displayAssumedHours: displayOptionalNumber(assumedWeekdayHours, String(resolvedAssumedHours)),
     remainingDayLabel: includeWeekends ? 'days' : 'workdays',
   };
 }

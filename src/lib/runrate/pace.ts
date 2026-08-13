@@ -29,10 +29,7 @@ export function hoursPerDayEvenSpread(
 }
 
 /** Daily earn when billing at a fixed assumed hours/day and hourly rate. */
-export function dailyEarnAtAssumedHours(
-  hourlyRate: number,
-  assumedHours: number,
-): number | null {
+export function dailyEarnAtAssumedHours(hourlyRate: number, assumedHours: number): number | null {
   if (!Number.isFinite(hourlyRate) || hourlyRate <= 0) return null;
   if (!Number.isFinite(assumedHours) || assumedHours <= 0) return null;
   return hourlyRate * assumedHours;
@@ -76,9 +73,7 @@ export interface CapacityOverflowResult {
  * Capacity overflow: assume weekdays are worked at `assumedWeekdayHours`,
  * then compute how many weekend days are still needed at that same hours/day.
  */
-export function capacityOverflow(
-  input: CapacityOverflowInput,
-): CapacityOverflowResult | null {
+export function capacityOverflow(input: CapacityOverflowInput): CapacityOverflowResult | null {
   const {
     target,
     earned,
@@ -102,8 +97,7 @@ export function capacityOverflow(
   const remainingEarn = Math.max(0, target - earned);
   const shortfall = Math.max(0, remainingEarn - weekdayCapacity);
   const earnPerDay = assumedWeekdayHours * hourlyRate;
-  const weekendDaysNeeded =
-    shortfall === 0 ? 0 : Math.ceil(shortfall / earnPerDay);
+  const weekendDaysNeeded = shortfall === 0 ? 0 : Math.ceil(shortfall / earnPerDay);
 
   return {
     weekdayCapacity,

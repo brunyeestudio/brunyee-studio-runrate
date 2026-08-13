@@ -46,9 +46,7 @@ export function mapZohoProjectDetail(
     customerName: String(raw.customer_name ?? ''),
     billingType,
     rate:
-      raw.rate === undefined || raw.rate === null || raw.rate === ''
-        ? null
-        : parseAmount(raw.rate),
+      raw.rate === undefined || raw.rate === null || raw.rate === '' ? null : parseAmount(raw.rate),
     unBilledHours: String(raw.un_billed_hours ?? '00:00'),
     unBilledAmount: parseAmount(raw.un_billed_amount),
     currencyCode: String(raw.currency_code ?? 'GBP'),
@@ -81,11 +79,7 @@ export async function getProjectDetail(
   projectId: string,
   options: ZohoClientOptions = {},
 ): Promise<ProjectWip | null> {
-  const data = await zohoFetch<ZohoProjectDetail>(
-    `/projects/${projectId}`,
-    {},
-    options,
-  );
+  const data = await zohoFetch<ZohoProjectDetail>(`/projects/${projectId}`, {}, options);
   if (!data.project) return null;
   return mapZohoProjectDetail(data.project);
 }

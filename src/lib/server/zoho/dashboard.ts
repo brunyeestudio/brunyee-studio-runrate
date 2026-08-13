@@ -21,10 +21,6 @@ export async function buildZohoDashboard(
     fetchHourlyProjectWip(options),
   ]);
   const currencyCodes = collectCurrencyCodes([...invoices, ...projects]);
-  const fx = await fetchFrankfurterFx(
-    DEFAULT_BASE_CURRENCY,
-    currencyCodes,
-    fetchImpl,
-  );
+  const fx = await fetchFrankfurterFx(DEFAULT_BASE_CURRENCY, currencyCodes, fetchImpl);
   return buildDashboardSnapshot(invoices, projects, ctx, fx, now);
 }

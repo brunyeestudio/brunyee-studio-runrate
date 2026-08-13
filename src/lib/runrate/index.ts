@@ -46,12 +46,7 @@ export {
   sumMoney,
   toBaseAmount,
 } from './currency';
-export {
-  clampProgress,
-  formatCurrency,
-  formatHours,
-  parseAmount,
-} from './format';
+export { clampProgress, formatCurrency, formatHours, parseAmount } from './format';
 export {
   DEFAULT_PACE_HOURS_MODE,
   TEMP_CONFIG_STORAGE_KEY,

@@ -122,11 +122,7 @@ describe('dates', () => {
     const progress = weekdayProgress('2026-07-14');
     expect(progress).not.toBeNull();
     expect(
-      forecastEndOfMonth(
-        1400,
-        progress!.weekdaysElapsed,
-        progress!.weekdaysInMonth,
-      ),
+      forecastEndOfMonth(1400, progress!.weekdaysElapsed, progress!.weekdaysInMonth),
     ).toBeCloseTo(3220);
   });
 });

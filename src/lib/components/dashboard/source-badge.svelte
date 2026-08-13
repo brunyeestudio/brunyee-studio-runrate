@@ -9,10 +9,6 @@
   } = $props();
 </script>
 
-<Badge
-  variant="secondary"
-  data-testid="source-badge"
-  class="text-muted-foreground"
->
+<Badge variant="secondary" data-testid="source-badge" class="text-muted-foreground">
   {source}
 </Badge>

@@ -26,9 +26,7 @@ function bucket(
   fx: FxContext,
   useBalance = false,
 ): InvoiceBucket {
-  const totalMoney = useBalance
-    ? sumBalance(invoices, fx)
-    : sumTotal(invoices, fx);
+  const totalMoney = useBalance ? sumBalance(invoices, fx) : sumTotal(invoices, fx);
   const balanceMoney = sumBalance(invoices, fx);
   return {
     invoices,
@@ -70,16 +68,12 @@ export function classifyOutstanding(
   fx: FxContext,
 ): InvoiceBucket {
   const matched = invoices.filter(
-    (invoice) =>
-      isOutstandingInvoice(invoice) && isDueOrOverdue(invoice, ctx.today),
+    (invoice) => isOutstandingInvoice(invoice) && isDueOrOverdue(invoice, ctx.today),
   );
   return bucket(matched, 'Outstanding', fx, true);
 }
 
-export function classifyDrafts(
-  invoices: Invoice[],
-  fx: FxContext,
-): InvoiceBucket {
+export function classifyDrafts(invoices: Invoice[], fx: FxContext): InvoiceBucket {
   return bucket(invoices.filter(isDraftInvoice), 'Draft invoices', fx);
 }
 
@@ -90,9 +84,7 @@ export function classifyScheduledNextMonth(
 ): InvoiceBucket {
   const matched = invoices.filter((invoice) => {
     const when = scheduleDate(invoice.scheduleTime);
-    return (
-      when !== null && isDateInRange(when, ctx.nextMonthStart, ctx.nextMonthEnd)
-    );
+    return when !== null && isDateInRange(when, ctx.nextMonthStart, ctx.nextMonthEnd);
   });
   return bucket(matched, 'Scheduled', fx);
 }
@@ -104,8 +96,7 @@ export function classifyDraftDatedNextFirst(
   fx: FxContext,
 ): InvoiceBucket {
   const matched = invoices.filter(
-    (invoice) =>
-      isDraftInvoice(invoice) && isSameDay(invoice.date, ctx.firstOfNextMonth),
+    (invoice) => isDraftInvoice(invoice) && isSameDay(invoice.date, ctx.firstOfNextMonth),
   );
   return bucket(matched, 'Draft invoices', fx);
 }
@@ -117,8 +108,7 @@ export function classifyDueThisMonth(
 ): InvoiceBucket {
   const matched = invoices.filter(
     (invoice) =>
-      isOutstandingInvoice(invoice) &&
-      isDateInRange(invoice.dueDate, ctx.monthStart, ctx.monthEnd),
+      isOutstandingInvoice(invoice) && isDateInRange(invoice.dueDate, ctx.monthStart, ctx.monthEnd),
   );
   return bucket(matched, 'Outstanding', fx, true);
 }
@@ -191,10 +181,7 @@ export function classifyCashCollected(
   const matched = invoices.filter((invoice) => {
     const status = invoice.status.toLowerCase();
     const paidLike = status === 'paid' || status === 'partially_paid';
-    return (
-      paidLike &&
-      isDateInRange(invoice.lastPaymentDate, ctx.monthStart, ctx.monthEnd)
-    );
+    return paidLike && isDateInRange(invoice.lastPaymentDate, ctx.monthStart, ctx.monthEnd);
   });
   // For cash, prefer total for fully paid; for partial use total - balance as approximation
   const withAmounts = matched.map((invoice) => {

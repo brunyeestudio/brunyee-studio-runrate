@@ -17,9 +17,7 @@
     },
   });
 
-  export type InputGroupAddonAlign = VariantProps<
-    typeof inputGroupAddonVariants
-  >['align'];
+  export type InputGroupAddonAlign = VariantProps<typeof inputGroupAddonVariants>['align'];
 </script>
 
 <script lang="ts">

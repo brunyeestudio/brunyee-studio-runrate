@@ -18,9 +18,7 @@
   }}
   play={async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-    await expect(canvas.getByTestId('source-badge')).toHaveTextContent(
-      'Projects (hourly)',
-    );
+    await expect(canvas.getByTestId('source-badge')).toHaveTextContent('Projects (hourly)');
     await expect(canvas.getByText('Platform retainers')).toBeInTheDocument();
     await expect(canvas.getByText('12:30')).toBeInTheDocument();
     await expect(canvas.getByText('GBP')).toBeInTheDocument();

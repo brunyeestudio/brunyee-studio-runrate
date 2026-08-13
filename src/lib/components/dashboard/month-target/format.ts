@@ -19,10 +19,7 @@ export function formatWorkDays(days: number): string {
   })} ${label}`;
 }
 
-export function displayOptionalNumber(
-  value: number | undefined,
-  fallback?: string,
-): string {
+export function displayOptionalNumber(value: number | undefined, fallback?: string): string {
   if (value === undefined || Number.isNaN(value)) {
     return fallback ?? '';
   }

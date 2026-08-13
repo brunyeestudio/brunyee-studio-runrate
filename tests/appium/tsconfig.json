@@ -9,13 +9,7 @@
     "esModuleInterop": true,
     "resolveJsonModule": true,
     "noEmit": true,
-    "types": [
-      "node",
-      "@wdio/globals/types",
-      "expect-webdriverio",
-      "@wdio/mocha-framework",
-      "mocha"
-    ]
+    "types": ["node", "@wdio/globals/types", "expect-webdriverio", "@wdio/mocha-framework", "mocha"]
   },
   "include": ["./**/*.ts"]
 }

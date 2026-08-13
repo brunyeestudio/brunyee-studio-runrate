@@ -46,7 +46,7 @@
   {weekdayFormat}
   {disableDaysOutsideMonth}
   class={cn(
-    'p-3 [--cell-radius:0] [--cell-size:--spacing(8)] bg-background group/calendar p-3 [[data-slot=card-content]_&]:bg-transparent [[data-slot=popover-content]_&]:bg-transparent',
+    'group/calendar bg-background p-3 p-3 [--cell-radius:0] [--cell-size:--spacing(8)] [[data-slot=card-content]_&]:bg-transparent [[data-slot=popover-content]_&]:bg-transparent',
     className,
   )}
   {locale}

@@ -22,17 +22,11 @@ import type { MonthContext } from './types';
 const ISO_DATE_PATTERN = 'yyyy-MM-dd';
 
 /** Format calendar parts as yyyy-mm-dd in local terms (`monthIndex` is 0-based). */
-export function toIsoDate(
-  year: number,
-  monthIndex: number,
-  day: number,
-): string {
+export function toIsoDate(year: number, monthIndex: number, day: number): string {
   return format(new Date(year, monthIndex, day), ISO_DATE_PATTERN);
 }
 
-export function parseIsoDate(
-  iso: string,
-): { year: number; month: number; day: number } | null {
+export function parseIsoDate(iso: string): { year: number; month: number; day: number } | null {
   const datePart = iso.trim().slice(0, 10);
   if (!/^\d{4}-\d{2}-\d{2}$/.test(datePart)) return null;
   const date = parseISO(datePart);
@@ -80,11 +74,7 @@ function parseIsoDatePart(iso: string): Date | null {
   return isValid(date) ? date : null;
 }
 
-export function isDateInRange(
-  iso: string | null | undefined,
-  start: string,
-  end: string,
-): boolean {
+export function isDateInRange(iso: string | null | undefined, start: string, end: string): boolean {
   if (!iso) return false;
   const date = parseIsoDatePart(iso);
   const startDate = parseIsoDatePart(start);
@@ -93,10 +83,7 @@ export function isDateInRange(
   return isWithinInterval(date, { start: startDate, end: endDate });
 }
 
-export function isSameDay(
-  iso: string | null | undefined,
-  day: string,
-): boolean {
+export function isSameDay(iso: string | null | undefined, day: string): boolean {
   if (!iso) return false;
   const left = parseIsoDatePart(iso);
   const right = parseIsoDatePart(day);
@@ -105,9 +92,7 @@ export function isSameDay(
 }
 
 /** Extract yyyy-mm-dd from Zoho schedule_time like "2026-06-20 10:00:00". */
-export function scheduleDate(
-  scheduleTime: string | null | undefined,
-): string | null {
+export function scheduleDate(scheduleTime: string | null | undefined): string | null {
   if (!scheduleTime?.trim()) return null;
   const trimmed = scheduleTime.trim();
   const withTime = parse(trimmed, 'yyyy-MM-dd HH:mm:ss', new Date());
@@ -161,11 +146,7 @@ function daysOfMonth(year: number, month: number): Date[] {
 }
 
 /** Monday–Friday (public holidays ignored). */
-export function isWeekdayDate(
-  year: number,
-  month: number,
-  day: number,
-): boolean {
+export function isWeekdayDate(year: number, month: number, day: number): boolean {
   return !isWeekend(calendarDate(year, month, day));
 }
 

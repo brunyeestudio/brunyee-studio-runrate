@@ -24,34 +24,22 @@
   } = $props();
 
   function handleTargetInput(event: Event) {
-    monthTarget = parseOptionalNumber(
-      (event.currentTarget as HTMLInputElement).value,
-    );
+    monthTarget = parseOptionalNumber((event.currentTarget as HTMLInputElement).value);
   }
 
   function handleHourlyRateInput(event: Event) {
-    hourlyRate = parseOptionalNumber(
-      (event.currentTarget as HTMLInputElement).value,
-    );
+    hourlyRate = parseOptionalNumber((event.currentTarget as HTMLInputElement).value);
   }
 
   function handleAssumedHoursInput(event: Event) {
-    assumedWeekdayHours = parseOptionalNumber(
-      (event.currentTarget as HTMLInputElement).value,
-    );
+    assumedWeekdayHours = parseOptionalNumber((event.currentTarget as HTMLInputElement).value);
   }
 </script>
 
-<div
-  class="bg-muted/30 space-y-3 rounded-none border p-3"
-  data-testid="hourly-rate-section"
->
+<div class="space-y-3 rounded-none border bg-muted/30 p-3" data-testid="hourly-rate-section">
   <div class="flex items-center gap-1.5">
     <p class="text-sm font-medium">Setup</p>
-    <InfoHint
-      label="How hourly rate planning is calculated"
-      text={kpiInfo.hourlyRate}
-    />
+    <InfoHint label="How hourly rate planning is calculated" text={kpiInfo.hourlyRate} />
   </div>
 
   <div class="grid gap-3 sm:grid-cols-3">
@@ -70,9 +58,7 @@
     </Field.Field>
 
     <Field.Field>
-      <Field.Label for="hourly-rate-input"
-        >Rate per hour ({currencyCode})</Field.Label
-      >
+      <Field.Label for="hourly-rate-input">Rate per hour ({currencyCode})</Field.Label>
       <Input
         id="hourly-rate-input"
         type="number"
@@ -86,9 +72,7 @@
     </Field.Field>
 
     <Field.Field>
-      <Field.Label for="assumed-weekday-hours"
-        >Assumed weekday hours/day</Field.Label
-      >
+      <Field.Label for="assumed-weekday-hours">Assumed weekday hours/day</Field.Label>
       <Input
         id="assumed-weekday-hours"
         type="number"

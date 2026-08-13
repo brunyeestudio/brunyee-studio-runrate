@@ -1,10 +1,7 @@
 <script lang="ts" generics="T = never">
   import { Tooltip as TooltipPrimitive } from 'bits-ui';
   import { setContext } from 'svelte';
-  import {
-    TOOLTIP_OPEN_CONTEXT,
-    type TooltipOpenContext,
-  } from './tooltip-open-context.js';
+  import { TOOLTIP_OPEN_CONTEXT, type TooltipOpenContext } from './tooltip-open-context.js';
 
   let {
     open = $bindable(false),
@@ -54,8 +51,4 @@
   });
 </script>
 
-<TooltipPrimitive.Root
-  bind:open
-  {disableCloseOnTriggerClick}
-  {...restProps}
-/>
+<TooltipPrimitive.Root bind:open {disableCloseOnTriggerClick} {...restProps} />

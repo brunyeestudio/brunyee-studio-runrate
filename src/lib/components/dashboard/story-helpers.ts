@@ -14,8 +14,6 @@ export function touchToggle(target: Element) {
 /** Wait until a portaled tooltip finishes its exit animation and unmounts. */
 export async function expectTooltipClosed(testId: string) {
   await waitFor(() => {
-    expect(
-      within(document.body).queryByTestId(testId),
-    ).not.toBeInTheDocument();
+    expect(within(document.body).queryByTestId(testId)).not.toBeInTheDocument();
   });
 }

@@ -1,8 +1,4 @@
-export function formatCurrency(
-  amount: number,
-  currencyCode = 'GBP',
-  locale = 'en-GB',
-): string {
+export function formatCurrency(amount: number, currencyCode = 'GBP', locale = 'en-GB'): string {
   return new Intl.NumberFormat(locale, {
     style: 'currency',
     currency: currencyCode,

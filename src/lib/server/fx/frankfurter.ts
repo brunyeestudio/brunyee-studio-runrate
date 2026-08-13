@@ -84,9 +84,7 @@ export async function fetchFrankfurterFx(
   }
 
   if (!response.ok) {
-    throw new FrankfurterError(
-      `Frankfurter FX API failed (${response.status}) for base ${base}.`,
-    );
+    throw new FrankfurterError(`Frankfurter FX API failed (${response.status}) for base ${base}.`);
   }
 
   const data = (await response.json()) as FrankfurterLatestResponse;
@@ -94,10 +92,6 @@ export async function fetchFrankfurterFx(
 }
 
 /** Collect distinct currency codes from invoice/project-like records. */
-export function collectCurrencyCodes(
-  records: Array<{ currencyCode: string }>,
-): string[] {
-  return [
-    ...new Set(records.map((record) => record.currencyCode).filter(Boolean)),
-  ];
+export function collectCurrencyCodes(records: Array<{ currencyCode: string }>): string[] {
+  return [...new Set(records.map((record) => record.currencyCode).filter(Boolean))];
 }

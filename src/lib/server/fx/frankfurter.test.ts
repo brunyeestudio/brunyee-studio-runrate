@@ -20,9 +20,9 @@ describe('frankfurter fx', () => {
   });
 
   it('throws when a needed currency is missing from the response', () => {
-    expect(() =>
-      mapFrankfurterRates('GBP', ['EUR', 'AED'], { EUR: 1.17 }),
-    ).toThrow(FrankfurterError);
+    expect(() => mapFrankfurterRates('GBP', ['EUR', 'AED'], { EUR: 1.17 })).toThrow(
+      FrankfurterError,
+    );
   });
 
   it('collects distinct currency codes', () => {
@@ -52,11 +52,7 @@ describe('frankfurter fx', () => {
       );
     };
 
-    const fx = await fetchFrankfurterFx(
-      DEFAULT_BASE_CURRENCY,
-      ['GBP', 'EUR'],
-      fetchImpl,
-    );
+    const fx = await fetchFrankfurterFx(DEFAULT_BASE_CURRENCY, ['GBP', 'EUR'], fetchImpl);
     expect(fx.baseCurrencyCode).toBe('GBP');
     expect(fx.rates.EUR).toBeCloseTo(1 / 1.175);
   });

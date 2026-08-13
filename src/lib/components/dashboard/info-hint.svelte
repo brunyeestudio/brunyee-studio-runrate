@@ -15,7 +15,7 @@
   <Tooltip.Root>
     <Tooltip.Trigger
       type="button"
-      class="text-muted-foreground hover:text-foreground focus-visible:ring-ring inline-flex size-4 shrink-0 items-center justify-center rounded-sm outline-none focus-visible:ring-2"
+      class="inline-flex size-4 shrink-0 items-center justify-center rounded-sm text-muted-foreground outline-none hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring"
       aria-label={label}
       data-testid="info-hint"
     >

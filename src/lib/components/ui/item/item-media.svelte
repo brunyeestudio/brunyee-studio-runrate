@@ -16,9 +16,7 @@
     },
   });
 
-  export type ItemMediaVariant = VariantProps<
-    typeof itemMediaVariants
-  >['variant'];
+  export type ItemMediaVariant = VariantProps<typeof itemMediaVariants>['variant'];
 </script>
 
 <script lang="ts">

@@ -25,9 +25,7 @@ function canUseSessionStorage(): boolean {
 }
 
 function readFiniteNumber(value: unknown): number | undefined {
-  return typeof value === 'number' && Number.isFinite(value)
-    ? value
-    : undefined;
+  return typeof value === 'number' && Number.isFinite(value) ? value : undefined;
 }
 
 export function readTempConfig(): TempSessionConfig {
@@ -40,9 +38,7 @@ export function readTempConfig(): TempSessionConfig {
     const hourlyRate = readFiniteNumber(parsed.hourlyRate);
     const assumedWeekdayHours = readFiniteNumber(parsed.assumedWeekdayHours);
     const includeWeekends =
-      typeof parsed.includeWeekends === 'boolean'
-        ? parsed.includeWeekends
-        : undefined;
+      typeof parsed.includeWeekends === 'boolean' ? parsed.includeWeekends : undefined;
     const paceHoursMode = readPaceHoursMode(parsed.paceHoursMode);
 
     const next: TempSessionConfig = {};
@@ -62,16 +58,10 @@ export function readTempConfig(): TempSessionConfig {
 export function writeTempConfig(config: TempSessionConfig): void {
   if (!canUseSessionStorage()) return;
   const next: TempSessionConfig = {};
-  if (
-    typeof config.monthTarget === 'number' &&
-    Number.isFinite(config.monthTarget)
-  ) {
+  if (typeof config.monthTarget === 'number' && Number.isFinite(config.monthTarget)) {
     next.monthTarget = config.monthTarget;
   }
-  if (
-    typeof config.hourlyRate === 'number' &&
-    Number.isFinite(config.hourlyRate)
-  ) {
+  if (typeof config.hourlyRate === 'number' && Number.isFinite(config.hourlyRate)) {
     next.hourlyRate = config.hourlyRate;
   }
   if (typeof config.includeWeekends === 'boolean') {
@@ -83,10 +73,7 @@ export function writeTempConfig(config: TempSessionConfig): void {
   ) {
     next.assumedWeekdayHours = config.assumedWeekdayHours;
   }
-  if (
-    config.paceHoursMode === 'even-spread' ||
-    config.paceHoursMode === 'assumed-hours'
-  ) {
+  if (config.paceHoursMode === 'even-spread' || config.paceHoursMode === 'assumed-hours') {
     next.paceHoursMode = config.paceHoursMode;
   }
   sessionStorage.setItem(STORAGE_KEY, JSON.stringify(next));
@@ -106,9 +93,7 @@ export function resolveAssumedWeekdayHours(value: number | undefined): number {
 }
 
 /** Resolve pace hours display mode with the product default when unset. */
-export function resolvePaceHoursMode(
-  value: PaceHoursMode | undefined,
-): PaceHoursMode {
+export function resolvePaceHoursMode(value: PaceHoursMode | undefined): PaceHoursMode {
   return value === 'assumed-hours' ? 'assumed-hours' : DEFAULT_PACE_HOURS_MODE;
 }
 

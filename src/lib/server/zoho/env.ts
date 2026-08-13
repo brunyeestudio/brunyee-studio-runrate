@@ -37,12 +37,10 @@ export type ZohoEnvSource = {
   ZOHO_API_BASE_URL?: string;
 };
 
-export function readZohoEnv(env: ZohoEnvSource = privateEnv): ZohoEnv {
+export function readZohoEnv(env: ZohoEnvSource = privateEnv as ZohoEnvSource): ZohoEnv {
   const authSecret = required('AUTH_SECRET', env.AUTH_SECRET);
   if (authSecret.length < MIN_AUTH_SECRET_LENGTH) {
-    throw new ZohoEnvError(
-      `AUTH_SECRET must be at least ${MIN_AUTH_SECRET_LENGTH} characters`,
-    );
+    throw new ZohoEnvError(`AUTH_SECRET must be at least ${MIN_AUTH_SECRET_LENGTH} characters`);
   }
 
   return {
@@ -51,11 +49,10 @@ export function readZohoEnv(env: ZohoEnvSource = privateEnv): ZohoEnv {
     organizationId: required('ZOHO_ORGANIZATION_ID', env.ZOHO_ORGANIZATION_ID),
     redirectUri: required('ZOHO_REDIRECT_URI', env.ZOHO_REDIRECT_URI),
     authSecret,
-    accountsUrl: (
-      env.ZOHO_ACCOUNTS_URL?.trim() || 'https://accounts.zoho.com'
-    ).replace(/\/$/, ''),
-    apiBaseUrl: (
-      env.ZOHO_API_BASE_URL?.trim() || 'https://www.zohoapis.com/books/v3'
-    ).replace(/\/$/, ''),
+    accountsUrl: (env.ZOHO_ACCOUNTS_URL?.trim() || 'https://accounts.zoho.com').replace(/\/$/, ''),
+    apiBaseUrl: (env.ZOHO_API_BASE_URL?.trim() || 'https://www.zohoapis.com/books/v3').replace(
+      /\/$/,
+      '',
+    ),
   };
 }

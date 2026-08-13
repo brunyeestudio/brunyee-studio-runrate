@@ -52,10 +52,7 @@
       <div>
         <div class="flex items-center gap-1.5">
           <Card.Title class="text-base">Month target</Card.Title>
-          <InfoHint
-            label="How month target progress is calculated"
-            text={kpiInfo.monthTarget}
-          />
+          <InfoHint label="How month target progress is calculated" text={kpiInfo.monthTarget} />
         </div>
         <Card.Description>
           Compare target to earned this month for {monthLabel || 'this month'}.
@@ -63,10 +60,7 @@
         {#if model.weekProgress && model.weekendStats}
           {@const weekdaysLeft = model.weekProgress.weekdaysRemaining}
           {@const weekendsLeft = model.weekendStats.weekendsRemaining}
-          <p
-            class="text-muted-foreground mt-1 text-xs"
-            data-testid="month-remaining-days"
-          >
+          <p class="mt-1 text-xs text-muted-foreground" data-testid="month-remaining-days">
             {weekdaysLeft}
             {weekdaysLeft === 1 ? 'weekday' : 'weekdays'} remaining ·
             {weekendsLeft}
@@ -91,20 +85,10 @@
     />
 
     <div class="grid gap-5 {model.hasTargetShortfall ? 'md:grid-cols-2' : ''}">
-      <Status
-        {model}
-        {earnedThisMonth}
-        {paidThisMonth}
-        {currencyCode}
-      />
+      <Status {model} {earnedThisMonth} {paidThisMonth} {currencyCode} />
 
       {#if model.hasTargetShortfall}
-        <PacePanel
-          {model}
-          bind:includeWeekends
-          bind:paceHoursMode
-          {currencyCode}
-        />
+        <PacePanel {model} bind:includeWeekends bind:paceHoursMode {currencyCode} />
       {/if}
     </div>
   </Card.Content>

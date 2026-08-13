@@ -15,10 +15,7 @@ export const GET: RequestHandler = async ({ cookies, url }) => {
     return json({ connected: store.isConnected() });
   } catch (error) {
     if (error instanceof ZohoEnvError) {
-      return json(
-        { connected: false, error: error.message, code: 'ZOHO_ENV' },
-        { status: 503 },
-      );
+      return json({ connected: false, error: error.message, code: 'ZOHO_ENV' }, { status: 503 });
     }
     return json({ connected: false });
   }

@@ -44,13 +44,11 @@ export const GET: RequestHandler = async ({ cookies, url }) => {
       return json(
         { error: error.message, code: 'ZOHO_API', zohoCode: error.code },
         {
-          status:
-            error.status >= 400 && error.status < 600 ? error.status : 502,
+          status: error.status >= 400 && error.status < 600 ? error.status : 502,
         },
       );
     }
-    const message =
-      error instanceof Error ? error.message : 'Unknown dashboard error';
+    const message = error instanceof Error ? error.message : 'Unknown dashboard error';
     return json({ error: message, code: 'DASHBOARD_ERROR' }, { status: 500 });
   }
 };

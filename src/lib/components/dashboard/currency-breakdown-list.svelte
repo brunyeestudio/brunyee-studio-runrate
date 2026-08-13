@@ -18,7 +18,7 @@
       <span class="flex items-baseline gap-2 tabular-nums">
         <span>{formatCurrency(entry.amount, entry.currencyCode)}</span>
         {#if entry.currencyCode !== baseCurrencyCode}
-          <span class="text-muted-foreground text-[0.6875rem]">
+          <span class="text-[0.6875rem] text-muted-foreground">
             ≈ {formatCurrency(entry.convertedAmount, baseCurrencyCode)}
           </span>
         {/if}

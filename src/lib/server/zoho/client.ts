@@ -64,12 +64,7 @@ export async function zohoFetch<T>(
     fetchImpl,
   });
 
-  const url = buildZohoUrl(
-    effectiveEnv.apiBaseUrl,
-    path,
-    effectiveEnv.organizationId,
-    query,
-  );
+  const url = buildZohoUrl(effectiveEnv.apiBaseUrl, path, effectiveEnv.organizationId, query);
   const response = await fetchImpl(url, {
     method: 'GET',
     headers: {

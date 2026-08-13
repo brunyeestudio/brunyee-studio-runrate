@@ -72,13 +72,23 @@
     }
   }
 
+  function canFetchAnalytics(): boolean {
+    if (errorCode === 'ZOHO_AUTH') return false;
+    if (page.url.searchParams.get('authError')) return false;
+    if (loading && !snapshot) return false;
+    if (!connected && !snapshot) return false;
+    return true;
+  }
+
   async function loadAnalytics() {
-    if (errorCode === 'ZOHO_AUTH') return;
+    if (!canFetchAnalytics()) return;
 
     const preset = analyticsRangePreset;
     const today = snapshot?.asOf.slice(0, 10) ?? todayIso();
     const { from, to } = resolveAnalyticsRange(preset, today);
 
+    // Record attempted preset before the request so failures do not re-trigger
+    // the analytics $effect until the preset or tab changes.
     fetchedAnalyticsPreset = preset;
     analyticsLoading = true;
     analyticsError = null;
@@ -100,7 +110,6 @@
           snapshot = null;
         }
         analyticsSnapshot = null;
-        fetchedAnalyticsPreset = null;
         return;
       }
       analyticsSnapshot = data as AnalyticsSnapshot;
@@ -108,7 +117,6 @@
       analyticsError =
         err instanceof Error ? err.message : 'Failed to load analytics';
       analyticsSnapshot = null;
-      fetchedAnalyticsPreset = null;
     } finally {
       analyticsLoading = false;
     }
@@ -170,8 +178,8 @@
 
   $effect(() => {
     if (!hydrated) return;
-    if (errorCode === 'ZOHO_AUTH') return;
     if (view !== 'analytics') return;
+    if (!canFetchAnalytics()) return;
     if (fetchedAnalyticsPreset === analyticsRangePreset) return;
     void loadAnalytics();
   });

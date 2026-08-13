@@ -81,3 +81,83 @@ export function parseAnalyticsDates(
   if (fromDate > toDate) return null;
   return { from, to };
 }
+
+export const ON_RATE_HOURS_BAND = 0.5;
+
+export type AnalyticsStatus =
+  | 'overshoot'
+  | 'headroom'
+  | 'on-rate'
+  | 'no-time'
+  | 'no-invoices';
+
+export interface AnalyticsDerivedMetrics {
+  soldHours: number | null;
+  hoursVariance: number | null;
+  moneyVariance: number | null;
+  effectiveRate: number | null;
+  status: AnalyticsStatus | null;
+}
+
+export function hasHourlyRate(hourlyRate: number | undefined): boolean {
+  return hourlyRate !== undefined && Number.isFinite(hourlyRate) && hourlyRate > 0;
+}
+
+function statusFromHoursVariance(hoursVariance: number): AnalyticsStatus {
+  if (hoursVariance > ON_RATE_HOURS_BAND) return 'overshoot';
+  if (hoursVariance < -ON_RATE_HOURS_BAND) return 'headroom';
+  return 'on-rate';
+}
+
+export function deriveMetrics(
+  hoursSpent: number,
+  revenue: number,
+  hourlyRate: number | undefined,
+): AnalyticsDerivedMetrics {
+  if (hourlyRate === undefined || !hasHourlyRate(hourlyRate)) {
+    return {
+      soldHours: null,
+      hoursVariance: null,
+      moneyVariance: null,
+      effectiveRate: null,
+      status: null,
+    };
+  }
+
+  const soldHours = revenue / hourlyRate;
+  const hoursVariance = hoursSpent - soldHours;
+  const moneyVariance = revenue - hoursSpent * hourlyRate;
+
+  if (hoursSpent === 0 && revenue > 0) {
+    return {
+      soldHours,
+      hoursVariance,
+      moneyVariance,
+      effectiveRate: null,
+      status: 'no-time',
+    };
+  }
+
+  if (hoursSpent > 0 && revenue === 0) {
+    return {
+      soldHours,
+      hoursVariance,
+      moneyVariance,
+      effectiveRate: 0,
+      status: 'no-invoices',
+    };
+  }
+
+  return {
+    soldHours,
+    hoursVariance,
+    moneyVariance,
+    effectiveRate: revenue / hoursSpent,
+    status: statusFromHoursVariance(hoursVariance),
+  };
+}
+
+export function percentChange(current: number, previous: number): number | null {
+  if (previous === 0) return null;
+  return (current - previous) / previous;
+}

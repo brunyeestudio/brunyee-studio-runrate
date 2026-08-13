@@ -2,12 +2,20 @@ export { buildDashboardSnapshot } from './aggregate';
 export {
   ANALYTICS_RANGE_DAYS,
   DEFAULT_ANALYTICS_RANGE_PRESET,
+  ON_RATE_HOURS_BAND,
+  deriveMetrics,
+  hasHourlyRate,
   isAnalyticsRangePreset,
   parseAnalyticsDates,
+  percentChange,
   previousPeriod,
   resolveAnalyticsRange,
 } from './analytics';
-export type { AnalyticsRangePreset } from './analytics';
+export type {
+  AnalyticsDerivedMetrics,
+  AnalyticsRangePreset,
+  AnalyticsStatus,
+} from './analytics';
 export {
   classifyCashCollected,
   classifyDraftDatedNextFirst,

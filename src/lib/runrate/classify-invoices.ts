@@ -62,6 +62,11 @@ export function isDraftInvoice(invoice: Invoice): boolean {
   return invoice.status.toLowerCase() === 'draft';
 }
 
+export function isIssuedInvoice(invoice: Invoice): boolean {
+  const status = invoice.status.toLowerCase();
+  return status !== 'draft' && status !== 'void';
+}
+
 export function classifyOutstanding(
   invoices: Invoice[],
   ctx: MonthContext,

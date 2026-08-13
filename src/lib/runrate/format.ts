@@ -20,6 +20,21 @@ export function parseAmount(value: unknown): number {
   return 0;
 }
 
+export function parseHours(value: unknown): number {
+  if (typeof value === 'number' && Number.isFinite(value) && value >= 0) {
+    return value;
+  }
+  if (typeof value !== 'string') return 0;
+  const trimmed = value.trim();
+  if (!trimmed) return 0;
+  const hhmm = trimmed.match(/^(\d+):([0-5]\d)$/);
+  if (hhmm) {
+    return Number(hhmm[1]) + Number(hhmm[2]) / 60;
+  }
+  const decimal = Number(trimmed.replace(/,/g, ''));
+  return Number.isFinite(decimal) && decimal >= 0 ? decimal : 0;
+}
+
 export function clampProgress(current: number, target: number): number {
   if (!Number.isFinite(target) || target <= 0) return 0;
   if (!Number.isFinite(current) || current <= 0) return 0;

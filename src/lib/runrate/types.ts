@@ -5,7 +5,8 @@ export type RevenueSource =
   | 'Scheduled'
   | 'Projects (hourly)'
   | 'Cash collected'
-  | 'Issued';
+  | 'Issued'
+  | 'Timesheets';
 
 export type InvoiceStatus =
   | 'draft'

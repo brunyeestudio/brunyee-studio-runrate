@@ -17,6 +17,7 @@ import {
   ZOHO_OAUTH_SCOPES,
 } from './oauth';
 import { mapZohoProjectDetail } from './projects';
+import { mapZohoTimeEntry } from './time-entries';
 import { sealTokenPayload, unsealTokenPayload } from './token-cookie';
 
 const AUTH_SECRET = 'test-auth-secret-with-32-plus-chars!!';
@@ -153,6 +154,9 @@ describe('zoho oauth helpers', () => {
     expect(url.searchParams.get('response_type')).toBe('code');
     expect(url.searchParams.get('access_type')).toBe('offline');
     expect(url.searchParams.get('prompt')).toBe('consent');
+    expect(ZOHO_OAUTH_SCOPES).toBe(
+      'ZohoBooks.invoices.READ,ZohoBooks.projects.READ,ZohoBooks.timesheet.READ',
+    );
     expect(url.searchParams.get('scope')).toBe(ZOHO_OAUTH_SCOPES);
     expect(url.searchParams.get('state')).toBe('state-123');
   });
@@ -250,5 +254,36 @@ describe('zoho mappers', () => {
         un_billed_amount: 250,
       }),
     ).toBeNull();
+  });
+
+  it('maps HH:MM and decimal time entries', () => {
+    expect(
+      mapZohoTimeEntry({
+        time_entry_id: 'te1',
+        customer_name: 'Quantum',
+        project_name: 'Retainer',
+        log_date: '2026-08-10',
+        hours: '02:30',
+      }),
+    ).toEqual({
+      timeEntryId: 'te1',
+      customerName: 'Quantum',
+      projectName: 'Retainer',
+      logDate: '2026-08-10',
+      hours: 2.5,
+    });
+    expect(
+      mapZohoTimeEntry({
+        time_entry_id: 'te2',
+        date: '2026-08-11 00:00:00',
+        time: '1.5',
+      }),
+    ).toMatchObject({
+      timeEntryId: 'te2',
+      customerName: '',
+      logDate: '2026-08-11',
+      hours: 1.5,
+    });
+    expect(mapZohoTimeEntry({ customer_name: 'X' })).toBeNull();
   });
 });

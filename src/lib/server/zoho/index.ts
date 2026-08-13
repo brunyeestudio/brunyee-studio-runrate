@@ -14,6 +14,10 @@ export { readZohoEnv, ZohoEnvError } from './env';
 export { fetchDashboardInvoices, listAllInvoices, mapZohoInvoice } from './invoices';
 export { fetchHourlyProjectWip, mapZohoProjectDetail } from './projects';
 export {
+  fetchTimeEntriesInRange,
+  mapZohoTimeEntry,
+} from './time-entries';
+export {
   buildAuthorizeUrl,
   completeOAuthCallback,
   createOAuthState,

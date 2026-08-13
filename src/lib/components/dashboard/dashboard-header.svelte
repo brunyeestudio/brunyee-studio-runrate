@@ -24,12 +24,12 @@
 >
   <div class="space-y-1">
     <p
-      class="text-muted-foreground text-[0.625rem] font-semibold tracking-[0.2em] uppercase"
+      class="text-[0.625rem] font-semibold tracking-[0.2em] text-muted-foreground uppercase"
     >
       Brunyee Studio
     </p>
     <h1 class="text-3xl font-medium tracking-tight">Runrate</h1>
-    <p class="text-muted-foreground text-sm">
+    <p class="text-sm text-muted-foreground">
       In-month overview · {monthLabel}
     </p>
   </div>

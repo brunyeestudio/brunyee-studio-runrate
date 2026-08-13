@@ -10,6 +10,6 @@
   <title>Runrate · Brunyee Studio</title>
 </svelte:head>
 
-<div class="dark bg-background text-foreground min-h-svh">
+<div class="dark min-h-svh bg-background text-foreground">
   {@render children()}
 </div>

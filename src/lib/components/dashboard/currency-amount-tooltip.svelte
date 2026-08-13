@@ -29,7 +29,7 @@
     <Tooltip.Root>
       <Tooltip.Trigger
         type="button"
-        class="hover:text-foreground/90 cursor-default text-left outline-none"
+        class="cursor-default text-left outline-none hover:text-foreground/90"
         aria-label={label}
         data-testid="currency-amount-trigger"
       >
@@ -38,11 +38,11 @@
       <Tooltip.Content
         side="top"
         sideOffset={6}
-        class="flex min-w-44 max-w-64 flex-col items-stretch gap-1.5 text-left leading-snug"
+        class="flex max-w-64 min-w-44 flex-col items-stretch gap-1.5 text-left leading-snug"
         data-testid="currency-amount-tooltip"
       >
         <p
-          class="text-background/65 text-[0.625rem] font-semibold tracking-widest uppercase"
+          class="text-[0.625rem] font-semibold tracking-widest text-background/65 uppercase"
         >
           By currency
         </p>
@@ -55,7 +55,7 @@
                 >{formatCurrency(entry.amount, entry.currencyCode)}</span
               >
               {#if entry.currencyCode !== baseCurrencyCode}
-                <span class="text-background/65 shrink-0 tabular-nums">
+                <span class="shrink-0 text-background/65 tabular-nums">
                   ≈ {formatCurrency(entry.convertedAmount, baseCurrencyCode)}
                 </span>
               {/if}
@@ -63,7 +63,7 @@
           {/each}
         </ul>
         <p
-          class="text-background/65 border-background/20 flex w-full items-baseline justify-between gap-3 border-t pt-1.5 text-[0.6875rem] tabular-nums"
+          class="flex w-full items-baseline justify-between gap-3 border-t border-background/20 pt-1.5 text-[0.6875rem] text-background/65 tabular-nums"
         >
           <span>Total</span>
           <span>{formatCurrency(amount, baseCurrencyCode)}</span>

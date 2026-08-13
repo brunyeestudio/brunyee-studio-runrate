@@ -15,14 +15,14 @@
 
 <div class="space-y-3" data-testid="project-wip-table">
   <div class="flex items-center justify-between gap-2">
-    <p class="text-muted-foreground text-xs tracking-widest uppercase">
+    <p class="text-xs tracking-widest text-muted-foreground uppercase">
       Source
     </p>
     <SourceBadge source="Projects (hourly)" />
   </div>
 
   {#if projects.length === 0}
-    <p class="text-muted-foreground text-sm">{emptyMessage}</p>
+    <p class="text-sm text-muted-foreground">{emptyMessage}</p>
   {:else}
     <Table.Root>
       <Table.Header>

@@ -64,7 +64,7 @@
           {@const weekdaysLeft = model.weekProgress.weekdaysRemaining}
           {@const weekendsLeft = model.weekendStats.weekendsRemaining}
           <p
-            class="text-muted-foreground mt-1 text-xs"
+            class="mt-1 text-xs text-muted-foreground"
             data-testid="month-remaining-days"
           >
             {weekdaysLeft}

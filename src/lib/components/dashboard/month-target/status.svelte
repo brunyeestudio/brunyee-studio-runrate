@@ -20,19 +20,19 @@
   <div class="space-y-2">
     <div class="flex items-baseline justify-between gap-2">
       <div>
-        <p class="text-muted-foreground text-xs">Earned this month</p>
-        <p class="text-foreground text-xl tabular-nums">
+        <p class="text-xs text-muted-foreground">Earned this month</p>
+        <p class="text-xl text-foreground tabular-nums">
           {formatCurrency(earnedThisMonth, currencyCode)}
         </p>
       </div>
-      <p class="text-foreground text-lg tabular-nums">{model.progress}%</p>
+      <p class="text-lg text-foreground tabular-nums">{model.progress}%</p>
     </div>
     <Progress value={model.progress} max={100} />
-    <p class="text-muted-foreground text-xs">
+    <p class="text-xs text-muted-foreground">
       Paid this month: {formatCurrency(paidThisMonth, currencyCode)}
     </p>
     {#if model.isOnTarget}
-      <p class="text-foreground text-xs font-medium" data-testid="on-target">
+      <p class="text-xs font-medium text-foreground" data-testid="on-target">
         On target
       </p>
     {/if}
@@ -42,14 +42,14 @@
     <p class="text-sm font-medium">On current pace</p>
     <div class="grid gap-2 sm:grid-cols-2">
       <div
-        class="border-border/80 space-y-1 border p-3"
+        class="space-y-1 border border-border/80 p-3"
         data-testid="month-forecast-weekdays"
       >
-        <p class="text-muted-foreground text-xs">Weekdays</p>
-        <p class="text-foreground text-lg tabular-nums">
+        <p class="text-xs text-muted-foreground">Weekdays</p>
+        <p class="text-lg text-foreground tabular-nums">
           {formatCurrency(model.endOfMonthForecastWeekdays, currencyCode)}
         </p>
-        <p class="text-muted-foreground text-xs">
+        <p class="text-xs text-muted-foreground">
           {model.forecastProgressWeekdays}% of target
           {#if model.weekProgress}
             <span class="text-muted-foreground/80">
@@ -60,11 +60,11 @@
         </p>
       </div>
       <div
-        class="border-border/60 text-muted-foreground space-y-1 border p-3"
+        class="space-y-1 border border-border/60 p-3 text-muted-foreground"
         data-testid="month-forecast-all-days"
       >
         <p class="text-xs">All days</p>
-        <p class="text-foreground text-lg tabular-nums">
+        <p class="text-lg text-foreground tabular-nums">
           {formatCurrency(model.endOfMonthForecastAllDays, currencyCode)}
         </p>
         <p class="text-xs">

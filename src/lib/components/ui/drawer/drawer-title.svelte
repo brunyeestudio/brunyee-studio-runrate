@@ -13,7 +13,7 @@
   bind:ref
   data-slot="drawer-title"
   class={cn(
-    'font-heading text-foreground text-lg font-semibold tracking-wider uppercase',
+    'font-heading text-lg font-semibold tracking-wider text-foreground uppercase',
     className,
   )}
   {...restProps}

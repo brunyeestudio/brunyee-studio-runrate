@@ -31,10 +31,10 @@
   data-testid="pace-to-target"
 >
   <div class="space-y-3">
-    <div class="flex flex-wrap items-center gap-x-4 gap-y-2 justify-between">
+    <div class="flex flex-wrap items-center justify-between gap-x-4 gap-y-2">
       <p class="text-sm font-medium">To hit target</p>
       <label
-        class="text-muted-foreground flex items-center gap-2 text-xs"
+        class="flex items-center gap-2 text-xs text-muted-foreground"
         for="include-weekends"
       >
         <span>Include weekends</span>
@@ -75,72 +75,72 @@
 
   <div class="grid gap-3 sm:grid-cols-2">
     <div data-testid="required-daily-earn">
-      <p class="text-muted-foreground text-xs">Per day</p>
+      <p class="text-xs text-muted-foreground">Per day</p>
       {#if model.showAssumedHoursMode}
         {#if !model.hasHourlyRate}
-          <p class="text-muted-foreground text-sm">Enter hourly rate</p>
+          <p class="text-sm text-muted-foreground">Enter hourly rate</p>
         {:else if model.dailyEarnNeeded !== null && model.daysLeftForDisplay !== null}
-          <p class="text-foreground text-xl tabular-nums">
+          <p class="text-xl text-foreground tabular-nums">
             {formatCurrency(model.dailyEarnNeeded, currencyCode)}/day
           </p>
-          <p class="text-muted-foreground text-xs">
+          <p class="text-xs text-muted-foreground">
             {formatWorkDays(model.daysLeftForDisplay)} to hit target
           </p>
         {:else}
-          <p class="text-muted-foreground text-sm">
+          <p class="text-sm text-muted-foreground">
             Cannot compute daily earn.
           </p>
         {/if}
       {:else if model.dailyEarnNeeded !== null && model.daysLeftForDisplay !== null}
-        <p class="text-foreground text-xl tabular-nums">
+        <p class="text-xl text-foreground tabular-nums">
           {formatCurrency(model.dailyEarnNeeded, currencyCode)}/day
         </p>
-        <p class="text-muted-foreground text-xs">
+        <p class="text-xs text-muted-foreground">
           {model.daysLeftForDisplay}
           {model.remainingDayLabel} left
         </p>
       {:else}
-        <p class="text-muted-foreground text-sm">
+        <p class="text-sm text-muted-foreground">
           No remaining {model.remainingDayLabel} left this month.
         </p>
       {/if}
     </div>
 
     <div data-testid="even-spread-hours">
-      <p class="text-muted-foreground text-xs">
+      <p class="text-xs text-muted-foreground">
         {model.showAssumedHoursMode ? 'Assumed hours' : 'Even spread'}
       </p>
       {#if !model.hasHourlyRate}
-        <p class="text-muted-foreground text-sm">Enter hourly rate</p>
+        <p class="text-sm text-muted-foreground">Enter hourly rate</p>
       {:else if model.showAssumedHoursMode}
         {#if model.assumedWorkDays !== null}
           <p
-            class="text-foreground text-xl tabular-nums"
+            class="text-xl text-foreground tabular-nums"
             data-testid="assumed-work-days"
           >
             {formatWorkDays(model.assumedWorkDays)}
           </p>
-          <p class="text-muted-foreground text-xs">
+          <p class="text-xs text-muted-foreground">
             at {model.resolvedAssumedHours}h/day
           </p>
         {:else}
-          <p class="text-muted-foreground text-sm">Cannot compute work days.</p>
+          <p class="text-sm text-muted-foreground">Cannot compute work days.</p>
         {/if}
       {:else if model.evenSpreadHours !== null}
-        <p class="text-foreground text-xl tabular-nums">
+        <p class="text-xl text-foreground tabular-nums">
           {formatHoursPerDay(model.evenSpreadHours)}
         </p>
-        <p class="text-muted-foreground text-xs">
+        <p class="text-xs text-muted-foreground">
           across remaining {model.remainingDayLabel}
         </p>
       {:else}
-        <p class="text-muted-foreground text-sm">
+        <p class="text-sm text-muted-foreground">
           Cannot compute hours — no remaining days.
         </p>
       {/if}
       {#if model.weekendStats}
         <p
-          class="text-muted-foreground/80 mt-1 text-xs"
+          class="mt-1 text-xs text-muted-foreground/80"
           data-testid="weekend-planning-counts"
         >
           {model.weekendStats.weekendsRemaining} weekends left ({model
@@ -151,13 +151,13 @@
   </div>
 
   <div class="space-y-1.5" data-testid="capacity-overflow">
-    <p class="text-muted-foreground text-xs">Capacity</p>
+    <p class="text-xs text-muted-foreground">Capacity</p>
     {#if !model.hasHourlyRate}
-      <p class="text-muted-foreground text-xs">
+      <p class="text-xs text-muted-foreground">
         Enter hourly rate to check weekend capacity.
       </p>
     {:else if model.overflow}
-      <p class="text-muted-foreground text-xs">
+      <p class="text-xs text-muted-foreground">
         Weekday capacity: {formatCurrency(
           model.overflow.weekdayCapacity,
           currencyCode,
@@ -170,7 +170,7 @@
       {:else if model.overflow.exceedsRemainingWeekends}
         <p data-testid="overflow-result">
           <Badge variant="destructive">Exceeds remaining weekends</Badge>
-          <Badge variant="default" class="block mt-0.5">
+          <Badge variant="default" class="mt-0.5 block">
             Need {model.overflow.weekendDaysNeeded} of {model.weekendStats
               ?.weekendDaysRemaining ?? 0} weekend days
           </Badge>

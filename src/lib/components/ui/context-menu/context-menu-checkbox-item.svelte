@@ -25,13 +25,13 @@
   data-slot="context-menu-checkbox-item"
   data-inset={inset}
   class={cn(
-    "focus:bg-accent focus:text-accent-foreground gap-2.5 rounded-none py-2 pr-8 pl-3 text-xs font-medium tracking-wider uppercase data-inset:pl-9.5 [&_svg:not([class*='size-'])]:size-3.5 relative flex cursor-default items-center outline-hidden select-none data-disabled:pointer-events-none data-disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0",
+    "relative flex cursor-default items-center gap-2.5 rounded-none py-2 pr-8 pl-3 text-xs font-medium tracking-wider uppercase outline-hidden select-none focus:bg-accent focus:text-accent-foreground data-inset:pl-9.5 data-disabled:pointer-events-none data-disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-3.5",
     className,
   )}
   {...restProps}
 >
   {#snippet children({ checked })}
-    <span class="absolute right-2 pointer-events-none">
+    <span class="pointer-events-none absolute right-2">
       {#if checked}
         <CheckIcon />
       {/if}

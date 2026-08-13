@@ -43,7 +43,7 @@
 </script>
 
 <div
-  class="bg-muted/30 space-y-3 rounded-none border p-3"
+  class="space-y-3 rounded-none border bg-muted/30 p-3"
   data-testid="hourly-rate-section"
 >
   <div class="flex items-center gap-1.5">

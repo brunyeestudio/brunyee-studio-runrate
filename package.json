@@ -4,7 +4,7 @@
   "version": "0.0.1",
   "type": "module",
   "engines": {
-    "node": "24.x.x"
+    "node": "24.x"
   },
   "scripts": {
     "dev": "vite dev",
@@ -51,7 +51,7 @@
     "@tailwindcss/vite": "^4.3.0",
     "@tanstack/table-core": "^8.21.3",
     "@types/mocha": "^10.0.10",
-    "@types/node": "^22.20.1",
+    "@types/node": "^24",
     "@vitest/browser-playwright": "^4.1.8",
     "@vitest/coverage-v8": "^4.1.8",
     "@wdio/appium-service": "^9.29.1",

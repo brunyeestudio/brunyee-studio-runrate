@@ -149,3 +149,39 @@ export interface MonthContext {
   firstOfNextMonth: string;
   monthLabel: string;
 }
+
+export interface TimeEntry {
+  timeEntryId: string;
+  customerName: string;
+  projectName: string;
+  logDate: string;
+  hours: number;
+}
+
+export interface AnalyticsPeriodBounds {
+  from: string;
+  to: string;
+}
+
+export interface AnalyticsClientFacts {
+  customerName: string;
+  hoursSpent: number;
+  revenue: number;
+  timeEntryCount: number;
+  invoiceCount: number;
+  revenueByCurrency: CurrencyAmount[];
+}
+
+export interface AnalyticsPeriodFacts {
+  bounds: AnalyticsPeriodBounds;
+  studio: AnalyticsClientFacts;
+  clients: AnalyticsClientFacts[];
+}
+
+export interface AnalyticsSnapshot {
+  asOf: string;
+  currencyCode: string;
+  exchangeRates: Record<string, number>;
+  current: AnalyticsPeriodFacts;
+  previous: AnalyticsPeriodFacts;
+}

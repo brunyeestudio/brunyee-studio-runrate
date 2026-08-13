@@ -3,6 +3,10 @@ export {
   ANALYTICS_RANGE_DAYS,
   DEFAULT_ANALYTICS_RANGE_PRESET,
   ON_RATE_HOURS_BAND,
+  STUDIO_CUSTOMER,
+  UNASSIGNED_CUSTOMER,
+  buildAnalyticsView,
+  customerKey,
   deriveMetrics,
   hasHourlyRate,
   isAnalyticsRangePreset,
@@ -10,11 +14,14 @@ export {
   percentChange,
   previousPeriod,
   resolveAnalyticsRange,
+  rollupPeriod,
 } from './analytics';
 export type {
+  AnalyticsClientRow,
   AnalyticsDerivedMetrics,
   AnalyticsRangePreset,
   AnalyticsStatus,
+  AnalyticsViewModel,
 } from './analytics';
 export {
   classifyCashCollected,
@@ -82,6 +89,10 @@ export {
 } from './session-config';
 export type { PaceHoursMode, TempSessionConfig } from './session-config';
 export type {
+  AnalyticsClientFacts,
+  AnalyticsPeriodBounds,
+  AnalyticsPeriodFacts,
+  AnalyticsSnapshot,
   CurrencyAmount,
   DashboardSnapshot,
   FxContext,
@@ -94,5 +105,6 @@ export type {
   ProjectBucket,
   ProjectWip,
   RevenueSource,
+  TimeEntry,
 } from './types';
 export { HOURLY_BILLING_TYPES } from './types';

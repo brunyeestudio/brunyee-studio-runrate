@@ -77,6 +77,12 @@
     return formatted;
   }
 
+  function formatChangePercent(change: number): string {
+    const pct = Math.round(change * 100);
+    const sign = pct > 0 ? '+' : '';
+    return `${sign}${pct}%`;
+  }
+
   function statusLabel(status: AnalyticsStatus): string {
     switch (status) {
       case 'overshoot':
@@ -181,7 +187,13 @@
           </Card.Title>
         </Card.Header>
         <Card.Content class="text-muted-foreground text-xs tabular-nums">
-          {formatSignedHours(view.studio.hoursDelta)} vs previous
+          {formatSignedHours(view.studio.hoursDelta)}
+          {#if view.studio.hoursChangePercent !== null}
+            <span data-testid="analytics-kpi-hours-pct">
+              ({formatChangePercent(view.studio.hoursChangePercent)})
+            </span>
+          {/if}
+          vs previous
         </Card.Content>
       </Card.Root>
 
@@ -200,7 +212,13 @@
           </Card.Title>
         </Card.Header>
         <Card.Content class="text-muted-foreground text-xs tabular-nums">
-          {formatSignedMoney(view.studio.revenueDelta)} vs previous
+          {formatSignedMoney(view.studio.revenueDelta)}
+          {#if view.studio.revenueChangePercent !== null}
+            <span data-testid="analytics-kpi-revenue-pct">
+              ({formatChangePercent(view.studio.revenueChangePercent)})
+            </span>
+          {/if}
+          vs previous
         </Card.Content>
       </Card.Root>
 
@@ -229,6 +247,10 @@
                 {formatSignedHours(view.studio.hoursVariance ?? 0)}
               </Card.Title>
             </div>
+          {:else if view.hasHourlyRate}
+            <Card.Title class="text-muted-foreground text-base font-medium">
+              —
+            </Card.Title>
           {:else}
             <Card.Title class="text-muted-foreground text-base font-medium">
               Enter hourly rate

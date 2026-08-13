@@ -155,7 +155,7 @@ describe('zoho oauth helpers', () => {
     expect(url.searchParams.get('access_type')).toBe('offline');
     expect(url.searchParams.get('prompt')).toBe('consent');
     expect(ZOHO_OAUTH_SCOPES).toBe(
-      'ZohoBooks.invoices.READ,ZohoBooks.projects.READ,ZohoBooks.timesheet.READ',
+      'ZohoBooks.invoices.READ,ZohoBooks.projects.READ',
     );
     expect(url.searchParams.get('scope')).toBe(ZOHO_OAUTH_SCOPES);
     expect(url.searchParams.get('state')).toBe('state-123');
@@ -285,5 +285,22 @@ describe('zoho mappers', () => {
       hours: 1.5,
     });
     expect(mapZohoTimeEntry({ customer_name: 'X' })).toBeNull();
+  });
+
+  it('maps docs-shaped list payloads that use log_time', () => {
+    expect(
+      mapZohoTimeEntry({
+        time_entry_id: '460000000026135',
+        log_date: '2014-03-10',
+        log_time: '05:00',
+        customer_name: 'Bowman and Co',
+      }),
+    ).toEqual({
+      timeEntryId: '460000000026135',
+      customerName: 'Bowman and Co',
+      projectName: '',
+      logDate: '2014-03-10',
+      hours: 5,
+    });
   });
 });

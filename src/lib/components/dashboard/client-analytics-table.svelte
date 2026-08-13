@@ -45,6 +45,12 @@
     return formatted;
   }
 
+  function formatChangePercent(change: number): string {
+    const pct = Math.round(change * 100);
+    const sign = pct > 0 ? '+' : '';
+    return `${sign}${pct}%`;
+  }
+
   function statusLabel(status: AnalyticsStatus): string {
     switch (status) {
       case 'overshoot':
@@ -78,12 +84,18 @@
     <div>{formatHoursValue(row.hoursSpent)}</div>
     <div class="text-muted-foreground text-xs">
       {formatSignedHours(row.hoursDelta)}
+      {#if row.hoursChangePercent !== null}
+        ({formatChangePercent(row.hoursChangePercent)})
+      {/if}
     </div>
   </Table.Cell>
   <Table.Cell class="tabular-nums">
     <div>{formatCurrency(row.revenue, currencyCode)}</div>
     <div class="text-muted-foreground text-xs">
       {formatSignedMoney(row.revenueDelta)}
+      {#if row.revenueChangePercent !== null}
+        ({formatChangePercent(row.revenueChangePercent)})
+      {/if}
     </div>
   </Table.Cell>
   <Table.Cell class="tabular-nums">

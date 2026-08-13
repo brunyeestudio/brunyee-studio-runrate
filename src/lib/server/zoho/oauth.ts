@@ -1,7 +1,8 @@
 import { exchangeAuthorizationCode, type StoredZohoTokens } from './auth';
 import type { ZohoEnv } from './env';
 
-export const ZOHO_OAUTH_SCOPES = 'ZohoBooks.invoices.READ,ZohoBooks.projects.READ';
+export const ZOHO_OAUTH_SCOPES =
+  'ZohoBooks.invoices.READ,ZohoBooks.projects.READ';
 
 export function createOAuthState(): string {
   const bytes = crypto.getRandomValues(new Uint8Array(24));

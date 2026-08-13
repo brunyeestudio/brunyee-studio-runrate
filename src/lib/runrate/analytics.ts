@@ -139,17 +139,17 @@ export function deriveMetrics(
   const hoursVariance = hoursSpent - soldHours;
   const moneyVariance = revenue - hoursSpent * hourlyRate;
 
-  if (hoursSpent === 0 && revenue > 0) {
+  if (hoursSpent === 0) {
     return {
       soldHours,
       hoursVariance,
       moneyVariance,
       effectiveRate: null,
-      status: 'no-time',
+      status: revenue > 0 ? 'no-time' : null,
     };
   }
 
-  if (hoursSpent > 0 && revenue === 0) {
+  if (revenue === 0) {
     return {
       soldHours,
       hoursVariance,

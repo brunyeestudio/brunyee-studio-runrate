@@ -95,6 +95,8 @@
     try {
       const response = await fetch(`/api/analytics?from=${from}&to=${to}`);
       const data = await response.json();
+      // Ignore stale responses if the user changed the preset mid-flight.
+      if (preset !== analyticsRangePreset) return;
       if (!response.ok) {
         analyticsError =
           typeof data.error === 'string'
@@ -114,11 +116,14 @@
       }
       analyticsSnapshot = data as AnalyticsSnapshot;
     } catch (err) {
+      if (preset !== analyticsRangePreset) return;
       analyticsError =
         err instanceof Error ? err.message : 'Failed to load analytics';
       analyticsSnapshot = null;
     } finally {
-      analyticsLoading = false;
+      if (preset === analyticsRangePreset) {
+        analyticsLoading = false;
+      }
     }
   }
 

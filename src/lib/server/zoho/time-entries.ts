@@ -10,6 +10,7 @@ export interface ZohoTimeEntryRaw {
   project_name?: string;
   log_date?: string;
   date?: string;
+  log_time?: number | string;
   hours?: number | string;
   billed_hours?: number | string;
   time?: number | string;
@@ -38,7 +39,7 @@ export function mapZohoTimeEntry(raw: ZohoTimeEntryRaw): TimeEntry | null {
     customerName: String(raw.customer_name ?? ''),
     projectName: String(raw.project_name ?? ''),
     logDate,
-    hours: parseHours(raw.hours ?? raw.billed_hours ?? raw.time),
+    hours: parseHours(raw.log_time ?? raw.hours ?? raw.billed_hours ?? raw.time),
   };
 }
 

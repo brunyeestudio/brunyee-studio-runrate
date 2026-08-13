@@ -98,6 +98,13 @@ describe('deriveMetrics', () => {
     expect(deriveMetrics(6, 0, 100).status).toBe('no-invoices');
     expect(deriveMetrics(6, 0, 100).effectiveRate).toBe(0);
   });
+
+  it('keeps effectiveRate and status null when hours and revenue are both zero', () => {
+    const result = deriveMetrics(0, 0, 100);
+    expect(result.effectiveRate).toBeNull();
+    expect(result.status).toBeNull();
+    expect(Number.isNaN(result.effectiveRate)).toBe(false);
+  });
 });
 
 describe('percentChange', () => {

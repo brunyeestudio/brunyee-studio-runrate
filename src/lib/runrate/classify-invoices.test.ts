@@ -1,12 +1,11 @@
 import { describe, expect, it } from 'vitest';
 import {
-  classifyCashCollected,
   classifyDraftDatedNextFirst,
   classifyDrafts,
   classifyDueNextMonth,
   classifyDueThisMonth,
   classifyIssuedOnMonthStart,
-  classifyIssuedOnPreviousMonthStart,
+  classifyEarnedLastMonth,
   classifyIssuedThisMonth,
   classifyOutstanding,
   classifyScheduledNextMonth,
@@ -219,78 +218,95 @@ describe('classify-invoices', () => {
     expect(result.source).toBe('Issued');
   });
 
-  it('classifies issued on the 1st of previous month by total (earned last month)', () => {
+  it('classifies invoices dated the 1st of this month as earned last month, drafts included', () => {
     const invoices = [
       invoice({
         invoiceId: '1',
         status: 'sent',
-        date: '2026-06-01',
-        dueDate: '2026-07-01',
+        date: '2026-07-01',
         total: 1500,
         balance: 1500,
       }),
       invoice({
         invoiceId: '2',
         status: 'paid',
-        date: '2026-06-01',
-        dueDate: '2026-07-01',
+        date: '2026-07-01',
         total: 800,
         balance: 0,
-        lastPaymentDate: '2026-07-05',
       }),
-      invoice({
-        invoiceId: '3',
-        status: 'sent',
-        date: '2026-06-15',
-        total: 400,
-        balance: 400,
-      }),
-      invoice({
-        invoiceId: '4',
-        status: 'draft',
-        date: '2026-06-01',
-        total: 100,
-      }),
-      invoice({
-        invoiceId: '5',
-        status: 'sent',
-        date: '2026-07-01',
-        total: 2000,
-        balance: 2000,
-      }),
+      invoice({ invoiceId: '3', status: 'draft', date: '2026-07-01', total: 100 }),
+      invoice({ invoiceId: '4', status: 'void', date: '2026-07-01', total: 50 }),
+      invoice({ invoiceId: '5', status: 'sent', date: '2026-06-01', total: 2000 }),
+      invoice({ invoiceId: '6', status: 'sent', date: '2026-07-08', total: 400 }),
     ];
-    const result = classifyIssuedOnPreviousMonthStart(invoices, ctx, fx);
-    expect(result.invoices.map((i) => i.invoiceId)).toEqual(['1', '2']);
-    expect(result.total).toBe(2300);
+    const result = classifyEarnedLastMonth(invoices, ctx, fx);
+    expect(result.invoices.map((i) => i.invoiceId)).toEqual(['1', '2', '3']);
+    expect(result.net).toBe(2400);
     expect(result.source).toBe('Issued');
   });
 
-  it('classifies cash collected and issued this month', () => {
+  it('reports earned amounts excluding tax', () => {
+    const invoices = [
+      invoice({ invoiceId: '1', status: 'sent', date: '2026-07-01', total: 1200, taxTotal: 200 }),
+      invoice({ invoiceId: '2', status: 'sent', date: '2026-07-01', total: 500 }),
+    ];
+    const result = classifyEarnedLastMonth(invoices, ctx, fx);
+    expect(result.net).toBe(1500);
+    expect(result.total).toBe(1700);
+  });
+
+  it('splits earned net into paid and outstanding in proportion to each balance', () => {
     const invoices = [
       invoice({
         invoiceId: '1',
-        status: 'paid',
-        date: '2026-06-01',
-        lastPaymentDate: '2026-07-05',
-        total: 800,
-        balance: 0,
+        status: 'partially_paid',
+        date: '2026-07-01',
+        total: 1200,
+        taxTotal: 200,
+        balance: 600,
+      }),
+    ];
+    const result = classifyEarnedLastMonth(invoices, ctx, fx);
+    expect(result.netOutstanding).toBe(500);
+  });
+
+  it('converts invoices at their booked exchange rate before falling back to current rates', () => {
+    const mixedFx: FxContext = { baseCurrencyCode: 'GBP', rates: { GBP: 1, USD: 0.5 } };
+    const invoices = [
+      invoice({
+        invoiceId: '1',
+        status: 'sent',
+        date: '2026-07-01',
+        total: 100,
+        currencyCode: 'USD',
+        exchangeRate: 0.8,
       }),
       invoice({
         invoiceId: '2',
         status: 'sent',
-        date: '2026-07-08',
-        total: 450,
-        balance: 450,
-      }),
-      invoice({
-        invoiceId: '3',
-        status: 'draft',
-        date: '2026-07-09',
-        total: 50,
+        date: '2026-07-01',
+        total: 100,
+        currencyCode: 'USD',
       }),
     ];
-    expect(classifyCashCollected(invoices, ctx, fx).total).toBe(800);
-    expect(classifyIssuedThisMonth(invoices, ctx, fx).total).toBe(450);
+    expect(classifyEarnedLastMonth(invoices, ctx, mixedFx).net).toBe(130);
+  });
+
+  it('includes overdue invoices from earlier months in due this month', () => {
+    const invoices = [
+      invoice({ invoiceId: '1', status: 'overdue', dueDate: '2026-05-31', balance: 300 }),
+      invoice({ invoiceId: '2', status: 'unpaid', dueDate: '2026-07-31', balance: 400 }),
+      invoice({ invoiceId: '3', status: 'unpaid', dueDate: '2026-08-01', balance: 600 }),
+    ];
+    expect(classifyDueThisMonth(invoices, ctx, fx).balance).toBe(700);
+  });
+
+  it('classifies issued this month by net amount', () => {
+    const invoices = [
+      invoice({ invoiceId: '2', status: 'sent', date: '2026-07-08', total: 540, taxTotal: 90 }),
+      invoice({ invoiceId: '3', status: 'draft', date: '2026-07-09', total: 50 }),
+    ];
+    expect(classifyIssuedThisMonth(invoices, ctx, fx).net).toBe(450);
     expect(classifyDrafts(invoices, fx).invoices).toHaveLength(1);
   });
 

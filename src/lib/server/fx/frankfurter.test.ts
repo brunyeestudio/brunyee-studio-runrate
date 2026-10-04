@@ -1,8 +1,10 @@
 import { describe, expect, it } from 'vitest';
+import type { Invoice } from '$lib/runrate/types';
 import {
   DEFAULT_BASE_CURRENCY,
   FrankfurterError,
   collectCurrencyCodes,
+  currenciesNeedingCurrentRate,
   fetchFrankfurterFx,
   mapFrankfurterRates,
 } from './frankfurter';
@@ -23,6 +25,31 @@ describe('frankfurter fx', () => {
     expect(() => mapFrankfurterRates('GBP', ['EUR', 'AED'], { EUR: 1.17 })).toThrow(
       FrankfurterError,
     );
+  });
+
+  it('falls back to booked rates when Frankfurter lacks a currency', () => {
+    const fx = mapFrankfurterRates('GBP', ['EUR', 'AED'], { EUR: 1.17 }, { AED: 0.21 });
+    expect(fx.rates.AED).toBe(0.21);
+    expect(fx.rates.EUR).toBeCloseTo(1 / 1.17);
+  });
+
+  it('uses booked rates when Frankfurter is unreachable', async () => {
+    const fetchImpl: typeof fetch = async () => {
+      throw new Error('offline');
+    };
+    const fx = await fetchFrankfurterFx('GBP', ['USD'], fetchImpl, { USD: 0.8 });
+    expect(fx.rates.USD).toBe(0.8);
+  });
+
+  it('only asks for current rates where no booked rate exists', () => {
+    const invoice = (currencyCode: string, exchangeRate: number | null) =>
+      ({ currencyCode, exchangeRate }) as Invoice;
+    expect(
+      currenciesNeedingCurrentRate(
+        [invoice('USD', 0.8), invoice('EUR', null)],
+        [{ currencyCode: 'AUD' }],
+      ),
+    ).toEqual(['EUR', 'AUD']);
   });
 
   it('collects distinct currency codes', () => {

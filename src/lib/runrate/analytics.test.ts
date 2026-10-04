@@ -227,6 +227,33 @@ describe('rollupPeriod', () => {
       revenue: 1000,
     });
   });
+
+  it('measures revenue excluding tax at the booked exchange rate', () => {
+    const taxed: Invoice[] = [
+      {
+        ...invoice({
+          invoiceId: 'vat',
+          customerName: 'Quantum',
+          date: '2026-07-20',
+          total: 1200,
+          status: 'sent',
+        }),
+        taxTotal: 200,
+      },
+      {
+        ...invoice({
+          invoiceId: 'usd',
+          customerName: 'Quantum',
+          date: '2026-07-21',
+          total: 100,
+          status: 'sent',
+        }),
+        currencyCode: 'USD',
+        exchangeRate: 0.8,
+      },
+    ];
+    expect(rollupPeriod([], taxed, fx, current).studio.revenue).toBe(1080);
+  });
 });
 
 describe('buildAnalyticsView', () => {

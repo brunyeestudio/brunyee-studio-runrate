@@ -122,8 +122,9 @@
           bind:assumedWeekdayHours
           bind:paceHoursMode
           earnedThisMonth={snapshot.kpis.earnedPipeline.amount}
+          earnedCarriedOver={snapshot.kpis.earnedPipelineCarriedOver}
           paidThisMonth={snapshot.kpis.cashCollected.amount}
-          asOf={snapshot.asOf}
+          asOf={snapshot.today}
           currencyCode={snapshot.currencyCode}
           monthLabel={snapshot.monthLabel}
         />
@@ -136,8 +137,7 @@
             count={snapshot.kpis.cashCollected.count}
             byCurrency={snapshot.kpis.cashCollected.byCurrency}
             currencyCode={snapshot.currencyCode}
-            invoices={snapshot.buckets.cashCollected.invoices}
-            amountField="total"
+            payments={snapshot.buckets.cashCollected.payments}
             info={kpiInfo.paidThisMonth}
           />
           <KpiCard
@@ -147,14 +147,9 @@
             count={snapshot.kpis.earnedLastMonth.count}
             byCurrency={snapshot.kpis.earnedLastMonth.byCurrency}
             currencyCode={snapshot.currencyCode}
-            invoices={snapshot.buckets.issuedOnPreviousMonthStart.invoices}
-            amountField="total"
-            paymentSplit={{
-              paid:
-                snapshot.buckets.issuedOnPreviousMonthStart.total -
-                snapshot.buckets.issuedOnPreviousMonthStart.balance,
-              outstanding: snapshot.buckets.issuedOnPreviousMonthStart.balance,
-            }}
+            invoices={snapshot.buckets.earnedLastMonth.invoices}
+            amountField="net"
+            paymentSplit={snapshot.kpis.earnedLastMonthSplit}
             info={kpiInfo.earnedLastMonth}
           />
           <KpiCard

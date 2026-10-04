@@ -74,18 +74,21 @@ There is **no app-user authentication**, **no database**, and **no durable app s
 
 Pure TypeScript, no Svelte — unit-tested with Vitest:
 
-| Concern                     | Notes                                                                                                   |
-| --------------------------- | ------------------------------------------------------------------------------------------------------- |
-| Outstanding invoices        | Unpaid-like status with `balance > 0` and `due_date` today or earlier (excludes not-yet-due)            |
-| Drafts                      | `Status.Draft`                                                                                          |
-| Scheduled next month        | Non-empty `schedule_time` in next calendar month                                                        |
-| Draft dated 1st next month  | Draft with `date ===` first day of next month → **earned pipeline**, source `Draft invoices`            |
-| Due this / next month       | Receivable invoices (`balance > 0`, unpaid-like) bucketed by `due_date` month — includes not-yet-due    |
-| Cash collected              | Payments with `last_payment_date` in current month                                                      |
-| Issued this month           | Non-draft invoices with `date` in current month                                                         |
-| Issued on 1st of this month | Non-draft invoices with `date ===` first day of current month → NET 30 cash forecast, source `Issued`   |
-| Issued on 1st last month    | Non-draft invoices with `date ===` first day of previous month → **earned last month**, source `Issued` |
-| Hourly project WIP          | Active projects with hourly `billing_type`; use detail `un_billed_amount` → source `Projects (hourly)`  |
+| Concern                     | Notes                                                                                                                                                                                                                                       |
+| --------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Outstanding invoices        | Unpaid-like status with `balance > 0` and `due_date` today or earlier (excludes not-yet-due)                                                                                                                                                |
+| Drafts                      | `Status.Draft`                                                                                                                                                                                                                              |
+| Scheduled next month        | Non-empty `schedule_time` in next calendar month                                                                                                                                                                                            |
+| Draft dated 1st next month  | Draft with `date ===` first day of next month → **earned pipeline** (net of tax), source `Draft invoices`                                                                                                                                   |
+| Due this / next month       | Receivable invoices (`balance > 0`, unpaid-like): this month = `due_date` ≤ month end (includes earlier overdue); next month = `due_date` in next month                                                                                     |
+| Cash collected              | Customer payments (`/customerpayments`) dated this month, summed via `bcy_amount` — not invoice status                                                                                                                                      |
+| Issued this month           | Non-draft invoices with `date` in current month                                                                                                                                                                                             |
+| Issued on 1st of this month | Non-draft invoices with `date ===` first day of current month → NET 30 cash forecast, source `Issued`                                                                                                                                       |
+| Earned last month           | Non-void invoices (drafts included) with `date ===` first day of **current** month → **earned last month** (net of tax), source `Issued`                                                                                                    |
+| Hourly project WIP          | Active projects with hourly `billing_type`; use detail `un_billed_amount` → source `Projects (hourly)`. Split into this month vs carried over pro rata to unbilled billable time-entry hours; forecasts extrapolate only this month's share |
+| Earned vs received amounts  | Earned figures use `total - tax_total`; cash, outstanding and due figures stay gross (what will actually be received)                                                                                                                       |
+| Currency conversion         | Invoices convert at their booked `exchange_rate`; Frankfurter (ECB) current rates only for project WIP / invoices without one, falling back to the latest booked rate                                                                       |
+| Month boundaries            | "Today" is the calendar date in `Europe/London` (`REPORTING_TIME_ZONE`), sent as `snapshot.today` — never derive dates from the UTC `asOf`                                                                                                  |
 
 **Brunyee billing pattern:** invoices may be created any day, often sent/scheduled on the 1st of the month, due ~30 days later. Payment timing follows `due_date`, not create date.
 

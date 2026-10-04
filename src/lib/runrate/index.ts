@@ -24,13 +24,12 @@ export type {
   AnalyticsViewModel,
 } from './analytics';
 export {
-  classifyCashCollected,
   classifyDraftDatedNextFirst,
   classifyDrafts,
   classifyDueNextMonth,
   classifyDueThisMonth,
   classifyIssuedOnMonthStart,
-  classifyIssuedOnPreviousMonthStart,
+  classifyEarnedLastMonth,
   classifyIssuedThisMonth,
   classifyOutstanding,
   classifyScheduledNextMonth,
@@ -38,8 +37,14 @@ export {
   isDueOrOverdue,
   isIssuedInvoice,
   isOutstandingInvoice,
+  netAmount,
 } from './classify-invoices';
-export { classifyHourlyWip, isHourlyBillingType } from './classify-projects';
+export { classifyCashCollected } from './classify-payments';
+export {
+  classifyHourlyWip,
+  isHourlyBillingType,
+  withCarriedOverAmounts,
+} from './classify-projects';
 export {
   countWeekdaysInMonth,
   countWeekendDaysInMonth,

@@ -24,6 +24,19 @@ describe('deriveMonthTargetModel', () => {
     expect(model.displayAssumedHours).toBe('8');
   });
 
+  it('adds carried-over earnings to the forecast without extrapolating them', () => {
+    // July 2026: day 14 of 31; 10 of 23 weekdays elapsed.
+    const model = deriveMonthTargetModel({
+      ...base,
+      asOf: '2026-07-14',
+      earnedThisMonth: 2400,
+      earnedCarriedOver: 1000,
+    });
+
+    expect(model.endOfMonthForecastAllDays).toBeCloseTo(1000 + (1400 / 14) * 31);
+    expect(model.endOfMonthForecastWeekdays).toBeCloseTo(1000 + (1400 / 10) * 23);
+  });
+
   it('switches to assumed-hours daily earn and work days', () => {
     const model = deriveMonthTargetModel({
       ...base,

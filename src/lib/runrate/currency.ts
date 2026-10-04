@@ -36,19 +36,26 @@ function sortByCurrency(entries: CurrencyAmount[], baseCurrencyCode: string): Cu
 /**
  * Sum amounts in native currencies and convert into base.
  * `rates` maps foreign currency → multiplier (`base = foreign * rate`).
+ * `getBookedRate` supplies a per-item rate (e.g. the invoice's own rate) that
+ * wins over `fx.rates` when it is a positive number.
  */
 export function sumMoney<T>(
   items: T[],
   getAmount: (item: T) => number,
   getCurrency: (item: T) => string,
   fx: FxContext,
+  getBookedRate: (item: T) => number | null | undefined = () => undefined,
 ): MoneyTotal {
   const byCode = new Map<string, { amount: number; convertedAmount: number; count: number }>();
 
   for (const item of items) {
     const currencyCode = getCurrency(item);
     const amount = getAmount(item);
-    const convertedAmount = toBaseAmount(amount, currencyCode, fx.baseCurrencyCode, fx.rates);
+    const bookedRate = getBookedRate(item);
+    const convertedAmount =
+      currencyCode !== fx.baseCurrencyCode && bookedRate && bookedRate > 0
+        ? amount * bookedRate
+        : toBaseAmount(amount, currencyCode, fx.baseCurrencyCode, fx.rates);
     const existing = byCode.get(currencyCode);
     if (existing) {
       existing.amount += amount;
@@ -73,6 +80,19 @@ export function sumMoney<T>(
     amount: byCurrency.reduce((sum, entry) => sum + entry.convertedAmount, 0),
     byCurrency,
   };
+}
+
+/** Most recent booked rate per currency — a fallback when no current rate is available. */
+export function latestBookedRates(
+  records: Array<{ currencyCode: string; date: string; exchangeRate?: number | null }>,
+): Record<string, number> {
+  const latest = new Map<string, { date: string; rate: number }>();
+  for (const { currencyCode, date, exchangeRate } of records) {
+    if (!exchangeRate || exchangeRate <= 0) continue;
+    const existing = latest.get(currencyCode);
+    if (!existing || date > existing.date) latest.set(currencyCode, { date, rate: exchangeRate });
+  }
+  return Object.fromEntries([...latest].map(([code, { rate }]) => [code, rate]));
 }
 
 export function emptyMoneyTotal(): MoneyTotal {

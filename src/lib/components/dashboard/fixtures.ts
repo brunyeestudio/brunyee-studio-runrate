@@ -1,4 +1,10 @@
-import type { CurrencyAmount, DashboardSnapshot, Invoice, ProjectWip } from '$lib/runrate/types';
+import type {
+  CurrencyAmount,
+  DashboardSnapshot,
+  Invoice,
+  Payment,
+  ProjectWip,
+} from '$lib/runrate/types';
 
 function gbp(amount: number, count = 1): CurrencyAmount[] {
   return [{ currencyCode: 'GBP', amount, convertedAmount: amount, count }];
@@ -49,7 +55,7 @@ export const sampleInvoices: Invoice[] = [
     invoiceNumber: 'INV-EUR-12',
     customerName: 'Euro Partners',
     status: 'unpaid',
-    date: '2026-06-01',
+    date: '2026-07-01',
     dueDate: '2026-07-10',
     total: 1000,
     balance: 1000,
@@ -69,12 +75,27 @@ export const sampleProjects: ProjectWip[] = [
     unBilledHours: '12:30',
     unBilledAmount: 1187.5,
     currencyCode: 'GBP',
+    carriedOverAmount: 237.5,
+  },
+];
+
+export const samplePayments: Payment[] = [
+  {
+    paymentId: 'pay-1',
+    paymentNumber: '42',
+    customerName: 'Fabrikam',
+    date: '2026-07-10',
+    invoiceNumbers: 'INV-0998',
+    currencyCode: 'GBP',
+    amount: 3100,
+    bcyAmount: 3100,
   },
 ];
 
 /** Snapshot with mixed GBP + EUR outstanding (EUR @ 0.85). */
 export const sampleSnapshot: DashboardSnapshot = {
   asOf: '2026-07-14T10:00:00.000Z',
+  today: '2026-07-14',
   monthLabel: 'July 2026',
   currencyCode: 'GBP',
   exchangeRates: { GBP: 1, EUR: 0.85 },
@@ -91,6 +112,7 @@ export const sampleSnapshot: DashboardSnapshot = {
       count: 1,
       byCurrency: [{ currencyCode: 'EUR', amount: 1000, convertedAmount: 850, count: 1 }],
     },
+    earnedLastMonthSplit: { paid: 0, outstanding: 850 },
     earnedPipeline: {
       amount: 6787.5,
       source: 'Draft invoices',
@@ -105,12 +127,21 @@ export const sampleSnapshot: DashboardSnapshot = {
         byCurrency: gbp(5600),
       },
       {
-        amount: 1187.5,
+        amount: 950,
         source: 'Projects (hourly)',
+        label: 'Unbilled time — this month',
         count: 1,
-        byCurrency: gbp(1187.5),
+        byCurrency: gbp(950),
+      },
+      {
+        amount: 237.5,
+        source: 'Projects (hourly)',
+        label: 'Unbilled time — earlier months',
+        count: 1,
+        byCurrency: gbp(237.5),
       },
     ],
+    earnedPipelineCarriedOver: 237.5,
     outstandingBalance: {
       amount: 850,
       source: 'Outstanding',
@@ -151,6 +182,9 @@ export const sampleSnapshot: DashboardSnapshot = {
       balance: 850,
       totalByCurrency: [{ currencyCode: 'EUR', amount: 1000, convertedAmount: 850, count: 1 }],
       balanceByCurrency: [{ currencyCode: 'EUR', amount: 1000, convertedAmount: 850, count: 1 }],
+      net: 850,
+      netByCurrency: [{ currencyCode: 'EUR', amount: 1000, convertedAmount: 850, count: 1 }],
+      netOutstanding: 850,
       source: 'Outstanding',
     },
     drafts: {
@@ -159,6 +193,9 @@ export const sampleSnapshot: DashboardSnapshot = {
       balance: 5600,
       totalByCurrency: gbp(5600),
       balanceByCurrency: gbp(5600),
+      net: 5600,
+      netByCurrency: gbp(5600),
+      netOutstanding: 5600,
       source: 'Draft invoices',
     },
     scheduledNextMonth: {
@@ -167,6 +204,9 @@ export const sampleSnapshot: DashboardSnapshot = {
       balance: 5600,
       totalByCurrency: gbp(5600),
       balanceByCurrency: gbp(5600),
+      net: 5600,
+      netByCurrency: gbp(5600),
+      netOutstanding: 5600,
       source: 'Scheduled',
     },
     draftDatedNextFirst: {
@@ -175,14 +215,20 @@ export const sampleSnapshot: DashboardSnapshot = {
       balance: 5600,
       totalByCurrency: gbp(5600),
       balanceByCurrency: gbp(5600),
+      net: 5600,
+      netByCurrency: gbp(5600),
+      netOutstanding: 5600,
       source: 'Draft invoices',
     },
-    issuedOnPreviousMonthStart: {
+    earnedLastMonth: {
       invoices: [sampleInvoices[3]],
       total: 850,
       balance: 850,
       totalByCurrency: [{ currencyCode: 'EUR', amount: 1000, convertedAmount: 850, count: 1 }],
       balanceByCurrency: [{ currencyCode: 'EUR', amount: 1000, convertedAmount: 850, count: 1 }],
+      net: 850,
+      netByCurrency: [{ currencyCode: 'EUR', amount: 1000, convertedAmount: 850, count: 1 }],
+      netOutstanding: 850,
       source: 'Issued',
     },
     issuedOnMonthStart: {
@@ -191,6 +237,9 @@ export const sampleSnapshot: DashboardSnapshot = {
       balance: 4200,
       totalByCurrency: gbp(4200),
       balanceByCurrency: gbp(4200),
+      net: 4200,
+      netByCurrency: gbp(4200),
+      netOutstanding: 4200,
       source: 'Issued',
     },
     issuedThisMonth: {
@@ -199,14 +248,15 @@ export const sampleSnapshot: DashboardSnapshot = {
       balance: 4200,
       totalByCurrency: gbp(4200),
       balanceByCurrency: gbp(4200),
+      net: 4200,
+      netByCurrency: gbp(4200),
+      netOutstanding: 4200,
       source: 'Issued',
     },
     cashCollected: {
-      invoices: [sampleInvoices[2]],
+      payments: samplePayments,
       total: 3100,
-      balance: 0,
-      totalByCurrency: gbp(3100),
-      balanceByCurrency: [],
+      byCurrency: gbp(3100),
       source: 'Cash collected',
     },
     dueThisMonth: {
@@ -215,6 +265,9 @@ export const sampleSnapshot: DashboardSnapshot = {
       balance: 850,
       totalByCurrency: [{ currencyCode: 'EUR', amount: 1000, convertedAmount: 850, count: 1 }],
       balanceByCurrency: [{ currencyCode: 'EUR', amount: 1000, convertedAmount: 850, count: 1 }],
+      net: 850,
+      netByCurrency: [{ currencyCode: 'EUR', amount: 1000, convertedAmount: 850, count: 1 }],
+      netOutstanding: 850,
       source: 'Outstanding',
     },
     dueNextMonth: {
@@ -223,12 +276,17 @@ export const sampleSnapshot: DashboardSnapshot = {
       balance: 4200,
       totalByCurrency: gbp(4200),
       balanceByCurrency: gbp(4200),
+      net: 4200,
+      netByCurrency: gbp(4200),
+      netOutstanding: 4200,
       source: 'Outstanding',
     },
     hourlyWip: {
       projects: sampleProjects,
       total: 1187.5,
       byCurrency: gbp(1187.5),
+      carriedOver: 237.5,
+      carriedOverByCurrency: gbp(237.5),
       source: 'Projects (hourly)',
     },
   },

@@ -76,7 +76,7 @@
     if (!canFetchAnalytics()) return;
 
     const preset = analyticsRangePreset;
-    const today = snapshot?.asOf.slice(0, 10) ?? todayIso();
+    const today = snapshot?.today ?? todayIso();
     const { from, to } = resolveAnalyticsRange(preset, today);
 
     // Record attempted preset before the request so failures do not re-trigger

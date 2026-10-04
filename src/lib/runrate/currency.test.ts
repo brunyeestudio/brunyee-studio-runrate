@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import {
   MissingExchangeRateError,
   hasMultipleCurrencies,
+  latestBookedRates,
   sumMoney,
   toBaseAmount,
 } from './currency';
@@ -13,6 +14,31 @@ const gbpFx: FxContext = {
 };
 
 describe('currency', () => {
+  it('takes the most recent booked rate per currency', () => {
+    expect(
+      latestBookedRates([
+        { currencyCode: 'USD', date: '2026-06-01', exchangeRate: 0.7 },
+        { currencyCode: 'USD', date: '2026-07-01', exchangeRate: 0.8 },
+        { currencyCode: 'EUR', date: '2026-07-01', exchangeRate: null },
+      ]),
+    ).toEqual({ USD: 0.8 });
+  });
+
+  it('prefers a per-item booked rate over the current rate', () => {
+    const items = [
+      { amount: 100, currency: 'EUR', rate: 0.9 },
+      { amount: 100, currency: 'EUR', rate: null },
+    ];
+    const result = sumMoney(
+      items,
+      (item) => item.amount,
+      (item) => item.currency,
+      gbpFx,
+      (item) => item.rate,
+    );
+    expect(result.amount).toBe(175);
+  });
+
   it('converts foreign amounts into base currency', () => {
     expect(toBaseAmount(100, 'GBP', 'GBP', gbpFx.rates)).toBe(100);
     expect(toBaseAmount(100, 'EUR', 'GBP', gbpFx.rates)).toBe(85);

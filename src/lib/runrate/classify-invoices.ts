@@ -2,21 +2,28 @@ import { sumMoney } from './currency';
 import { isDateInRange, isSameDay, scheduleDate } from './dates';
 import type { FxContext, Invoice, InvoiceBucket, MonthContext } from './types';
 
-function sumTotal(invoices: Invoice[], fx: FxContext) {
-  return sumMoney(
-    invoices,
-    (invoice) => invoice.total,
-    (invoice) => invoice.currencyCode,
-    fx,
-  );
+/** Invoice total excluding tax — what was earned, as opposed to what will be received. */
+export function netAmount(invoice: Invoice): number {
+  return invoice.total - (invoice.taxTotal ?? 0);
 }
 
-function sumBalance(invoices: Invoice[], fx: FxContext) {
+/** Unpaid share of the net amount, pro rata to the remaining balance. */
+function netOutstandingAmount(invoice: Invoice): number {
+  if (invoice.total <= 0) return 0;
+  return netAmount(invoice) * (invoice.balance / invoice.total);
+}
+
+export function sumInvoices(
+  invoices: Invoice[],
+  getAmount: (invoice: Invoice) => number,
+  fx: FxContext,
+) {
   return sumMoney(
     invoices,
-    (invoice) => invoice.balance,
+    getAmount,
     (invoice) => invoice.currencyCode,
     fx,
+    (invoice) => invoice.exchangeRate,
   );
 }
 
@@ -26,14 +33,20 @@ function bucket(
   fx: FxContext,
   useBalance = false,
 ): InvoiceBucket {
-  const totalMoney = useBalance ? sumBalance(invoices, fx) : sumTotal(invoices, fx);
-  const balanceMoney = sumBalance(invoices, fx);
+  const balanceMoney = sumInvoices(invoices, (invoice) => invoice.balance, fx);
+  const totalMoney = useBalance
+    ? balanceMoney
+    : sumInvoices(invoices, (invoice) => invoice.total, fx);
+  const netMoney = sumInvoices(invoices, netAmount, fx);
   return {
     invoices,
     total: totalMoney.amount,
     balance: balanceMoney.amount,
     totalByCurrency: totalMoney.byCurrency,
     balanceByCurrency: balanceMoney.byCurrency,
+    net: netMoney.amount,
+    netByCurrency: netMoney.byCurrency,
+    netOutstanding: sumInvoices(invoices, netOutstandingAmount, fx).amount,
     source,
   };
 }
@@ -111,9 +124,10 @@ export function classifyDueThisMonth(
   ctx: MonthContext,
   fx: FxContext,
 ): InvoiceBucket {
+  // Overdue invoices from earlier months are still expected this month.
   const matched = invoices.filter(
     (invoice) =>
-      isOutstandingInvoice(invoice) && isDateInRange(invoice.dueDate, ctx.monthStart, ctx.monthEnd),
+      isOutstandingInvoice(invoice) && Boolean(invoice.dueDate) && invoice.dueDate <= ctx.monthEnd,
   );
   return bucket(matched, 'Outstanding', fx, true);
 }
@@ -169,33 +183,17 @@ export function classifyIssuedOnMonthStart(
   return classifyIssuedOnDay(invoices, ctx.monthStart, fx, true);
 }
 
-/** Non-draft invoices dated the 1st of last month — earned last month. */
-export function classifyIssuedOnPreviousMonthStart(
+/**
+ * Invoices dated the 1st of this month bill last month's work, so they are
+ * earned last month. Drafts count too: on the 1st they may not be sent yet.
+ */
+export function classifyEarnedLastMonth(
   invoices: Invoice[],
   ctx: MonthContext,
   fx: FxContext,
 ): InvoiceBucket {
-  return classifyIssuedOnDay(invoices, ctx.previousMonthStart, fx);
-}
-
-export function classifyCashCollected(
-  invoices: Invoice[],
-  ctx: MonthContext,
-  fx: FxContext,
-): InvoiceBucket {
-  const matched = invoices.filter((invoice) => {
-    const status = invoice.status.toLowerCase();
-    const paidLike = status === 'paid' || status === 'partially_paid';
-    return paidLike && isDateInRange(invoice.lastPaymentDate, ctx.monthStart, ctx.monthEnd);
-  });
-  // For cash, prefer total for fully paid; for partial use total - balance as approximation
-  const withAmounts = matched.map((invoice) => {
-    const status = invoice.status.toLowerCase();
-    if (status === 'paid') return invoice;
-    return {
-      ...invoice,
-      total: Math.max(0, invoice.total - invoice.balance),
-    };
-  });
-  return bucket(withAmounts, 'Cash collected', fx);
+  const matched = invoices.filter(
+    (invoice) => invoice.status.toLowerCase() !== 'void' && isSameDay(invoice.date, ctx.monthStart),
+  );
+  return bucket(matched, 'Issued', fx);
 }

@@ -1,11 +1,12 @@
 import { parseHours } from '$lib/runrate/format';
 import type { TimeEntry } from '$lib/runrate/types';
-import { zohoFetch, type ZohoClientOptions } from './client';
+import { zohoFetch, type QueryValue, type ZohoClientOptions } from './client';
 
 const ISO_DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
 
 export interface ZohoTimeEntryRaw {
   time_entry_id?: string;
+  project_id?: string;
   customer_name?: string;
   project_name?: string;
   log_date?: string;
@@ -14,6 +15,7 @@ export interface ZohoTimeEntryRaw {
   hours?: number | string;
   billed_hours?: number | string;
   time?: number | string;
+  is_billable?: boolean;
 }
 
 interface ListTimeEntriesResponse {
@@ -36,6 +38,7 @@ export function mapZohoTimeEntry(raw: ZohoTimeEntryRaw): TimeEntry | null {
 
   return {
     timeEntryId,
+    ...(raw.project_id ? { projectId: String(raw.project_id) } : {}),
     customerName: String(raw.customer_name ?? ''),
     projectName: String(raw.project_name ?? ''),
     logDate,
@@ -43,11 +46,10 @@ export function mapZohoTimeEntry(raw: ZohoTimeEntryRaw): TimeEntry | null {
   };
 }
 
-/** Paginate time entries in a date range (max 200 per page). */
-export async function fetchTimeEntriesInRange(
-  from: string,
-  to: string,
-  options: ZohoClientOptions = {},
+async function listTimeEntries(
+  query: Record<string, QueryValue>,
+  options: ZohoClientOptions,
+  include: (raw: ZohoTimeEntryRaw) => boolean = () => true,
 ): Promise<TimeEntry[]> {
   const results: TimeEntry[] = [];
   let page = 1;
@@ -56,15 +58,11 @@ export async function fetchTimeEntriesInRange(
   while (hasMore) {
     const data = await zohoFetch<ListTimeEntriesResponse>(
       '/projects/timeentries',
-      {
-        from_date: from,
-        to_date: to,
-        page,
-        per_page: 200,
-      },
+      { ...query, page, per_page: 200 },
       options,
     );
     for (const raw of data.time_entries ?? []) {
+      if (!include(raw)) continue;
       const mapped = mapZohoTimeEntry(raw);
       if (mapped) results.push(mapped);
     }
@@ -74,4 +72,24 @@ export async function fetchTimeEntriesInRange(
   }
 
   return results;
+}
+
+/** Paginate time entries in a date range (max 200 per page). */
+export async function fetchTimeEntriesInRange(
+  from: string,
+  to: string,
+  options: ZohoClientOptions = {},
+): Promise<TimeEntry[]> {
+  return listTimeEntries({ from_date: from, to_date: to }, options);
+}
+
+/** Billable time not yet invoiced, across all dates. */
+export async function fetchUnbilledTimeEntries(
+  options: ZohoClientOptions = {},
+): Promise<TimeEntry[]> {
+  return listTimeEntries(
+    { filter_by: 'Status.Unbilled' },
+    options,
+    (raw) => raw.is_billable !== false,
+  );
 }

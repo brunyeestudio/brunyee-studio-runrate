@@ -10,6 +10,7 @@ import {
 import { buildZohoUrl } from './client';
 import { readZohoEnv, ZohoEnvError } from './env';
 import { mapZohoInvoice } from './invoices';
+import { mapZohoPayment } from './payments';
 import {
   accountsUrlForLocation,
   assertOAuthState,
@@ -154,7 +155,9 @@ describe('zoho oauth helpers', () => {
     expect(url.searchParams.get('response_type')).toBe('code');
     expect(url.searchParams.get('access_type')).toBe('offline');
     expect(url.searchParams.get('prompt')).toBe('consent');
-    expect(ZOHO_OAUTH_SCOPES).toBe('ZohoBooks.invoices.READ,ZohoBooks.projects.READ');
+    expect(ZOHO_OAUTH_SCOPES).toBe(
+      'ZohoBooks.invoices.READ,ZohoBooks.projects.READ,ZohoBooks.customerpayments.READ',
+    );
     expect(url.searchParams.get('scope')).toBe(ZOHO_OAUTH_SCOPES);
     expect(url.searchParams.get('state')).toBe('state-123');
   });
@@ -234,6 +237,53 @@ describe('zoho mappers', () => {
     });
     expect(invoice.total).toBe(100);
     expect(invoice.scheduleTime).toContain('2026-08-01');
+    expect(invoice.taxTotal).toBeNull();
+    expect(invoice.exchangeRate).toBeNull();
+  });
+
+  it('maps invoice tax and booked exchange rate', () => {
+    const invoice = mapZohoInvoice({
+      invoice_id: '2',
+      total: '1,200.00',
+      tax_total: '200.00',
+      exchange_rate: 0.79,
+      currency_code: 'USD',
+    });
+    expect(invoice.taxTotal).toBe(200);
+    expect(invoice.exchangeRate).toBe(0.79);
+  });
+
+  it('maps customer payments with base-currency amounts', () => {
+    expect(
+      mapZohoPayment(
+        {
+          payment_id: 'p1',
+          payment_number: '7',
+          customer_name: 'Acme',
+          invoice_numbers: 'INV-1, INV-2',
+          date: '2026-07-05',
+          amount: 100,
+          bcy_amount: 79,
+          currency_code: 'USD',
+        },
+        'GBP',
+      ),
+    ).toEqual({
+      paymentId: 'p1',
+      paymentNumber: '7',
+      customerName: 'Acme',
+      invoiceNumbers: 'INV-1, INV-2',
+      date: '2026-07-05',
+      currencyCode: 'USD',
+      amount: 100,
+      bcyAmount: 79,
+    });
+  });
+
+  it('treats payments without a currency as base-currency amounts', () => {
+    expect(
+      mapZohoPayment({ payment_id: 'p2', date: '2026-07-05', amount: 50 }, 'GBP'),
+    ).toMatchObject({ currencyCode: 'GBP', amount: 50, bcyAmount: 50, invoiceNumbers: '' });
   });
 
   it('maps hourly projects and rejects fixed fee', () => {
@@ -283,6 +333,17 @@ describe('zoho mappers', () => {
       hours: 1.5,
     });
     expect(mapZohoTimeEntry({ customer_name: 'X' })).toBeNull();
+  });
+
+  it('keeps the project id on time entries', () => {
+    expect(
+      mapZohoTimeEntry({
+        time_entry_id: 'te3',
+        project_id: 'pr1',
+        log_date: '2026-08-10',
+        log_time: '01:00',
+      })?.projectId,
+    ).toBe('pr1');
   });
 
   it('maps docs-shaped list payloads that use log_time', () => {

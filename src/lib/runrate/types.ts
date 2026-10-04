@@ -43,6 +43,23 @@ export interface Invoice {
   scheduleTime: string | null;
   lastPaymentDate: string | null;
   currencyCode: string;
+  /** Tax included in `total`; absent when Zoho does not report it. */
+  taxTotal?: number | null;
+  /** Booked rate at invoice date (`base = foreign * rate`); absent → current rate. */
+  exchangeRate?: number | null;
+}
+
+/** Normalized customer payment from Zoho list responses. */
+export interface Payment {
+  paymentId: string;
+  paymentNumber: string;
+  customerName: string;
+  date: string;
+  invoiceNumbers: string;
+  currencyCode: string;
+  amount: number;
+  /** Amount in org base currency at the booked rate. */
+  bcyAmount: number;
 }
 
 /** Normalized hourly project WIP from Zoho project detail. */
@@ -55,6 +72,8 @@ export interface ProjectWip {
   unBilledHours: string;
   unBilledAmount: number;
   currencyCode: string;
+  /** Portion of `unBilledAmount` from time logged before the current month. */
+  carriedOverAmount?: number;
 }
 
 /** Native amount plus conversion into org base currency. */
@@ -81,6 +100,8 @@ export interface LabeledAmount {
   /** Sum converted into org base currency. */
   amount: number;
   source: RevenueSource;
+  /** Display label when several breakdown rows share a source. */
+  label?: string;
   count: number;
   byCurrency: CurrencyAmount[];
 }
@@ -92,6 +113,18 @@ export interface InvoiceBucket {
   balance: number;
   totalByCurrency: CurrencyAmount[];
   balanceByCurrency: CurrencyAmount[];
+  /** Converted total excluding tax — the earned figure. */
+  net: number;
+  netByCurrency: CurrencyAmount[];
+  /** Share of `net` still unpaid, pro rata to each invoice balance. */
+  netOutstanding: number;
+  source: RevenueSource;
+}
+
+export interface PaymentBucket {
+  payments: Payment[];
+  total: number;
+  byCurrency: CurrencyAmount[];
   source: RevenueSource;
 }
 
@@ -99,11 +132,16 @@ export interface ProjectBucket {
   projects: ProjectWip[];
   total: number;
   byCurrency: CurrencyAmount[];
+  /** Converted share of `total` logged before the current month. */
+  carriedOver: number;
+  carriedOverByCurrency: CurrencyAmount[];
   source: RevenueSource;
 }
 
 export interface DashboardSnapshot {
   asOf: string;
+  /** Reporting-time-zone calendar date (yyyy-mm-dd) the snapshot was built for. */
+  today: string;
   monthLabel: string;
   /** Org base currency code — all KPI `amount` fields are converted into this. */
   currencyCode: string;
@@ -112,8 +150,12 @@ export interface DashboardSnapshot {
   kpis: {
     cashCollected: LabeledAmount;
     earnedLastMonth: LabeledAmount;
+    /** Net earned last month split by what has been paid so far. */
+    earnedLastMonthSplit: { paid: number; outstanding: number };
     earnedPipeline: LabeledAmount;
     earnedPipelineBreakdown: LabeledAmount[];
+    /** Part of earned pipeline from time logged before this month (not run rate). */
+    earnedPipelineCarriedOver: number;
     outstandingBalance: LabeledAmount;
     issuedOnMonthStart: LabeledAmount;
     issuedThisMonth: LabeledAmount;
@@ -127,10 +169,10 @@ export interface DashboardSnapshot {
     drafts: InvoiceBucket;
     scheduledNextMonth: InvoiceBucket;
     draftDatedNextFirst: InvoiceBucket;
-    issuedOnPreviousMonthStart: InvoiceBucket;
+    earnedLastMonth: InvoiceBucket;
     issuedOnMonthStart: InvoiceBucket;
     issuedThisMonth: InvoiceBucket;
-    cashCollected: InvoiceBucket;
+    cashCollected: PaymentBucket;
     dueThisMonth: InvoiceBucket;
     dueNextMonth: InvoiceBucket;
     hourlyWip: ProjectBucket;
@@ -152,6 +194,7 @@ export interface MonthContext {
 
 export interface TimeEntry {
   timeEntryId: string;
+  projectId?: string;
   customerName: string;
   projectName: string;
   logDate: string;

@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { netAmount } from '$lib/runrate/classify-invoices';
   import { formatCurrency } from '$lib/runrate/format';
   import type { Invoice } from '$lib/runrate/types';
 
@@ -8,9 +9,15 @@
     emptyMessage = 'No contributing items.',
   }: {
     invoices: Invoice[];
-    amountField?: 'balance' | 'total';
+    /** `net` = total excluding tax (earned figures). */
+    amountField?: 'balance' | 'total' | 'net';
     emptyMessage?: string;
   } = $props();
+
+  function amountOf(invoice: Invoice): number {
+    if (amountField === 'net') return netAmount(invoice);
+    return amountField === 'total' ? invoice.total : invoice.balance;
+  }
 </script>
 
 {#if invoices.length === 0}
@@ -33,10 +40,7 @@
           </p>
         </div>
         <span class="shrink-0 text-xs tabular-nums">
-          {formatCurrency(
-            amountField === 'total' ? invoice.total : invoice.balance,
-            invoice.currencyCode,
-          )}
+          {formatCurrency(amountOf(invoice), invoice.currencyCode)}
         </span>
       </li>
     {/each}

@@ -1,6 +1,5 @@
 import { differenceInCalendarDays, format, isValid, parseISO, subDays } from 'date-fns';
-import { isIssuedInvoice } from './classify-invoices';
-import { sumMoney } from './currency';
+import { isIssuedInvoice, netAmount, sumInvoices } from './classify-invoices';
 import { isDateInRange } from './dates';
 import type {
   AnalyticsPeriodBounds,
@@ -180,12 +179,7 @@ function factsFromAccumulator(
   acc: ClientAccumulator,
   fx: FxContext,
 ): AnalyticsPeriodFacts['studio'] {
-  const money = sumMoney(
-    acc.invoices,
-    (invoice) => invoice.total,
-    (invoice) => invoice.currencyCode,
-    fx,
-  );
+  const money = sumInvoices(acc.invoices, netAmount, fx);
   return {
     customerName,
     hoursSpent: acc.hoursSpent,

@@ -36,6 +36,17 @@ describe('dates', () => {
     expect(ctx.monthLabel).toBe('July 2026');
   });
 
+  it('resolves today in the reporting time zone, not UTC', () => {
+    // 00:30 BST on 1 July is still 30 June in UTC.
+    const ctx = getMonthContext(new Date('2026-06-30T23:30:00Z'));
+    expect(ctx.today).toBe('2026-07-01');
+    expect(ctx.monthStart).toBe('2026-07-01');
+    expect(ctx.monthLabel).toBe('July 2026');
+    expect(getMonthContext(new Date('2026-07-01T02:00:00Z'), 'America/New_York').today).toBe(
+      '2026-06-30',
+    );
+  });
+
   it('handles year rollover for previous and next months', () => {
     const january = getMonthContext(new Date(2026, 0, 15));
     expect(january.previousMonthStart).toBe('2025-12-01');

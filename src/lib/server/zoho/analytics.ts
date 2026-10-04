@@ -6,9 +6,10 @@ import type {
   Invoice,
   TimeEntry,
 } from '$lib/runrate/types';
+import { latestBookedRates } from '$lib/runrate/currency';
 import {
   DEFAULT_BASE_CURRENCY,
-  collectCurrencyCodes,
+  currenciesNeedingCurrentRate,
   fetchFrankfurterFx,
 } from '$lib/server/fx/frankfurter';
 import type { ZohoClientOptions } from './client';
@@ -45,8 +46,12 @@ export async function buildZohoAnalytics(
     fetchInvoicesInRange(previous.from, current.to, options),
     fetchTimeEntriesInRange(previous.from, current.to, options),
   ]);
-  const currencyCodes = collectCurrencyCodes(invoices);
-  const fx = await fetchFrankfurterFx(DEFAULT_BASE_CURRENCY, currencyCodes, fetchImpl);
+  const fx = await fetchFrankfurterFx(
+    DEFAULT_BASE_CURRENCY,
+    currenciesNeedingCurrentRate(invoices, []),
+    fetchImpl,
+    latestBookedRates(invoices),
+  );
   return assembleAnalyticsSnapshot({
     invoices,
     entries,

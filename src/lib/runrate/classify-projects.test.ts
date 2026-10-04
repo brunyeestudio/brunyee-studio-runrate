@@ -1,10 +1,52 @@
 import { describe, expect, it } from 'vitest';
-import { classifyHourlyWip, isHourlyBillingType } from './classify-projects';
-import type { FxContext, ProjectWip } from './types';
+import {
+  classifyHourlyWip,
+  isHourlyBillingType,
+  withCarriedOverAmounts,
+} from './classify-projects';
+import type { FxContext, ProjectWip, TimeEntry } from './types';
 
 const fx: FxContext = { baseCurrencyCode: 'GBP', rates: { GBP: 1 } };
 
+function project(partial: Partial<ProjectWip> & Pick<ProjectWip, 'projectId'>): ProjectWip {
+  return {
+    projectName: `Project ${partial.projectId}`,
+    customerName: 'Client',
+    billingType: 'based_on_project_hours',
+    rate: 100,
+    unBilledHours: '10:00',
+    unBilledAmount: 1000,
+    currencyCode: 'GBP',
+    ...partial,
+  };
+}
+
+function entry(partial: Partial<TimeEntry> & Pick<TimeEntry, 'timeEntryId'>): TimeEntry {
+  return {
+    customerName: 'Client',
+    projectName: 'Project',
+    logDate: '2026-07-02',
+    hours: 1,
+    ...partial,
+  };
+}
+
 describe('classify-projects', () => {
+  it('attributes unbilled amount logged before the month start as carried over', () => {
+    const projects = [
+      project({ projectId: '1', unBilledAmount: 1000 }),
+      project({ projectId: '2', unBilledAmount: 300 }),
+    ];
+    const entries = [
+      entry({ timeEntryId: 'a', projectId: '1', logDate: '2026-06-20', hours: 3 }),
+      entry({ timeEntryId: 'b', projectId: '1', logDate: '2026-07-02', hours: 7 }),
+      entry({ timeEntryId: 'c', projectId: '2', logDate: '2026-07-03', hours: 3 }),
+    ];
+    const split = withCarriedOverAmounts(projects, entries, '2026-07-01');
+    expect(split.map((p) => p.carriedOverAmount)).toEqual([300, 0]);
+    expect(classifyHourlyWip(split, fx).carriedOver).toBe(300);
+  });
+
   it('detects hourly billing types', () => {
     expect(isHourlyBillingType('based_on_project_hours')).toBe(true);
     expect(isHourlyBillingType('fixed_cost_for_project')).toBe(false);

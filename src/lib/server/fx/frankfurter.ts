@@ -1,4 +1,4 @@
-import type { FxContext } from '$lib/runrate/types';
+import type { FxContext, Invoice } from '$lib/runrate/types';
 
 /** Display / conversion base for Runrate totals (Brunyee Books org home currency). */
 export const DEFAULT_BASE_CURRENCY = 'GBP';
@@ -22,12 +22,15 @@ export class FrankfurterError extends Error {
 /**
  * Build FX context from Frankfurter (ECB) latest rates.
  * Frankfurter returns foreign units per 1 base; we store multipliers as
- * `base = foreign * rate` (i.e. the inverse).
+ * `base = foreign * rate` (i.e. the inverse). Frankfurter silently omits
+ * currencies ECB does not publish; `fallbackRates` (already in multiplier
+ * form, e.g. booked invoice rates) cover those.
  */
 export function mapFrankfurterRates(
   baseCurrencyCode: string,
   neededCurrencyCodes: string[],
   frankfurterRates: Record<string, number>,
+  fallbackRates: Record<string, number> = {},
 ): FxContext {
   const base = baseCurrencyCode.trim().toUpperCase();
   const rates: Record<string, number> = { [base]: 1 };
@@ -41,6 +44,10 @@ export function mapFrankfurterRates(
       !Number.isFinite(foreignPerBase) ||
       foreignPerBase <= 0
     ) {
+      if (fallbackRates[code]) {
+        rates[code] = fallbackRates[code];
+        continue;
+      }
       throw new FrankfurterError(
         `No exchange rate available for ${code} (base ${base}). Frankfurter/ECB may not support this currency.`,
       );
@@ -55,6 +62,7 @@ export async function fetchFrankfurterFx(
   baseCurrencyCode: string,
   currencyCodes: Iterable<string>,
   fetchImpl: typeof fetch = fetch,
+  fallbackRates: Record<string, number> = {},
 ): Promise<FxContext> {
   const base = baseCurrencyCode.trim().toUpperCase() || DEFAULT_BASE_CURRENCY;
   const needed = [
@@ -79,19 +87,33 @@ export async function fetchFrankfurterFx(
       headers: { Accept: 'application/json' },
     });
   } catch (error) {
+    if (needed.every((code) => fallbackRates[code])) {
+      return mapFrankfurterRates(base, needed, {}, fallbackRates);
+    }
     const detail = error instanceof Error ? error.message : 'network error';
     throw new FrankfurterError(`Failed to reach Frankfurter FX API: ${detail}`);
   }
 
   if (!response.ok) {
+    if (needed.every((code) => fallbackRates[code])) {
+      return mapFrankfurterRates(base, needed, {}, fallbackRates);
+    }
     throw new FrankfurterError(`Frankfurter FX API failed (${response.status}) for base ${base}.`);
   }
 
   const data = (await response.json()) as FrankfurterLatestResponse;
-  return mapFrankfurterRates(base, needed, data.rates ?? {});
+  return mapFrankfurterRates(base, needed, data.rates ?? {}, fallbackRates);
 }
 
 /** Collect distinct currency codes from invoice/project-like records. */
 export function collectCurrencyCodes(records: Array<{ currencyCode: string }>): string[] {
   return [...new Set(records.map((record) => record.currencyCode).filter(Boolean))];
+}
+
+/** Currencies that need a current rate: invoices without a booked rate, plus project WIP. */
+export function currenciesNeedingCurrentRate(
+  invoices: Invoice[],
+  others: Array<{ currencyCode: string }>,
+): string[] {
+  return collectCurrencyCodes([...invoices.filter((invoice) => !invoice.exchangeRate), ...others]);
 }

@@ -42,7 +42,25 @@ export function daysInMonth(year: number, monthIndex: number): number {
   return getDaysInMonth(new Date(year, monthIndex, 1));
 }
 
-export function getMonthContext(now: Date = new Date()): MonthContext {
+/** Brunyee Studio books in UK time; the server itself runs in UTC. */
+export const REPORTING_TIME_ZONE = 'Europe/London';
+
+/** Calendar date of `instant` in `timeZone`, as a local-midnight Date. */
+function calendarDateInZone(instant: Date, timeZone: string): Date {
+  const iso = new Intl.DateTimeFormat('en-CA', {
+    timeZone,
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+  }).format(instant);
+  return parseISO(iso);
+}
+
+export function getMonthContext(
+  instant: Date = new Date(),
+  timeZone: string = REPORTING_TIME_ZONE,
+): MonthContext {
+  const now = calendarDateInZone(instant, timeZone);
   const year = getYear(now);
   const month = getMonth(now);
   const today = format(now, ISO_DATE_PATTERN);

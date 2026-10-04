@@ -27,6 +27,8 @@ export interface MonthTargetModelInput {
   assumedWeekdayHours: number | undefined;
   paceHoursMode: PaceHoursMode;
   earnedThisMonth: number;
+  /** Part of `earnedThisMonth` logged in earlier months — added flat, not extrapolated. */
+  earnedCarriedOver?: number;
   asOf: string;
 }
 
@@ -68,6 +70,7 @@ export function deriveMonthTargetModel(input: MonthTargetModelInput): MonthTarge
     assumedWeekdayHours,
     paceHoursMode,
     earnedThisMonth,
+    earnedCarriedOver = 0,
     asOf,
   } = input;
 
@@ -75,12 +78,15 @@ export function deriveMonthTargetModel(input: MonthTargetModelInput): MonthTarge
   const weekProgress = weekdayProgress(asOf);
   const weekendStats = weekendProgress(asOf);
 
+  const earnedAtRunRate = earnedThisMonth - earnedCarriedOver;
   const endOfMonthForecastAllDays = dayProgress
-    ? forecastEndOfMonth(earnedThisMonth, dayProgress.daysElapsed, dayProgress.daysInMonth)
+    ? earnedCarriedOver +
+      forecastEndOfMonth(earnedAtRunRate, dayProgress.daysElapsed, dayProgress.daysInMonth)
     : 0;
   const endOfMonthForecastWeekdays = weekProgress
-    ? forecastEndOfMonth(
-        earnedThisMonth,
+    ? earnedCarriedOver +
+      forecastEndOfMonth(
+        earnedAtRunRate,
         weekProgress.weekdaysElapsed,
         weekProgress.weekdaysInMonth,
       )

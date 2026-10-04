@@ -1,16 +1,17 @@
 import {
-  classifyCashCollected,
   classifyDraftDatedNextFirst,
   classifyDrafts,
   classifyDueNextMonth,
   classifyDueThisMonth,
+  classifyEarnedLastMonth,
   classifyIssuedOnMonthStart,
-  classifyIssuedOnPreviousMonthStart,
   classifyIssuedThisMonth,
   classifyOutstanding,
   classifyScheduledNextMonth,
 } from './classify-invoices';
+import { classifyCashCollected } from './classify-payments';
 import { classifyHourlyWip } from './classify-projects';
+import { sumMoney } from './currency';
 import type {
   CurrencyAmount,
   DashboardSnapshot,
@@ -18,6 +19,7 @@ import type {
   Invoice,
   LabeledAmount,
   MonthContext,
+  Payment,
   ProjectWip,
 } from './types';
 
@@ -33,6 +35,7 @@ function labeledFromMoney(
 export function buildDashboardSnapshot(
   invoices: Invoice[],
   projects: ProjectWip[],
+  payments: Payment[],
   ctx: MonthContext,
   fx: FxContext,
   asOf: Date = new Date(),
@@ -41,17 +44,17 @@ export function buildDashboardSnapshot(
   const drafts = classifyDrafts(invoices, fx);
   const scheduledNextMonth = classifyScheduledNextMonth(invoices, ctx, fx);
   const draftDatedNextFirst = classifyDraftDatedNextFirst(invoices, ctx, fx);
-  const issuedOnPreviousMonthStart = classifyIssuedOnPreviousMonthStart(invoices, ctx, fx);
+  const earnedLastMonth = classifyEarnedLastMonth(invoices, ctx, fx);
   const issuedOnMonthStart = classifyIssuedOnMonthStart(invoices, ctx, fx);
   const issuedThisMonth = classifyIssuedThisMonth(invoices, ctx, fx);
-  const cashCollected = classifyCashCollected(invoices, ctx, fx);
+  const cashCollected = classifyCashCollected(payments, ctx, fx);
   const dueThisMonth = classifyDueThisMonth(invoices, ctx, fx);
   const dueNextMonth = classifyDueNextMonth(invoices, ctx, fx);
   const hourlyWip = classifyHourlyWip(projects, fx);
 
   const draftPipeline = labeledFromMoney(
-    draftDatedNextFirst.total,
-    draftDatedNextFirst.totalByCurrency,
+    draftDatedNextFirst.net,
+    draftDatedNextFirst.netByCurrency,
     'Draft invoices',
     draftDatedNextFirst.invoices.length,
   );
@@ -61,7 +64,35 @@ export function buildDashboardSnapshot(
     'Projects (hourly)',
     hourlyWip.projects.length,
   );
-  const earnedPipelineBreakdown = [draftPipeline, projectPipeline].filter(
+  const unbilledThisMonth = sumMoney(
+    hourlyWip.projects,
+    (project) => project.unBilledAmount - (project.carriedOverAmount ?? 0),
+    (project) => project.currencyCode,
+    fx,
+  );
+  const unbilledBreakdown: LabeledAmount[] = [
+    {
+      ...labeledFromMoney(
+        unbilledThisMonth.amount,
+        unbilledThisMonth.byCurrency,
+        'Projects (hourly)',
+        hourlyWip.projects.filter(
+          (project) => project.unBilledAmount > (project.carriedOverAmount ?? 0),
+        ).length,
+      ),
+      label: 'Unbilled time — this month',
+    },
+    {
+      ...labeledFromMoney(
+        hourlyWip.carriedOver,
+        hourlyWip.carriedOverByCurrency,
+        'Projects (hourly)',
+        hourlyWip.projects.filter((project) => (project.carriedOverAmount ?? 0) > 0).length,
+      ),
+      label: 'Unbilled time — earlier months',
+    },
+  ];
+  const earnedPipelineBreakdown = [draftPipeline, ...unbilledBreakdown].filter(
     (item) => item.amount > 0 || item.count > 0,
   );
   const earnedPipelineAmount = draftPipeline.amount + projectPipeline.amount;
@@ -73,22 +104,27 @@ export function buildDashboardSnapshot(
 
   return {
     asOf: asOf.toISOString(),
+    today: ctx.today,
     monthLabel: ctx.monthLabel,
     currencyCode: fx.baseCurrencyCode,
     exchangeRates: { ...fx.rates, [fx.baseCurrencyCode]: 1 },
     kpis: {
       cashCollected: labeledFromMoney(
         cashCollected.total,
-        cashCollected.totalByCurrency,
+        cashCollected.byCurrency,
         'Cash collected',
-        cashCollected.invoices.length,
+        cashCollected.payments.length,
       ),
       earnedLastMonth: labeledFromMoney(
-        issuedOnPreviousMonthStart.total,
-        issuedOnPreviousMonthStart.totalByCurrency,
+        earnedLastMonth.net,
+        earnedLastMonth.netByCurrency,
         'Issued',
-        issuedOnPreviousMonthStart.invoices.length,
+        earnedLastMonth.invoices.length,
       ),
+      earnedLastMonthSplit: {
+        paid: earnedLastMonth.net - earnedLastMonth.netOutstanding,
+        outstanding: earnedLastMonth.netOutstanding,
+      },
       earnedPipeline: {
         amount: earnedPipelineAmount,
         source: 'Draft invoices',
@@ -96,6 +132,7 @@ export function buildDashboardSnapshot(
         byCurrency: earnedByCurrency,
       },
       earnedPipelineBreakdown,
+      earnedPipelineCarriedOver: hourlyWip.carriedOver,
       outstandingBalance: labeledFromMoney(
         outstanding.balance,
         outstanding.balanceByCurrency,
@@ -109,8 +146,8 @@ export function buildDashboardSnapshot(
         issuedOnMonthStart.invoices.length,
       ),
       issuedThisMonth: labeledFromMoney(
-        issuedThisMonth.total,
-        issuedThisMonth.totalByCurrency,
+        issuedThisMonth.net,
+        issuedThisMonth.netByCurrency,
         'Issued',
         issuedThisMonth.invoices.length,
       ),
@@ -134,7 +171,7 @@ export function buildDashboardSnapshot(
       drafts,
       scheduledNextMonth,
       draftDatedNextFirst,
-      issuedOnPreviousMonthStart,
+      earnedLastMonth,
       issuedOnMonthStart,
       issuedThisMonth,
       cashCollected,

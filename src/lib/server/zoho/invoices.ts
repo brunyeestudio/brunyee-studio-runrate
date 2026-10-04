@@ -14,6 +14,8 @@ interface ZohoInvoiceRaw {
   schedule_time?: string;
   last_payment_date?: string;
   currency_code?: string;
+  tax_total?: number | string;
+  exchange_rate?: number | string;
 }
 
 interface ListInvoicesResponse {
@@ -23,6 +25,10 @@ interface ListInvoicesResponse {
     per_page?: number;
     has_more_page?: boolean;
   };
+}
+
+function optionalAmount(value: unknown): number | null {
+  return value === undefined || value === null || value === '' ? null : parseAmount(value);
 }
 
 export function mapZohoInvoice(raw: ZohoInvoiceRaw): Invoice {
@@ -40,6 +46,8 @@ export function mapZohoInvoice(raw: ZohoInvoiceRaw): Invoice {
       ? String(raw.last_payment_date).slice(0, 10)
       : null,
     currencyCode: String(raw.currency_code ?? 'GBP'),
+    taxTotal: optionalAmount(raw.tax_total),
+    exchangeRate: optionalAmount(raw.exchange_rate),
   };
 }
 

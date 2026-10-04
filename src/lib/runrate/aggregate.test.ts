@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { buildDashboardSnapshot } from './aggregate';
 import { getMonthContext } from './dates';
-import type { FxContext, Invoice, ProjectWip } from './types';
+import type { FxContext, Invoice, Payment, ProjectWip } from './types';
 
 const gbpFx: FxContext = { baseCurrencyCode: 'GBP', rates: { GBP: 1 } };
 
@@ -72,41 +72,44 @@ describe('aggregate', () => {
         unBilledHours: '08:00',
         unBilledAmount: 960,
         currencyCode: 'GBP',
+        carriedOverAmount: 360,
+      },
+    ];
+    const payments: Payment[] = [
+      {
+        paymentId: 'pay1',
+        paymentNumber: '1',
+        customerName: 'Beta',
+        date: '2026-07-02',
+        invoiceNumbers: 'INV-2',
+        currencyCode: 'GBP',
+        amount: 750,
+        bcyAmount: 750,
       },
     ];
 
-    const snapshot = buildDashboardSnapshot(invoices, projects, ctx, gbpFx);
+    const snapshot = buildDashboardSnapshot(invoices, projects, payments, ctx, gbpFx);
     expect(snapshot.currencyCode).toBe('GBP');
     expect(snapshot.exchangeRates).toEqual({ GBP: 1 });
     expect(snapshot.kpis.earnedPipeline.amount).toBe(2960);
-    expect(snapshot.kpis.earnedPipelineBreakdown).toEqual([
+    expect(snapshot.today).toBe('2026-07-14');
+    expect(snapshot.kpis.earnedPipelineBreakdown).toMatchObject([
+      { amount: 2000, source: 'Draft invoices', count: 1 },
+      { amount: 600, source: 'Projects (hourly)', label: 'Unbilled time — this month', count: 1 },
       {
-        amount: 2000,
-        source: 'Draft invoices',
-        count: 1,
-        byCurrency: [
-          {
-            currencyCode: 'GBP',
-            amount: 2000,
-            convertedAmount: 2000,
-            count: 1,
-          },
-        ],
-      },
-      {
-        amount: 960,
+        amount: 360,
         source: 'Projects (hourly)',
+        label: 'Unbilled time — earlier months',
         count: 1,
-        byCurrency: [{ currencyCode: 'GBP', amount: 960, convertedAmount: 960, count: 1 }],
       },
     ]);
+    expect(snapshot.kpis.earnedPipelineCarriedOver).toBe(360);
     expect(snapshot.kpis.cashCollected.amount).toBe(750);
+    expect(snapshot.buckets.cashCollected.payments.map((p) => p.paymentId)).toEqual(['pay1']);
     expect(snapshot.kpis.outstandingBalance.amount).toBe(500);
-    expect(snapshot.kpis.earnedLastMonth.amount).toBe(1250);
-    expect(snapshot.buckets.issuedOnPreviousMonthStart.invoices.map((i) => i.invoiceId)).toEqual([
-      'o1',
-      'p1',
-    ]);
+    expect(snapshot.kpis.earnedLastMonth.amount).toBe(1800);
+    expect(snapshot.kpis.earnedLastMonthSplit).toEqual({ paid: 0, outstanding: 1800 });
+    expect(snapshot.buckets.earnedLastMonth.invoices.map((i) => i.invoiceId)).toEqual(['bom1']);
     expect(snapshot.kpis.issuedOnMonthStart.amount).toBe(1800);
     expect(snapshot.buckets.issuedOnMonthStart.invoices.map((i) => i.invoiceId)).toEqual(['bom1']);
     expect(snapshot.buckets.outstanding.invoices.map((i) => i.invoiceId)).toEqual(['o1']);
@@ -174,7 +177,7 @@ describe('aggregate', () => {
       },
     ];
 
-    const snapshot = buildDashboardSnapshot(invoices, projects, ctx, fx);
+    const snapshot = buildDashboardSnapshot(invoices, projects, [], ctx, fx);
     expect(snapshot.kpis.outstandingBalance.amount).toBe(670);
     expect(snapshot.kpis.outstandingBalance.byCurrency).toEqual([
       { currencyCode: 'GBP', amount: 500, convertedAmount: 500, count: 1 },

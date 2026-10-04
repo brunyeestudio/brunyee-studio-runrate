@@ -7,6 +7,7 @@
     CurrencyAmount,
     Invoice,
     LabeledAmount,
+    Payment,
     ProjectWip,
     RevenueSource,
   } from '$lib/runrate/types';
@@ -14,6 +15,7 @@
   import CurrencyBreakdownList from './currency-breakdown-list.svelte';
   import InfoHint from './info-hint.svelte';
   import InvoiceDetailList from './invoice-detail-list.svelte';
+  import PaymentDetailList from './payment-detail-list.svelte';
   import ProjectDetailList from './project-detail-list.svelte';
   import SourceBadge from './source-badge.svelte';
 
@@ -26,6 +28,7 @@
     byCurrency = [],
     breakdown = [],
     invoices = undefined,
+    payments = undefined,
     projects = undefined,
     amountField = 'balance',
     paymentSplit = undefined,
@@ -39,8 +42,9 @@
     byCurrency?: CurrencyAmount[];
     breakdown?: LabeledAmount[];
     invoices?: Invoice[];
+    payments?: Payment[];
     projects?: ProjectWip[];
-    amountField?: 'balance' | 'total';
+    amountField?: 'balance' | 'total' | 'net';
     /** Optional paid vs remaining balance for issued buckets (e.g. earned last month). */
     paymentSplit?: { paid: number; outstanding: number };
     info: string;
@@ -49,6 +53,7 @@
   const showCurrencyBreakdown = $derived(hasMultipleCurrencies(byCurrency, currencyCode));
   const hasDetails = $derived(
     invoices !== undefined ||
+      payments !== undefined ||
       projects !== undefined ||
       breakdown.length > 0 ||
       showCurrencyBreakdown,
@@ -107,9 +112,9 @@
 
             {#if breakdown.length > 0}
               <ul class="mb-3 space-y-1" data-testid="kpi-breakdown">
-                {#each breakdown as item (item.source)}
+                {#each breakdown as item (item.label ?? item.source)}
                   <li class="flex items-center justify-between gap-2">
-                    <span>{item.source}</span>
+                    <span>{item.label ?? item.source}</span>
                     <span class="tabular-nums">{formatCurrency(item.amount, currencyCode)}</span>
                   </li>
                 {/each}
@@ -122,7 +127,7 @@
                   <p class="mb-1! text-[0.625rem] font-semibold tracking-widest uppercase">
                     Draft invoices
                   </p>
-                  <InvoiceDetailList {invoices} amountField="total" />
+                  <InvoiceDetailList {invoices} amountField="net" />
                 </div>
                 <div class="space-y-1.5">
                   <p class="mb-1! text-[0.625rem] font-semibold tracking-widest uppercase">
@@ -133,6 +138,8 @@
               </div>
             {:else if invoices !== undefined}
               <InvoiceDetailList {invoices} {amountField} />
+            {:else if payments !== undefined}
+              <PaymentDetailList {payments} />
             {:else if projects !== undefined}
               <ProjectDetailList {projects} />
             {/if}

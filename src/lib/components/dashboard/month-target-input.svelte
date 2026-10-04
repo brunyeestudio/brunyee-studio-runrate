@@ -16,6 +16,7 @@
     assumedWeekdayHours = $bindable<number | undefined>(undefined),
     paceHoursMode = $bindable<PaceHoursMode>('even-spread'),
     earnedThisMonth = 0,
+    earnedCarriedOver = 0,
     paidThisMonth = 0,
     asOf = '',
     currencyCode = 'GBP',
@@ -27,6 +28,8 @@
     assumedWeekdayHours?: number | undefined;
     paceHoursMode?: PaceHoursMode;
     earnedThisMonth?: number;
+    /** Part of earned this month logged in earlier months — kept out of pace forecasts. */
+    earnedCarriedOver?: number;
     paidThisMonth?: number;
     asOf?: string;
     currencyCode?: string;
@@ -41,6 +44,7 @@
       assumedWeekdayHours,
       paceHoursMode,
       earnedThisMonth,
+      earnedCarriedOver,
       asOf,
     }),
   );

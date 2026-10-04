@@ -1,7 +1,7 @@
 <script module>
   import { defineMeta } from '@storybook/addon-svelte-csf';
   import { expect, userEvent, within } from 'storybook/test';
-  import { sampleInvoices, sampleProjects, sampleSnapshot } from './fixtures';
+  import { sampleInvoices, samplePayments, sampleProjects, sampleSnapshot } from './fixtures';
   import KpiCard from './kpi-card.svelte';
   import { kpiInfo } from './kpi-info';
   import { expectTooltipClosed, touchToggle } from './story-helpers';
@@ -23,8 +23,7 @@
     currencyCode: 'GBP',
     byCurrency: sampleSnapshot.kpis.cashCollected.byCurrency,
     info: kpiInfo.paidThisMonth,
-    invoices: [sampleInvoices[2]],
-    amountField: 'total',
+    payments: samplePayments,
   }}
   play={async ({ canvasElement }) => {
     const canvas = within(canvasElement);
@@ -36,7 +35,7 @@
 
     touchToggle(infoHint);
     const infoTooltip = await within(document.body).findByTestId('info-hint-tooltip');
-    await expect(infoTooltip).toHaveTextContent(/cash received this month/i);
+    await expect(infoTooltip).toHaveTextContent(/customer payments received this month/i);
 
     await userEvent.click(canvas.getByTestId('source-badge'));
     await expectTooltipClosed('info-hint-tooltip');
@@ -44,9 +43,10 @@
     const trigger = canvas.getByTestId('kpi-details-trigger');
     await expect(trigger).toHaveTextContent('1 item');
     await userEvent.click(trigger);
-    await expect(await canvas.findByTestId('invoice-detail-list')).toBeInTheDocument();
+    await expect(await canvas.findByTestId('payment-detail-list')).toBeInTheDocument();
     await expect(canvas.getByText('INV-0998')).toBeInTheDocument();
     await expect(canvas.getByText(/Fabrikam/)).toBeInTheDocument();
+    await expect(canvas.getByText(/Received 2026-07-10/)).toBeInTheDocument();
   }}
 />
 
@@ -60,7 +60,7 @@
     currencyCode: 'GBP',
     byCurrency: [{ currencyCode: 'GBP', amount: 2500, convertedAmount: 2500, count: 2 }],
     info: kpiInfo.earnedLastMonth,
-    invoices: sampleSnapshot.buckets.issuedOnPreviousMonthStart.invoices,
+    invoices: sampleSnapshot.buckets.earnedLastMonth.invoices,
     amountField: 'total',
     paymentSplit: { paid: 1500, outstanding: 1000 },
   }}
@@ -92,7 +92,9 @@
     const trigger = canvas.getByTestId('kpi-details-trigger');
     await userEvent.click(trigger);
     await expect(await canvas.findByTestId('kpi-breakdown')).toBeInTheDocument();
-    await expect(canvas.getAllByText('Projects (hourly)').length).toBeGreaterThanOrEqual(2);
+    await expect(canvas.getByText('Unbilled time — this month')).toBeInTheDocument();
+    await expect(canvas.getByText('Unbilled time — earlier months')).toBeInTheDocument();
+    await expect(canvas.getByTestId('kpi-breakdown')).toHaveTextContent(/£237\.50/);
     await expect(canvas.getAllByText('Draft invoices').length).toBeGreaterThanOrEqual(1);
     await expect(canvas.getByTestId('invoice-detail-list')).toBeInTheDocument();
     await expect(canvas.getByTestId('project-detail-list')).toBeInTheDocument();

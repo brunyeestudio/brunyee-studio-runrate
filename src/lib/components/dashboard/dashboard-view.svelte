@@ -187,7 +187,11 @@
           </Card.Header>
           <Card.Content>
             <Tabs.Root value="outstanding">
-              <Tabs.List variant="line" class="mb-4 flex h-auto flex-wrap gap-1">
+              <Tabs.List
+                variant="line"
+                class="mb-4 flex h-auto w-full max-w-full justify-start gap-1 overflow-x-auto pb-2"
+                data-testid="detail-tabs"
+              >
                 <Tabs.Trigger value="outstanding">Outstanding</Tabs.Trigger>
                 <Tabs.Trigger value="drafts">Drafts</Tabs.Trigger>
                 <Tabs.Trigger value="scheduled">Scheduled</Tabs.Trigger>
